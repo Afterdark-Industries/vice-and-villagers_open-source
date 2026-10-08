@@ -1,0 +1,86 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 2.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal_5x",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_25x",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_50x",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:ketamine_vial",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_250ug",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_500ug",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_100mg",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_250mg",
+          "weight": 2
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.4
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:two_ce_100mg",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:two_ce_250mg",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:four_ho_met_250mg",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:al_lad_250mg",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

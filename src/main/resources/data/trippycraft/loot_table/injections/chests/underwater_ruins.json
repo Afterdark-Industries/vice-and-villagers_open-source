@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:rum_glass",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:beer_bottle",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:wine_glass_5oz",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cocaine_powder",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/rum_cocaine",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

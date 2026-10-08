@@ -1,0 +1,100 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "trippycraft:block/opium_poppy_leaf",
+    "leaf": "trippycraft:block/opium_poppy_leaf",
+    "blade": "trippycraft:block/opium_poppy_leaf_blade",
+    "stem": "trippycraft:block/opium_poppy_stem"
+  },
+  "elements": [
+    {
+      "from": [7, 0, 7],
+      "to": [9, 7, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [4, 1.5, 6],
+      "to": [12, 2.4, 10],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [6, 2.2, 4],
+      "to": [10, 3.15, 12],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [2, 3.2, 6],
+      "to": [7, 4.0, 10],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [9, 4.0, 6],
+      "to": [14, 4.8, 10],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [5, 5.1, 5],
+      "to": [11, 6.0, 11],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [6.5, 6.1, 4],
+      "to": [9.5, 6.85, 12],
+      "rotation": {
+        "origin": [8, 6.3, 8],
+        "axis": "y",
+        "angle": -22.5
+      },
+      "faces": {
+        "down": {"texture": "#blade"},
+        "up": {"texture": "#blade"},
+        "north": {"texture": "#blade"},
+        "south": {"texture": "#blade"},
+        "west": {"texture": "#blade"},
+        "east": {"texture": "#blade"}
+      }
+    }
+  ]
+}

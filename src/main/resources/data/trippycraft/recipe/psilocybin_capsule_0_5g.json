@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_psilocybin_capsules",
+  "ingredients": [
+    {
+      "item": "trippycraft:empty_capsule"
+    },
+    {
+      "item": "trippycraft:psilocybin_powder"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:psilocybin_capsule_0_5g"
+  }
+}

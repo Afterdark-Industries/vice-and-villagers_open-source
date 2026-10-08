@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:cannabis_surface",
+  "features": "trippycraft:cannabis_surface",
+  "step": "vegetal_decoration"
+}
+

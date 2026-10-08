@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:salt_crystal_coastal_caves",
+  "features": "trippycraft:salt_crystal_coastal_caves",
+  "step": "underground_decoration"
+}
+

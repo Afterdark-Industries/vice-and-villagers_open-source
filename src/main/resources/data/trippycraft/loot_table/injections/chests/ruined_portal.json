@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal_5x",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_250ug",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_25x",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:ketamine_vial",
+          "weight": 3
+        }
+      ]
+    }
+  ]
+}

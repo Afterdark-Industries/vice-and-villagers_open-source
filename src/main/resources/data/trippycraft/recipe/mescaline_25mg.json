@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "trippycraft:mescaline_cactus"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:mescaline_25mg",
+    "count": 1
+  },
+  "category": "misc"
+}

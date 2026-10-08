@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:koka_river_surface",
+  "features": "trippycraft:koka_river_surface",
+  "step": "vegetal_decoration"
+}
+

@@ -1,0 +1,492 @@
+{
+  "loader": "neoforge:composite",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "trippycraft:block/cannabis_press_wood",
+    "wood": "trippycraft:block/cannabis_press_wood",
+    "metal": "trippycraft:block/cannabis_press_metal",
+    "resin": "trippycraft:block/cannabis_press_resin",
+    "leaf": "trippycraft:block/cannabis_press_leaf"
+  },
+  "children": {
+    "base": {
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "particle": "trippycraft:block/cannabis_press_wood",
+        "wood": "trippycraft:block/cannabis_press_wood",
+        "metal": "trippycraft:block/cannabis_press_metal",
+        "resin": "trippycraft:block/cannabis_press_resin",
+        "leaf": "trippycraft:block/cannabis_press_leaf"
+      },
+      "elements": [
+        {
+          "from": [
+            1,
+            0,
+            1
+          ],
+          "to": [
+            15,
+            10,
+            15
+          ],
+          "faces": {
+            "down": {
+              "texture": "#wood"
+            },
+            "up": {
+              "texture": "#wood"
+            },
+            "north": {
+              "texture": "#wood"
+            },
+            "south": {
+              "texture": "#wood"
+            },
+            "west": {
+              "texture": "#wood"
+            },
+            "east": {
+              "texture": "#wood"
+            }
+          }
+        },
+        {
+          "from": [
+            0,
+            10,
+            0
+          ],
+          "to": [
+            16,
+            11,
+            16
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            0,
+            0,
+            0
+          ],
+          "to": [
+            16,
+            1,
+            16
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            2,
+            10,
+            2
+          ],
+          "to": [
+            4,
+            14,
+            4
+          ],
+          "faces": {
+            "down": {
+              "texture": "#wood"
+            },
+            "up": {
+              "texture": "#wood"
+            },
+            "north": {
+              "texture": "#wood"
+            },
+            "south": {
+              "texture": "#wood"
+            },
+            "west": {
+              "texture": "#wood"
+            },
+            "east": {
+              "texture": "#wood"
+            }
+          }
+        },
+        {
+          "from": [
+            12,
+            10,
+            2
+          ],
+          "to": [
+            14,
+            14,
+            4
+          ],
+          "faces": {
+            "down": {
+              "texture": "#wood"
+            },
+            "up": {
+              "texture": "#wood"
+            },
+            "north": {
+              "texture": "#wood"
+            },
+            "south": {
+              "texture": "#wood"
+            },
+            "west": {
+              "texture": "#wood"
+            },
+            "east": {
+              "texture": "#wood"
+            }
+          }
+        },
+        {
+          "from": [
+            4,
+            14,
+            2.4
+          ],
+          "to": [
+            12,
+            15.4,
+            3.6
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            1.8,
+            14.0,
+            1.8
+          ],
+          "to": [
+            4.2,
+            16.0,
+            4.2
+          ],
+          "faces": {
+            "down": {
+              "texture": "#wood"
+            },
+            "up": {
+              "texture": "#wood"
+            },
+            "north": {
+              "texture": "#wood"
+            },
+            "south": {
+              "texture": "#wood"
+            },
+            "west": {
+              "texture": "#wood"
+            },
+            "east": {
+              "texture": "#wood"
+            }
+          }
+        },
+        {
+          "from": [
+            11.8,
+            14.0,
+            1.8
+          ],
+          "to": [
+            14.2,
+            16.0,
+            4.2
+          ],
+          "faces": {
+            "down": {
+              "texture": "#wood"
+            },
+            "up": {
+              "texture": "#wood"
+            },
+            "north": {
+              "texture": "#wood"
+            },
+            "south": {
+              "texture": "#wood"
+            },
+            "west": {
+              "texture": "#wood"
+            },
+            "east": {
+              "texture": "#wood"
+            }
+          }
+        },
+        {
+          "from": [
+            7.2,
+            11.5,
+            7.2
+          ],
+          "to": [
+            8.8,
+            15,
+            8.8
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            4.5,
+            12,
+            4.5
+          ],
+          "to": [
+            11.5,
+            13,
+            11.5
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            4,
+            10.7,
+            4
+          ],
+          "to": [
+            12,
+            11.7,
+            12
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            5,
+            10.8,
+            5
+          ],
+          "to": [
+            11,
+            11.2,
+            11
+          ],
+          "faces": {
+            "down": {
+              "texture": "#resin"
+            },
+            "up": {
+              "texture": "#resin"
+            },
+            "north": {
+              "texture": "#resin"
+            },
+            "south": {
+              "texture": "#resin"
+            },
+            "west": {
+              "texture": "#resin"
+            },
+            "east": {
+              "texture": "#resin"
+            }
+          }
+        },
+        {
+          "from": [
+            13.4,
+            7.4,
+            10.2
+          ],
+          "to": [
+            15.2,
+            8.5,
+            11.8
+          ],
+          "faces": {
+            "down": {
+              "texture": "#metal"
+            },
+            "up": {
+              "texture": "#metal"
+            },
+            "north": {
+              "texture": "#metal"
+            },
+            "south": {
+              "texture": "#metal"
+            },
+            "west": {
+              "texture": "#metal"
+            },
+            "east": {
+              "texture": "#metal"
+            }
+          }
+        },
+        {
+          "from": [
+            4,
+            2,
+            0.6
+          ],
+          "to": [
+            12,
+            8,
+            1.1
+          ],
+          "faces": {
+            "north": {
+              "texture": "#leaf"
+            },
+            "south": {
+              "texture": "#leaf"
+            },
+            "west": {
+              "texture": "#leaf"
+            },
+            "east": {
+              "texture": "#leaf"
+            },
+            "up": {
+              "texture": "#leaf"
+            },
+            "down": {
+              "texture": "#leaf"
+            }
+          }
+        }
+      ]
+    },
+    "arbitrary_rotation": {
+      "loader": "neoforge:obj",
+      "render_type": "minecraft:cutout",
+      "textures": {
+        "particle": "trippycraft:block/cannabis_press_wood",
+        "wood": "trippycraft:block/cannabis_press_wood",
+        "metal": "trippycraft:block/cannabis_press_metal",
+        "resin": "trippycraft:block/cannabis_press_resin",
+        "leaf": "trippycraft:block/cannabis_press_leaf"
+      },
+      "model": "trippycraft:models/block/backport/cannabis_press_arbitrary.obj",
+      "automatic_culling": false,
+      "shade_quads": true,
+      "flip_v": false
+    }
+  },
+  "item_render_order": [
+    "base",
+    "arbitrary_rotation"
+  ]
+}

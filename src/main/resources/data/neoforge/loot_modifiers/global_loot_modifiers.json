@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "entries": [
+    "trippycraft:village_houses",
+    "trippycraft:village_snowy_house",
+    "trippycraft:village_cartographer",
+    "trippycraft:village_fisher",
+    "trippycraft:village_temple",
+    "trippycraft:village_workshops",
+    "trippycraft:village_butcher",
+    "trippycraft:village_mason",
+    "trippycraft:village_tannery",
+    "trippycraft:abandoned_mineshaft",
+    "trippycraft:simple_dungeon",
+    "trippycraft:woodland_mansion",
+    "trippycraft:shipwreck_supply",
+    "trippycraft:shipwreck_treasure",
+    "trippycraft:buried_treasure",
+    "trippycraft:stronghold_library",
+    "trippycraft:stronghold_general",
+    "trippycraft:ancient_city",
+    "trippycraft:igloo_chest",
+    "trippycraft:pillager_outpost",
+    "trippycraft:desert_pyramid",
+    "trippycraft:jungle_temple",
+    "trippycraft:ruined_portal",
+    "trippycraft:underwater_ruins"
+  ]
+}

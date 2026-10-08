@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "trippycraft:item/dried_salvia_leaf"
+  },
+  "parent": "minecraft:item/generated"
+}

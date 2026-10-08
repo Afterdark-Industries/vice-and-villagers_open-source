@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,lit=false": {
+      "model": "trippycraft:block/chemistry_table"
+    },
+    "facing=east,lit=false": {
+      "model": "trippycraft:block/chemistry_table",
+      "y": 90
+    },
+    "facing=south,lit=false": {
+      "model": "trippycraft:block/chemistry_table",
+      "y": 180
+    },
+    "facing=west,lit=false": {
+      "model": "trippycraft:block/chemistry_table",
+      "y": 270
+    },
+    "facing=north,lit=true": {
+      "model": "trippycraft:block/chemistry_table"
+    },
+    "facing=east,lit=true": {
+      "model": "trippycraft:block/chemistry_table",
+      "y": 90
+    },
+    "facing=south,lit=true": {
+      "model": "trippycraft:block/chemistry_table",
+      "y": 180
+    },
+    "facing=west,lit=true": {
+      "model": "trippycraft:block/chemistry_table",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.15,
+  "ingredient": { "item": "trippycraft:two_cb_freebase" },
+  "result": { "id": "trippycraft:two_cb_crystal" }
+}

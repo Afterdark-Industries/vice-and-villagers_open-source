@@ -1,0 +1,45 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:rum_glass",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:wine_glass_5oz",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cocaine_powder",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cannabis_gummies",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cannabis_chocolate_bar",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_50ug",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/rum_cocaine",
+          "weight": 3
+        }
+      ]
+    }
+  ]
+}

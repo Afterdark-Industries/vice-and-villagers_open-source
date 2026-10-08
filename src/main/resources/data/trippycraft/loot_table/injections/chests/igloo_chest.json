@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:vodka_glass",
+          "weight": 15
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:ketamine_vial",
+          "weight": 14
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_25mg",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_100mg",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:wine_glass_5oz",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/vodka_ketamine",
+          "weight": 8
+        }
+      ]
+    }
+  ]
+}

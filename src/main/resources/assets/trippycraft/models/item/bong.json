@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "trippycraft:item/bong"
+  },
+  "parent": "minecraft:item/generated"
+}

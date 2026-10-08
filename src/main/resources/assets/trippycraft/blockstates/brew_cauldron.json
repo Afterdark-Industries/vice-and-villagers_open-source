@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "trippycraft:block/brew_cauldron"
+    },
+    "facing=east": {
+      "model": "trippycraft:block/brew_cauldron",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "trippycraft:block/brew_cauldron",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "trippycraft:block/brew_cauldron",
+      "y": 270
+    }
+  }
+}

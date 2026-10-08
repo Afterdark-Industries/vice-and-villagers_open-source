@@ -1,0 +1,325 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.144'
+    id 'idea'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = 'ViceAndVillagers'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+sourceSets.main.resources {
+    srcDir('src/generated/resources')
+    exclude('**/*.bbmodel')
+    exclude('src/generated/**/.cache')
+}
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    runs {
+        client {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('devRunDir').getOrElse('run'))
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+        }
+
+        server {
+            server()
+            gameDirectory = project.file(providers.gradleProperty('devRunDir').getOrElse('run'))
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file('build/gametest-server')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        hoMetGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file('build/homet-gametest-run')
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            programArguments.addAll '--universe', project.file('build/homet-gametest').absolutePath, '--world', 'homet-tests', '--nogui'
+        }
+
+        hoMetSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('hometSmokeDir').getOrElse('build/homet-client-smoke'))
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            systemProperty 'trippycraft.hometSmokeTest', 'true'
+            systemProperty 'trippycraft.alLadCraftingSmokeTest', providers.gradleProperty('alLadCraftingSmoke').getOrElse('false')
+            systemProperty 'trippycraft.twoCbCraftingSmokeTest', providers.gradleProperty('twoCbCraftingSmoke').getOrElse('false')
+            systemProperty 'trippycraft.twoCeCraftingSmokeTest', providers.gradleProperty('twoCeCraftingSmoke').getOrElse('false')
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        guiSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('guiSmokeDir').getOrElse('build/gui-client-smoke'))
+            systemProperty 'trippycraft.guiSmokeTest', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        data {
+            data()
+            gameDirectory = project.file('build/data-run')
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output',
+                    file('src/generated/resources/').absolutePath, '--existing',
+                    file('src/main/resources/').absolutePath
+        }
+
+        salviaSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('salviaSmokeDir').getOrElse('build/salvia-client-smoke'))
+            systemProperty 'trippycraft.salviaSmokeTest', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        mescalineSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('mescalineSmokeDir').getOrElse('build/mescaline-client-smoke'))
+            systemProperty 'trippycraft.mescalineSmokeTest', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        psilocybinSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('psilocybinSmokeDir').getOrElse('build/psilocybin-smoke'))
+            systemProperty 'trippycraft.psilocybinSmokeTest', 'true'
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        lsdSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('lsdSmokeDir').getOrElse('build/lsd-smoke'))
+            systemProperty 'trippycraft.lsdSmokeTest', 'true'
+            systemProperty 'trippycraft.lsdSmokePaletteOnly', providers.gradleProperty('lsdSmokePaletteOnly').getOrElse('false')
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        twoCeSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('twoCeSmokeDir').getOrElse('build/twoce-client-smoke'))
+            systemProperty 'trippycraft.twoCeSmokeTest', 'true'
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        alLadSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('alLadSmokeDir').getOrElse('build/allad-client-smoke'))
+            systemProperty 'trippycraft.alLadSmokeTest', 'true'
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        configureEach {
+            systemProperty 'forge.logging.console.level', 'debug'
+            logLevel = org.slf4j.event.Level.DEBUG
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/main/templates'
+    into 'build/generated/sources/modMetadata'
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.named('jar', Jar) {
+    archiveVersion = "${mod_version}-backport-${minecraft_version}-neoforge"
+    manifest {
+        attributes([
+                'Specification-Title'      : mod_name,
+                'Specification-Vendor'     : mod_authors,
+                'Specification-Version'    : '1',
+                'Implementation-Title'     : mod_name,
+                'Implementation-Version'   : project.jar.archiveVersion,
+                'Implementation-Vendor'    : mod_authors,
+        ])
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xmaxerrs', '1000'])
+}
+
+tasks.matching { it.name == 'runHoMetSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('hometSmokeDir').getOrElse('build/homet-client-smoke')
+        def result = project.file("${smokeDirectory}/homet-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: HoMet client scene smoke; screenshots=5')) {
+            throw new GradleException("4-HO-MET renderer smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runGuiSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('guiSmokeDir').getOrElse('build/gui-client-smoke')
+        def result = project.file("${smokeDirectory}/gui-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Native GUI smoke')) {
+            throw new GradleException("GUI renderer/input smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runSalviaSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('salviaSmokeDir').getOrElse('build/salvia-client-smoke')
+        def result = project.file("${smokeDirectory}/salvia-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Salvia client assets; screenshots=2')) {
+            throw new GradleException("Salvia asset smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runMescalineSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('mescalineSmokeDir').getOrElse('build/mescaline-client-smoke')
+        def result = project.file("${smokeDirectory}/mescaline-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Mescaline client assets; screenshots=4')) {
+            throw new GradleException("Mescaline asset smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runPsilocybinSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('psilocybinSmokeDir').getOrElse('build/psilocybin-smoke')
+        def result = project.file("${smokeDirectory}/psilocybin-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Psilocybin client flow smoke; screenshots=77')) {
+            throw new GradleException("Psilocybin renderer smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runLsdSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('lsdSmokeDir').getOrElse('build/lsd-smoke')
+        def result = project.file("${smokeDirectory}/lsd-smoke-result.txt")
+        def expectedScreenshots = project.providers.gradleProperty('lsdSmokePaletteOnly').getOrElse('false').toBoolean() ? 99 : 204
+        if (!result.isFile() || !result.getText('UTF-8').contains("PASS: LSD native client smoke; screenshots=${expectedScreenshots}")) {
+            throw new GradleException("LSD renderer smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runTwoCeSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('twoCeSmokeDir').getOrElse('build/twoce-client-smoke')
+        def result = project.file("${smokeDirectory}/twoce-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: 2C-E native client smoke; screenshots=14')) {
+            throw new GradleException("2C-E renderer smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runAlLadSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('alLadSmokeDir').getOrElse('build/allad-client-smoke')
+        def result = project.file("${smokeDirectory}/allad-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: AL-LAD native client smoke; screenshots=14')) {
+            throw new GradleException("AL-LAD renderer smoke failed; inspect ${result}")
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}
+
+// Development harness paths are resolved from this checkout, never a cached path list.
+tasks.register('writeToolingEnvironment') {
+    group = 'verification'
+    description = 'Resolve the Java toolchain and current client dependencies for development harnesses.'
+    dependsOn 'classes', configurations.named('clientLegacyClasspath')
+    def environmentFile = layout.buildDirectory.file('tooling/environment.json')
+    outputs.file environmentFile
+    // Paths must be regenerated when a source-only checkout moves to another directory.
+    outputs.upToDateWhen { false }
+    doLast {
+        def compiler = javaToolchains.compilerFor(java.toolchain).get()
+        def clientFiles = configurations.clientLegacyClasspath.files
+        def gpuNames = ['lwjgl-3.3.3.jar', 'lwjgl-3.3.3-natives-windows.jar',
+                        'lwjgl-glfw-3.3.3.jar', 'lwjgl-glfw-3.3.3-natives-windows.jar',
+                        'lwjgl-opengl-3.3.3.jar', 'lwjgl-opengl-3.3.3-natives-windows.jar', 'joml-1.10.5.jar']
+        def gpuFiles = gpuNames.collect { name ->
+            def matches = clientFiles.findAll { it.name == name }
+            if (matches.size() != 1) {
+                throw new GradleException("Expected one current client dependency ${name}; found ${matches.size()}")
+            }
+            matches.first().absolutePath
+        }
+        def resources = tasks.named('createMinecraftArtifacts').get().resourcesArtifact.get().asFile
+        def environment = [
+                javaExecutable: new File(compiler.metadata.installationPath.asFile, 'bin/java.exe').absolutePath,
+                javacExecutable: compiler.executablePath.asFile.absolutePath,
+                runtimeClasspath: (sourceSets.main.runtimeClasspath.files + clientFiles).collect { it.absolutePath }.unique(),
+                gpuClasspath: gpuFiles,
+                minecraftResources: resources.absolutePath
+        ]
+        def target = environmentFile.get().asFile
+        target.parentFile.mkdirs()
+        target.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(environment)), 'UTF-8')
+    }
+}

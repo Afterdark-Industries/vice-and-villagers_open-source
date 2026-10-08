@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "trippycraft:koka_leaves"
+  },
+  "result": {
+    "id": "trippycraft:dried_koka_leaves"
+  }
+}

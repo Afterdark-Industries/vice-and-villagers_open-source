@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "trippycraft:bong" },
+    { "item": "trippycraft:dried_cannabis_bud" }
+  ],
+  "result": {
+    "id": "trippycraft:bong_cannabis",
+    "count": 1
+  }
+}

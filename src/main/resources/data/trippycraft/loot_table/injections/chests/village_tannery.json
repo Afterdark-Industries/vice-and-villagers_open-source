@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:beer_bottle",
+          "weight": 14
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cannabis_joint",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cannabis_dab_pen",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cannabis_gummies",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/house_chaos",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

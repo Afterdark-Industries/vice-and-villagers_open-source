@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:opium_poppy_windswept_surface",
+  "features": "trippycraft:opium_poppy_windswept_surface",
+  "step": "vegetal_decoration"
+}
+

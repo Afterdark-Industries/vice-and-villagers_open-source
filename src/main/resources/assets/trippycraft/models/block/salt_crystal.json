@@ -1,0 +1,130 @@
+{
+  "textures": {
+    "particle": "trippycraft:block/salt_crystal_base_top",
+    "base_top": "trippycraft:block/salt_crystal_base_top",
+    "base_side": "trippycraft:block/salt_crystal_base_side",
+    "crystal": "trippycraft:block/salt_crystal_crystal"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 12, 16],
+      "faces": {
+        "down": {"texture": "#base_top"},
+        "up": {"texture": "#base_top"},
+        "north": {"texture": "#base_side"},
+        "south": {"texture": "#base_side"},
+        "west": {"texture": "#base_side"},
+        "east": {"texture": "#base_side"}
+      }
+    },
+    {
+      "from": [2, 12, 2],
+      "to": [5, 15, 5],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [5, 12, 7],
+      "to": [8, 16, 10],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [8, 12, 5],
+      "to": [11, 16, 8],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [11, 12, 3],
+      "to": [14, 15, 6],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [10, 12, 10],
+      "to": [13, 16, 13],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [4, 12, 10],
+      "to": [7, 14, 13],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [7, 12, 12],
+      "to": [9, 15, 14],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [3, 12, 6],
+      "to": [5, 14, 8],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    },
+    {
+      "from": [12, 12, 7],
+      "to": [14, 14, 9],
+      "faces": {
+        "down": {"texture": "#crystal"},
+        "up": {"texture": "#crystal"},
+        "north": {"texture": "#crystal"},
+        "south": {"texture": "#crystal"},
+        "west": {"texture": "#crystal"},
+        "east": {"texture": "#crystal"}
+      }
+    }
+  ]
+}

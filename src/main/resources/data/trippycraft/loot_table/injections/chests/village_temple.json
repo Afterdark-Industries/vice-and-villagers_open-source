@@ -1,0 +1,70 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_10x",
+          "weight": 11
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_1g",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:wine_glass_5oz",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/cleric_ritual",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:ketamine_vial",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_25x",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal_5x",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_100ug",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_250ug",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_50x",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

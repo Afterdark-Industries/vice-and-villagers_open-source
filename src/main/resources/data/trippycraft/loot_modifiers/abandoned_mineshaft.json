@@ -1,0 +1,11 @@
+{
+  "type": "trippycraft:add_substance_loot_table",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/abandoned_mineshaft"
+    }
+  ],
+  "loot_table": "trippycraft:injections/chests/abandoned_mineshaft"
+}
+

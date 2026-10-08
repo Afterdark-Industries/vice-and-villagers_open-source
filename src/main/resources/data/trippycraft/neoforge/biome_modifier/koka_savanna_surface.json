@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:koka_savanna_surface",
+  "features": "trippycraft:koka_savanna_surface",
+  "step": "vegetal_decoration"
+}
+

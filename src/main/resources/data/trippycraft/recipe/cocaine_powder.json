@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_cocaine_powder",
+  "ingredients": [
+    {
+      "item": "trippycraft:koka_paste"
+    },
+    {
+      "item": "trippycraft:frost_salt"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:cocaine_powder",
+    "count": 4
+  }
+}

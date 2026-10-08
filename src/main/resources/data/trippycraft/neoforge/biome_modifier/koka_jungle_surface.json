@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:koka_jungle_surface",
+  "features": "trippycraft:koka_jungle_surface",
+  "step": "vegetal_decoration"
+}
+

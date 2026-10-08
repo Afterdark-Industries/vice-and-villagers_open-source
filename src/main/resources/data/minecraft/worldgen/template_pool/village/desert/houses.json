@@ -1,0 +1,487 @@
+{
+    "elements":  [
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_3",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_4",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_5",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_6",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  1
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_7",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_small_house_8",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_medium_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_medium_house_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_butcher_shop_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_butcher"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_tool_smith_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_toolsmith"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_fletcher_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_shepherd_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_armorer_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_armorer"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  1
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_fisher_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_fisher"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_tannery_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_tannery"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_cartographer_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_cartographer"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_library_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_mason_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_mason"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_weaponsmith_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_weaponsmith"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_temple_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_temple"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_temple_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_temple"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_large_farm_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:farm_desert",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  11
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_farm_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:farm_desert",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  4
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_farm_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:farm_desert",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  4
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_animal_pen_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/desert/houses/desert_animal_pen_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:empty",
+                                                                                   "loot_table":  "minecraft:chests/village/village_desert_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:empty_pool_element"
+                                     },
+                         "weight":  5
+                     }
+                 ],
+    "fallback":  "minecraft:village/desert/terminators"
+}

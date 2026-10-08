@@ -1,0 +1,521 @@
+{
+    "elements":  [
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_3",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_4",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_5",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_6",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_7",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_small_house_8",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_medium_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_medium_house_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/zombie/houses/snowy_medium_house_3",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  1
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_butchers_shop_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_butcher"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_butchers_shop_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_butcher"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_tool_smith_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_toolsmith"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_fletcher_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_shepherds_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_armorer_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_armorer"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  1
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_armorer_house_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_armorer"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  1
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_fisher_cottage",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_fisher"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_tannery_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_tannery"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_cartographer_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_cartographer"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_library_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_masons_house_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_mason"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_masons_house_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_mason"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_weapon_smith_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_weaponsmith"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_temple_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_temple"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_farm_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  3
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_farm_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  3
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_animal_pen_1",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:legacy_single_pool_element",
+                                         "location":  "minecraft:village/snowy/houses/snowy_animal_pen_2",
+                                         "processors":  {
+                                                            "processors":  [
+                                                                               {
+                                                                                   "processor_type":  "trippycraft:village_house_chest",
+                                                                                   "base_processors":  "minecraft:zombie_snowy",
+                                                                                   "loot_table":  "minecraft:chests/village/village_snowy_house"
+                                                                               }
+                                                                           ]
+                                                        },
+                                         "projection":  "rigid"
+                                     },
+                         "weight":  2
+                     },
+                     {
+                         "element":  {
+                                         "element_type":  "minecraft:empty_pool_element"
+                                     },
+                         "weight":  6
+                     }
+                 ],
+    "fallback":  "minecraft:village/snowy/terminators"
+}

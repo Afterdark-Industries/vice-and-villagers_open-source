@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "trippycraft:block/mortar_and_pestle"
+    },
+    "facing=east": {
+      "model": "trippycraft:block/mortar_and_pestle",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "trippycraft:block/mortar_and_pestle",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "trippycraft:block/mortar_and_pestle",
+      "y": 270
+    }
+  }
+}

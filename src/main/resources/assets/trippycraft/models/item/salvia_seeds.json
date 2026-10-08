@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "layer0": "trippycraft:item/salvia_seeds"
+  },
+  "parent": "minecraft:item/generated"
+}

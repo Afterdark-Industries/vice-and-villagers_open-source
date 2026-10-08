@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "trippycraft:item/cannabis_dab_pen"
+  }
+}

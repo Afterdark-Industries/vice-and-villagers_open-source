@@ -1,0 +1,111 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 2.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal_5x",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:frost_salt",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 3.0,
+                "max": 6.0
+              }
+            }
+          ],
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cocaine_powder",
+          "weight": 11
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:crack_cocaine",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:ketamine_vial",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_25mg",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_100mg",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_250mg",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:heroin_500mg",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_3g",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_5g",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_250ug",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_500ug",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:beer_bottle",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:whiskey_glass",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/dmt_crack",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/dmt_ketamine",
+          "weight": 5
+        }
+      ]
+    }
+  ]
+}

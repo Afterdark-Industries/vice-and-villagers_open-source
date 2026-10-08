@@ -1,0 +1,41 @@
+# Gradle and generated build, validation, preview and publishing output
+/build/
+/.gradle/
+/mcmodsrepo/
+/.cache/
+
+# Private development game directories, logs, backups and toolchains
+/run/
+/run-data/
+/logs/
+/tmp/
+/backups/
+/.jdks/
+
+# Python generator caches
+__pycache__/
+*.py[cod]
+
+# Local editor settings
+/.vscode/
+/.idea/
+/.settings/
+/.metadata/
+/.classpath
+/.project
+/bin/
+/out/
+/eclipse/
+*.launch
+*.ipr
+*.iws
+*.iml
+
+# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# Operating system files
+Thumbs.db
+.DS_Store

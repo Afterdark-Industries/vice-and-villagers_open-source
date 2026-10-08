@@ -1,0 +1,70 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "trippycraft:block/koka_leaf",
+    "leaf": "trippycraft:block/koka_leaf",
+    "stem": "trippycraft:block/koka_stem"
+  },
+  "elements": [
+    {
+      "from": [7, 0, 7],
+      "to": [9, 5, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [3, 1, 7],
+      "to": [13, 1.75, 9],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [7, 1.25, 3],
+      "to": [9, 2, 13],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [5, 3.25, 5],
+      "to": [11, 4, 11],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [7, 5, 7],
+      "to": [9, 8, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    }
+  ]
+}

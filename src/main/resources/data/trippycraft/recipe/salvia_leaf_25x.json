@@ -1,0 +1,19 @@
+{
+  "ingredients": [
+    {
+      "item": "trippycraft:dried_salvia_leaf"
+    },
+    {
+      "item": "trippycraft:dried_salvia_leaf"
+    },
+    {
+      "item": "trippycraft:dried_salvia_leaf"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "trippycraft:salvia_leaf_25x"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "cookingtime": 50,
+  "experience": 0.15,
+  "ingredient": {
+    "item": "trippycraft:four_ho_met_freebase"
+  },
+  "result": {
+    "id": "trippycraft:four_ho_met_crystal"
+  }
+}

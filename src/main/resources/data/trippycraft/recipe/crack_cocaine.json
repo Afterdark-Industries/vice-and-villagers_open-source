@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_crack_cocaine",
+  "ingredients": [
+    {
+      "item": "trippycraft:hardened_koka_paste"
+    },
+    {
+      "item": "trippycraft:frost_salt"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:crack_cocaine"
+  }
+}

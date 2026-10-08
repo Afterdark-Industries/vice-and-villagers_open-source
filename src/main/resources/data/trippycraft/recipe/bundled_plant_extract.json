@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_plant_extracts",
+  "ingredients": [
+    {
+      "item": "trippycraft:plant_extract"
+    },
+    {
+      "item": "trippycraft:plant_extract"
+    },
+    {
+      "item": "trippycraft:plant_extract"
+    },
+    {
+      "item": "trippycraft:plant_extract"
+    },
+    {
+      "item": "trippycraft:plant_extract"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:bundled_plant_extract"
+  }
+}

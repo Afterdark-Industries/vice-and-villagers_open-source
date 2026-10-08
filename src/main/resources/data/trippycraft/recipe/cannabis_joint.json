@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_cannabis_joints",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "trippycraft:dried_cannabis_bud"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:cannabis_joint"
+  }
+}

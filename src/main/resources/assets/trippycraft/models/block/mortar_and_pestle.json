@@ -1,0 +1,166 @@
+{
+  "textures": {
+    "particle": "trippycraft:block/mortar_and_pestle_outer",
+    "outer": "trippycraft:block/mortar_and_pestle_outer",
+    "inner": "trippycraft:block/mortar_and_pestle_inner",
+    "pestle": "trippycraft:block/mortar_and_pestle_pestle"
+  },
+  "elements": [
+    {
+      "from": [4, 0, 4],
+      "to": [12, 1, 12],
+      "faces": {
+        "down": {"texture": "#outer"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [4, 2, 4],
+      "to": [12, 7, 5],
+      "faces": {
+        "down": {"texture": "#outer"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#inner"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [4, 2, 11],
+      "to": [12, 7, 12],
+      "faces": {
+        "down": {"texture": "#outer"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#inner"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [4, 2, 5],
+      "to": [5, 7, 11],
+      "faces": {
+        "down": {"texture": "#outer"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#inner"}
+      }
+    },
+    {
+      "from": [11, 2, 5],
+      "to": [12, 7, 11],
+      "faces": {
+        "down": {"texture": "#outer"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#inner"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [5, 1, 5],
+      "to": [11, 2, 11],
+      "faces": {
+        "down": {"texture": "#outer"},
+        "up": {"texture": "#inner"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [3.5, 7, 3.5],
+      "to": [12.5, 8, 5],
+      "faces": {
+        "down": {"texture": "#inner"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#inner"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [3.5, 7, 11],
+      "to": [12.5, 8, 12.5],
+      "faces": {
+        "down": {"texture": "#inner"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#inner"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [3.5, 7, 5],
+      "to": [5, 8, 11],
+      "faces": {
+        "down": {"texture": "#inner"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#outer"},
+        "east": {"texture": "#inner"}
+      }
+    },
+    {
+      "from": [11, 7, 5],
+      "to": [12.5, 8, 11],
+      "faces": {
+        "down": {"texture": "#inner"},
+        "up": {"texture": "#outer"},
+        "north": {"texture": "#outer"},
+        "south": {"texture": "#outer"},
+        "west": {"texture": "#inner"},
+        "east": {"texture": "#outer"}
+      }
+    },
+    {
+      "from": [7.2, 2.5, 6.6],
+      "to": [9.2, 9.0, 8.6],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [8, 3, 8],
+        "rescale": true
+      },
+      "faces": {
+        "down": {"texture": "#pestle"},
+        "up": {"texture": "#pestle"},
+        "north": {"texture": "#pestle"},
+        "south": {"texture": "#pestle"},
+        "west": {"texture": "#pestle"},
+        "east": {"texture": "#pestle"}
+      }
+    },
+    {
+      "from": [6.8, 8.2, 6.1],
+      "to": [9.8, 10.2, 9.1],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "z",
+        "origin": [8, 3, 8],
+        "rescale": true
+      },
+      "faces": {
+        "down": {"texture": "#pestle"},
+        "up": {"texture": "#pestle"},
+        "north": {"texture": "#pestle"},
+        "south": {"texture": "#pestle"},
+        "west": {"texture": "#pestle"},
+        "east": {"texture": "#pestle"}
+      }
+    }
+  ]
+}

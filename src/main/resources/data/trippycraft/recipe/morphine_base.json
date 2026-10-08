@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.15,
+  "ingredient": {
+    "item": "trippycraft:raw_opium"
+  },
+  "result": {
+    "id": "trippycraft:morphine_base"
+  }
+}

@@ -1,0 +1,68 @@
+package com.trippycraft.config;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.event.config.ModConfigEvent;
+
+public final class TrippyClientConfig {
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+
+    private static final ModConfigSpec.BooleanValue RENDERER_ENABLED = BUILDER
+            .comment("Enables Vice and Villagers client visuals.")
+            .define("rendererEnabled", true);
+
+    private static final ModConfigSpec.DoubleValue VISUAL_INTENSITY = BUILDER
+            .comment("Global multiplier for screen-space and color visuals.")
+            .defineInRange("visualIntensity", 1.0D, 0.0D, 2.0D);
+
+    private static final ModConfigSpec.DoubleValue MOTION_INTENSITY = BUILDER
+            .comment("Global multiplier for camera, FOV, fog, and motion-like visuals.")
+            .defineInRange("motionIntensity", 1.0D, 0.0D, 2.0D);
+
+    private static final ModConfigSpec.BooleanValue AUDIO_ENABLED = BUILDER
+            .comment("Enables subtle Vice and Villagers sound pitch and volume shaping while an experience is active.")
+            .define("audioEnabled", true);
+
+    private static final ModConfigSpec.DoubleValue AUDIO_INTENSITY = BUILDER
+            .comment("Global multiplier for sound pitch and volume shaping.")
+            .defineInRange("audioIntensity", 0.65D, 0.0D, 2.0D);
+
+    private static final ModConfigSpec.BooleanValue MOTION_REDUCTION = BUILDER
+            .comment("Caps camera roll, FOV breathing, drift, and trail strength for motion-sensitive players.")
+            .define("motionReduction", false);
+
+    private static final ModConfigSpec.BooleanValue PHOTOSENSITIVITY_REDUCTION = BUILDER
+            .comment("Caps high-contrast patterning, rapid color pulses, and bright overlays.")
+            .define("photosensitivityReduction", false);
+
+    private static final ModConfigSpec.BooleanValue DEBUG_CHANNELS = BUILDER
+            .comment("Adds Vice and Villagers client channel lines to the F3 debug overlay while an experience is active.")
+            .define("debugChannels", true);
+
+    public static final ModConfigSpec SPEC = BUILDER.build();
+
+    public static boolean rendererEnabled = true;
+    public static double visualIntensity = 1.0D;
+    public static double motionIntensity = 1.0D;
+    public static boolean audioEnabled = true;
+    public static double audioIntensity = 0.65D;
+    public static boolean motionReduction = false;
+    public static boolean photosensitivityReduction = false;
+    public static boolean debugChannels = true;
+
+    private TrippyClientConfig() {
+    }
+
+    public static void onLoad(ModConfigEvent event) {
+        if (event.getConfig().getSpec() != SPEC) {
+            return;
+        }
+        rendererEnabled = RENDERER_ENABLED.get();
+        visualIntensity = VISUAL_INTENSITY.get();
+        motionIntensity = MOTION_INTENSITY.get();
+        audioEnabled = AUDIO_ENABLED.get();
+        audioIntensity = AUDIO_INTENSITY.get();
+        motionReduction = MOTION_REDUCTION.get();
+        photosensitivityReduction = PHOTOSENSITIVITY_REDUCTION.get();
+        debugChannels = DEBUG_CHANNELS.get();
+    }
+}

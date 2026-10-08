@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "cookingtime": 300,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "trippycraft:opium_latex"
+  },
+  "result": {
+    "id": "trippycraft:raw_opium"
+  }
+}

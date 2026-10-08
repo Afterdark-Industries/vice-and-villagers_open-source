@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_mdma",
+  "ingredients": [
+    {
+      "item": "trippycraft:crude_empathogen_base"
+    },
+    {
+      "item": "trippycraft:frost_salt"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:mdma_crystal"
+  }
+}

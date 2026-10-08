@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "misc",
+  "cookingtime": 300,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "trippycraft:koka_leaves"
+  },
+  "result": {
+    "id": "trippycraft:dried_koka_leaves"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "category": "misc",
+  "ingredient": {
+    "item": "trippycraft:fresh_salvia_leaf"
+  },
+  "experience": 0.1,
+  "cookingtime": 50,
+  "type": "minecraft:smoking",
+  "result": {
+    "id": "trippycraft:dried_salvia_leaf"
+  }
+}

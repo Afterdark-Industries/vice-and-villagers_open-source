@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "trippycraft:bong"
+  },
+  "pattern": [
+    " G ",
+    " G ",
+    "GWG"
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "trippycraft:block/opium_poppy_leaf",
+    "leaf": "trippycraft:block/opium_poppy_leaf",
+    "blade": "trippycraft:block/opium_poppy_leaf_blade",
+    "stem": "trippycraft:block/opium_poppy_stem"
+  },
+  "elements": [
+    {
+      "from": [7, 0, 7],
+      "to": [9, 4, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [3, 0.75, 6],
+      "to": [13, 1.75, 10],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [6, 1.25, 3],
+      "to": [10, 2.25, 13],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [4, 2.2, 5],
+      "to": [12, 3.2, 11],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [6.5, 2.8, 4],
+      "to": [9.5, 3.55, 12],
+      "rotation": {
+        "origin": [8, 3, 8],
+        "axis": "y",
+        "angle": 22.5
+      },
+      "faces": {
+        "down": {"texture": "#blade"},
+        "up": {"texture": "#blade"},
+        "north": {"texture": "#blade"},
+        "south": {"texture": "#blade"},
+        "west": {"texture": "#blade"},
+        "east": {"texture": "#blade"}
+      }
+    }
+  ]
+}

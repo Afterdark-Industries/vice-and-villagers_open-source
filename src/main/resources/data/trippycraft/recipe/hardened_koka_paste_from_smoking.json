@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "cookingtime": 50,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "trippycraft:koka_paste"
+  },
+  "result": {
+    "id": "trippycraft:hardened_koka_paste"
+  }
+}

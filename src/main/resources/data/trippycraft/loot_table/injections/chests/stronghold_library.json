@@ -1,0 +1,101 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 2.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_50ug",
+          "weight": 12
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_100ug",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_250ug",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:lsd_blotter_500ug",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal_5x",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:wine_glass_5oz",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:cannabis_chocolate_bar",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_1g",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/wine_lsd50",
+          "weight": 6
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.3
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:four_ho_met_100mg",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:four_ho_met_250mg",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:al_lad_100mg",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:al_lad_250mg",
+          "weight": 1
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:two_ce_25mg",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:two_ce_100mg",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "trippycraft:block/opium_poppy_bud",
+    "leaf": "trippycraft:block/opium_poppy_leaf",
+    "blade": "trippycraft:block/opium_poppy_leaf_blade",
+    "stem": "trippycraft:block/opium_poppy_stem",
+    "bud": "trippycraft:block/opium_poppy_bud",
+    "crown": "trippycraft:block/opium_poppy_crown"
+  },
+  "elements": [
+    {
+      "from": [7, 0, 7],
+      "to": [9, 12, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [5, 2, 7],
+      "to": [7, 6, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [9, 4, 7],
+      "to": [11, 8, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [7, 6, 5],
+      "to": [9, 9, 7],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [3, 2, 6],
+      "to": [8, 2.85, 10],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [8, 3.0, 6],
+      "to": [13, 3.85, 10],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [6, 4.0, 2],
+      "to": [10, 4.85, 7],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [5, 6.5, 5],
+      "to": [12, 7.35, 11],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [7, 9.5, 6.5],
+      "to": [9, 13, 8.5],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [5.2, 10.8, 5.2],
+      "to": [10.8, 15.0, 10.8],
+      "faces": {
+        "down": {"texture": "#bud"},
+        "up": {"texture": "#bud"},
+        "north": {"texture": "#bud"},
+        "south": {"texture": "#bud"},
+        "west": {"texture": "#bud"},
+        "east": {"texture": "#bud"}
+      }
+    },
+    {
+      "from": [5.0, 14.6, 5.0],
+      "to": [11.0, 15.6, 11.0],
+      "faces": {
+        "down": {"texture": "#crown"},
+        "up": {"texture": "#crown"},
+        "north": {"texture": "#crown"},
+        "south": {"texture": "#crown"},
+        "west": {"texture": "#crown"},
+        "east": {"texture": "#crown"}
+      }
+    }
+  ]
+}

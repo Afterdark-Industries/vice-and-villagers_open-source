@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {
+      "item": "trippycraft:bong"
+    },
+    {
+      "item": "trippycraft:salvia_leaf"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "result": {
+    "count": 1,
+    "id": "trippycraft:bong_salvia_1x"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#trippycraft:strange_mushroom_surface",
+  "features": "trippycraft:strange_mushroom_surface",
+  "step": "vegetal_decoration"
+}
+

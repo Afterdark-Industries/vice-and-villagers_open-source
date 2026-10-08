@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "FCF",
+    "SSS"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:cauldron"
+    },
+    "F": {
+      "tag": "minecraft:fences"
+    },
+    "C": {
+      "item": "minecraft:campfire"
+    },
+    "S": {
+      "item": "minecraft:smooth_stone"
+    }
+  },
+  "result": {
+    "id": "trippycraft:brew_cauldron"
+  }
+}

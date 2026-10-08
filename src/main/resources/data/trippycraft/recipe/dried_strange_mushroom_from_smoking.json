@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "cookingtime": 50,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "trippycraft:strange_mushroom"
+  },
+  "result": {
+    "id": "trippycraft:dried_strange_mushroom"
+  }
+}

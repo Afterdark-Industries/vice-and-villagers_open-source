@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "minecraft:jungle",
+    "minecraft:sparse_jungle"
+  ],
+  "features": "trippycraft:salvia_jungle",
+  "step": "vegetal_decoration"
+}

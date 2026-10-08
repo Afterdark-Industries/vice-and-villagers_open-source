@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.15,
+  "ingredient": {
+    "item": "trippycraft:four_ho_met_freebase"
+  },
+  "result": {
+    "id": "trippycraft:four_ho_met_crystal"
+  }
+}

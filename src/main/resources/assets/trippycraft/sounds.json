@@ -1,0 +1,21 @@
+{
+  "tavern.we_become_the_wave": {"sounds": [{"name": "trippycraft:tavern/we_become_the_wave", "stream": true, "attenuation_distance": 16}]},
+  "tavern.warehouse_drop": {"sounds": [{"name": "trippycraft:tavern/warehouse_drop", "stream": true, "attenuation_distance": 16}]},
+  "tavern.warehouse_drop_1": {"sounds": [{"name": "trippycraft:tavern/warehouse_drop_1", "stream": true, "attenuation_distance": 16}]},
+  "tavern.chopped_groove": {"sounds": [{"name": "trippycraft:tavern/chopped_groove", "stream": true, "attenuation_distance": 16}]},
+  "tavern.bounce_harder": {"sounds": [{"name": "trippycraft:tavern/bounce_harder", "stream": true, "attenuation_distance": 16}]},
+  "tavern.peak_hour_drop": {"sounds": [{"name": "trippycraft:tavern/peak_hour_drop", "stream": true, "attenuation_distance": 16}]},
+  "tavern.nocturnal_motion": {"sounds": [{"name": "trippycraft:tavern/nocturnal_motion", "stream": true, "attenuation_distance": 16}]},
+  "tavern.summer_night_euphoria": {"sounds": [{"name": "trippycraft:tavern/summer_night_euphoria", "stream": true, "attenuation_distance": 16}]},
+  "tavern.warehouse_pressure": {"sounds": [{"name": "trippycraft:tavern/warehouse_pressure", "stream": true, "attenuation_distance": 16}]},
+  "tavern.mainstage_dreams": {"sounds": [{"name": "trippycraft:tavern/mainstage_dreams", "stream": true, "attenuation_distance": 16}]},
+  "tavern.final_hour": {"sounds": [{"name": "trippycraft:tavern/final_hour", "stream": true, "attenuation_distance": 16}]},
+  "tavern.euphoric_reprise": {"sounds": [{"name": "trippycraft:tavern/euphoric_reprise", "stream": true, "attenuation_distance": 16}]},
+  "tavern.lose_myself_come_alive": {"sounds": [{"name": "trippycraft:tavern/lose_myself_come_alive", "stream": true, "attenuation_distance": 16}]},
+  "tavern.while_the_house_comes_down": {"sounds": [{"name": "trippycraft:tavern/while_the_house_comes_down", "stream": true, "attenuation_distance": 16}]},
+  "tavern.no_brakes_no_sleep": {"sounds": [{"name": "trippycraft:tavern/no_brakes_no_sleep", "stream": true, "attenuation_distance": 16}]},
+  "tavern.dont_leave_not_yet": {"sounds": [{"name": "trippycraft:tavern/dont_leave_not_yet", "stream": true, "attenuation_distance": 16}]},
+  "tavern.lose_control": {"sounds": [{"name": "trippycraft:tavern/lose_control", "stream": true, "attenuation_distance": 16}]},
+  "tavern.stay_with_me_tonight": {"sounds": [{"name": "trippycraft:tavern/stay_with_me_tonight", "stream": true, "attenuation_distance": 16}]},
+  "tavern.some_memories_leave": {"sounds": [{"name": "trippycraft:tavern/some_memories_leave", "stream": true, "attenuation_distance": 16}]}
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "trippycraft:block/ergot_infected_wheat"
+  }
+}

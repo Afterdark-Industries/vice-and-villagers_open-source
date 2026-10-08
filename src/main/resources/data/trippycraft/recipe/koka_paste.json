@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "trippycraft_koka_paste",
+  "ingredients": [
+    {
+      "item": "trippycraft:ground_koka_leaves"
+    },
+    {
+      "item": "trippycraft:ground_koka_leaves"
+    },
+    {
+      "item": "trippycraft:ground_koka_leaves"
+    },
+    {
+      "item": "trippycraft:ground_koka_leaves"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "trippycraft:frost_salt"
+    }
+  ],
+  "result": {
+    "id": "trippycraft:koka_paste"
+  }
+}

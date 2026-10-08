@@ -1,0 +1,7 @@
+{
+  "message_id": "trippycraft.two_cb_overdose",
+  "scaling": "never",
+  "exhaustion": 0.0,
+  "effects": "hurt",
+  "death_message_type": "default"
+}

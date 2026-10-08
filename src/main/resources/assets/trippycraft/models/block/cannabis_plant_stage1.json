@@ -1,0 +1,107 @@
+{
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "trippycraft:block/cannabis_leaf",
+    "leaf": "trippycraft:block/cannabis_leaf",
+    "stem": "trippycraft:block/cannabis_stem",
+    "bud": "trippycraft:block/cannabis_bud"
+  },
+  "elements": [
+    {
+      "from": [7, 0, 7],
+      "to": [9, 8, 9],
+      "faces": {
+        "down": {"texture": "#stem"},
+        "up": {"texture": "#stem"},
+        "north": {"texture": "#stem"},
+        "south": {"texture": "#stem"},
+        "west": {"texture": "#stem"},
+        "east": {"texture": "#stem"}
+      }
+    },
+    {
+      "from": [2, 2, 7],
+      "to": [14, 3, 9],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [7, 2, 2],
+      "to": [9, 3, 14],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [4, 2, 4],
+      "to": [12, 3, 12],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [4, 5, 7],
+      "to": [12, 6, 9],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [7, 5, 4],
+      "to": [9, 6, 12],
+      "faces": {
+        "down": {"texture": "#leaf"},
+        "up": {"texture": "#leaf"},
+        "north": {"texture": "#leaf"},
+        "south": {"texture": "#leaf"},
+        "west": {"texture": "#leaf"},
+        "east": {"texture": "#leaf"}
+      }
+    },
+    {
+      "from": [6.5, 8, 6.5],
+      "to": [9.5, 11, 9.5],
+      "faces": {
+        "down": {"texture": "#bud"},
+        "up": {"texture": "#bud"},
+        "north": {"texture": "#bud"},
+        "south": {"texture": "#bud"},
+        "west": {"texture": "#bud"},
+        "east": {"texture": "#bud"}
+      }
+    },
+    {
+      "from": [7, 11, 7],
+      "to": [9, 12, 9],
+      "faces": {
+        "down": {"texture": "#bud"},
+        "up": {"texture": "#bud"},
+        "north": {"texture": "#bud"},
+        "south": {"texture": "#bud"},
+        "west": {"texture": "#bud"},
+        "east": {"texture": "#bud"}
+      }
+    }
+  ]
+}

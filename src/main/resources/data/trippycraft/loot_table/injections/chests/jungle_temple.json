@@ -1,0 +1,71 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 2.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_1g",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_3g",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:psilocybin_capsule_5g",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_10x",
+          "weight": 9
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:salvia_leaf_25x",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal",
+          "weight": 7
+        },
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:dmt_crystal_5x",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "trippycraft:injections/bundles/jungle_ritual",
+          "weight": 6
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.1
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "trippycraft:bong",
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}
