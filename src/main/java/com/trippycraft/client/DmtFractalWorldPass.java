@@ -20,6 +20,17 @@ public final class DmtFractalWorldPass {
     private static boolean fieldInitialized;
     private static double smoothDimensionalDepth;
     private static double smoothTemporalFlow;
+    private static double elapsedTripSeconds;
+    private static double crossingSeconds;
+    private static boolean crossingStarted;
+    private static boolean doseInitialized;
+    private static double smoothDoseEnergy;
+    private static double smoothAbsoluteDoseLog;
+    private static double cinematicIngress;
+    private static final double[] worldInfluence = new double[16];
+    private static final double[] worldAttractor = new double[4];
+    private static boolean attractorInitialized;
+    private static boolean influenceInitialized;
 
     private DmtFractalWorldPass() {
     }
@@ -59,6 +70,7 @@ public final class DmtFractalWorldPass {
         // Pauses, lag and clock discontinuities must not jump the realm animation.
         delta = Double.isFinite(delta) && delta >= 0.0D ? Math.min(5.0D, delta) : 0.0D;
         lastTicks = ticks;
+        elapsedTripSeconds += delta * 0.05D;
         double selectedIntensity = clamp(TrippyClientConfig.dmtFractalIntensity);
         // Lowering the player-selected limit takes effect immediately. Raising
         // it eases into the new amount without resetting the realm or its clock.
@@ -66,19 +78,26 @@ public final class DmtFractalWorldPass {
         double target = 0.0D;
         if (state.active()) {
             lastState = state;
-            double entry = smoothstep(TrippyConfig.dmtTransitionStartProgress,
-                    Math.max(TrippyConfig.dmtTransitionStartProgress + 0.01D,
-                            TrippyConfig.dmtPostBreakthroughStartProgress), state.progress());
-            double exit = 1.0D - smoothstep(TrippyConfig.dmtReturnStartProgress,
+            double doseEase = doseInitialized ? 1.0D - Math.exp(-delta / 45.0D) : 1.0D;
+            smoothDoseEnergy += (DmtRealmDynamics.doseLog(state.activeDoseUnits(),
+                    TrippyConfig.dmtBreakthroughThresholdUnits) - smoothDoseEnergy) * doseEase;
+            smoothAbsoluteDoseLog += (DmtRealmDynamics.doseLog(state.activeDoseUnits())
+                    - smoothAbsoluteDoseLog) * doseEase;
+            doseInitialized = true;
+            double exit = 1.0D - DmtRealmDynamics.smootherstep(TrippyConfig.dmtReturnStartProgress,
                     Math.max(TrippyConfig.dmtReturnStartProgress + 0.01D,
                             TrippyConfig.dmtAfterglowStartProgress), state.progress());
             double dose = smoothstep(TrippyConfig.dmtBreakthroughThresholdUnits * 0.85D,
                     TrippyConfig.dmtBreakthroughThresholdUnits * 1.10D, state.activeDoseUnits());
             double visual = smoothstep(0.01D, 0.40D, state.visualIntensity());
+            if (!crossingStarted && state.progress() >= TrippyConfig.dmtTransitionStartProgress
+                    && dose > 0.0D && visual > 0.0D) crossingStarted = true;
+            if (crossingStarted) crossingSeconds += delta * 0.05D;
+            cinematicIngress = DmtRealmDynamics.cinematicEntry(crossingSeconds, smoothDoseEnergy);
             double gain = CompositeEffectResolver.resolve(ClientExperienceStore.psilocybin(),
                     ClientExperienceStore.lsd(), state, ClientExperienceStore.hoMet(),
                     ClientExperienceStore.alLad(), ClientExperienceStore.twoCe()).dmtShaderGain();
-            target = clamp(entry * exit * dose * visual * gain
+            target = clamp(cinematicIngress * exit * dose * visual * gain
                     * selectedIntensity
                     * Math.min(1.0D, TrippyClientConfig.visualIntensity)
                     * Math.min(1.0D, TrippyConfig.globalIntensity));
@@ -88,7 +107,7 @@ public final class DmtFractalWorldPass {
         if (target <= 0.0001D && opacity <= 0.0001D) {
             tripAnchor = head;
         }
-        opacity += (target - opacity) * (1.0D - Math.exp(-delta / (target > opacity ? 12.0D : 20.0D)));
+        opacity += (target - opacity) * (1.0D - Math.exp(-delta / (target > opacity ? 32.0D : 100.0D)));
         if (Math.abs(opacity - target) < 0.001D) {
             opacity = target;
         }
@@ -96,7 +115,8 @@ public final class DmtFractalWorldPass {
                 * (TrippyClientConfig.motionReduction ? 0.15D : 1.0D)
                 * (TrippyConfig.dmtAccessibilityMode ? 0.25D : 1.0D);
         // Integrate the rate: changing settings or redosing never rescales elapsed time.
-        animationSeconds += delta * 0.05D * motion;
+        animationSeconds += delta * 0.05D * motion
+                * DmtRealmDynamics.transformationRate(smoothDoseEnergy * selectedIntensity);
         if (opacity <= 0.0001D) {
             if (!state.active()) {
                 reset();
@@ -112,6 +132,31 @@ public final class DmtFractalWorldPass {
         smoothDimensionalDepth += (clamp(scaffold.dimensionalDepth()) - smoothDimensionalDepth) * fieldEase;
         smoothTemporalFlow += (clamp(scaffold.temporalFlow()) - smoothTemporalFlow) * fieldEase;
         fieldInitialized = true;
+        var environment = lastState.environment();
+        var worldSample = DmtWorldInfluenceSampler.sample(minecraft);
+        double influenceEase = influenceInitialized ? 1.0D - Math.exp(-delta / 36.0D) : 1.0D;
+        smoothWorld(0, environment.organicBlocks() * 0.75D + environment.forest() * 0.25D,
+                Math.max(environment.artificialBlocks(), environment.village() * 0.65D),
+                Math.max(environment.cave(), environment.depth() * 0.60D), environment.water(), influenceEase);
+        smoothWorld(4, environment.light(), environment.night() * 0.70D + environment.rain() * 0.30D,
+                environment.entities() * 0.70D + environment.hostileEntities() * 0.30D,
+                environment.moving(), influenceEase);
+        smoothWorld(8, worldSample.red(), worldSample.green(), worldSample.blue(), worldSample.relief(), influenceEase);
+        smoothSignedWorld(12, worldSample.directionX(), influenceEase);
+        smoothSignedWorld(13, worldSample.directionY(), influenceEase);
+        smoothSignedWorld(14, worldSample.directionZ(), influenceEase);
+        smoothSignedWorld(15, clamp(worldSample.directionStrength()), influenceEase);
+        if (worldSample.attractorStrength() > 0.0D) {
+            Vec3 attractor = new Vec3(worldSample.attractorX(), worldSample.attractorY(), worldSample.attractorZ())
+                    .subtract(tripAnchor).scale(WORLD_SCALE);
+            double attractorEase = attractorInitialized ? influenceEase : 1.0D;
+            worldAttractor[0] += (attractor.x - worldAttractor[0]) * attractorEase;
+            worldAttractor[1] += (attractor.y - worldAttractor[1]) * attractorEase;
+            worldAttractor[2] += (attractor.z - worldAttractor[2]) * attractorEase;
+            attractorInitialized = true;
+        }
+        worldAttractor[3] += (clamp(worldSample.attractorStrength()) - worldAttractor[3]) * influenceEase;
+        influenceInitialized = true;
         Vec3 realmPosition = head.subtract(tripAnchor).scale(WORLD_SCALE);
         boolean softerColors = TrippyClientConfig.photosensitivityReduction || TrippyConfig.dmtAccessibilityMode;
         // WorldInverseViewProjection and the actual per-eye/head positions are
@@ -126,6 +171,18 @@ public final class DmtFractalWorldPass {
                 WorldWarpPostProcessor.uniform("FractalC", (float) selectedIntensity,
                         ((tripSeed >>> 17) & 4095L) / 4095.0F,
                         ((tripSeed >>> 43) & 4095L) / 4095.0F, signature.hyperspaceStyle()),
+                WorldWarpPostProcessor.uniform("RealmDynamics", (float) (smoothDoseEnergy * selectedIntensity),
+                        (float) cinematicIngress, (float) elapsedTripSeconds, (float) smoothAbsoluteDoseLog),
+                WorldWarpPostProcessor.uniform("WorldInfluenceA", (float) worldInfluence[0],
+                        (float) worldInfluence[1], (float) worldInfluence[2], (float) worldInfluence[3]),
+                WorldWarpPostProcessor.uniform("WorldInfluenceB", (float) worldInfluence[4],
+                        (float) worldInfluence[5], (float) worldInfluence[6], (float) worldInfluence[7]),
+                WorldWarpPostProcessor.uniform("WorldInfluenceC", (float) worldInfluence[8],
+                        (float) worldInfluence[9], (float) worldInfluence[10], (float) worldInfluence[11]),
+                WorldWarpPostProcessor.uniform("WorldInfluenceD", (float) worldInfluence[12],
+                        (float) worldInfluence[13], (float) worldInfluence[14], (float) worldInfluence[15]),
+                WorldWarpPostProcessor.uniform("WorldAttractor", (float) worldAttractor[0],
+                        (float) worldAttractor[1], (float) worldAttractor[2], (float) worldAttractor[3]),
                 WorldWarpPostProcessor.uniform("RealmOrigin", (float) realmPosition.x, (float) realmPosition.y,
                         (float) realmPosition.z, (float) WORLD_SCALE),
                 WorldWarpPostProcessor.uniform("PaletteA", signature.primaryRed() / 255.0F,
@@ -147,6 +204,30 @@ public final class DmtFractalWorldPass {
         fieldInitialized = false;
         smoothDimensionalDepth = 0.0D;
         smoothTemporalFlow = 0.0D;
+        elapsedTripSeconds = 0.0D;
+        crossingSeconds = 0.0D;
+        crossingStarted = false;
+        doseInitialized = false;
+        smoothDoseEnergy = 0.0D;
+        smoothAbsoluteDoseLog = 0.0D;
+        cinematicIngress = 0.0D;
+        java.util.Arrays.fill(worldInfluence, 0.0D);
+        java.util.Arrays.fill(worldAttractor, 0.0D);
+        attractorInitialized = false;
+        influenceInitialized = false;
+        DmtWorldInfluenceSampler.reset();
+    }
+
+    private static void smoothWorld(int offset, double a, double b, double c, double d, double ease) {
+        worldInfluence[offset] += (clamp(a) - worldInfluence[offset]) * ease;
+        worldInfluence[offset + 1] += (clamp(b) - worldInfluence[offset + 1]) * ease;
+        worldInfluence[offset + 2] += (clamp(c) - worldInfluence[offset + 2]) * ease;
+        worldInfluence[offset + 3] += (clamp(d) - worldInfluence[offset + 3]) * ease;
+    }
+
+    private static void smoothSignedWorld(int index, double value, double ease) {
+        double target = Double.isFinite(value) ? Math.max(-1.0D, Math.min(1.0D, value)) : 0.0D;
+        worldInfluence[index] += (target - worldInfluence[index]) * ease;
     }
 
     private static double smoothstep(double low, double high, double value) {

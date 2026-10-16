@@ -81,14 +81,31 @@ public final class ValidateDmtFractalControls {
                 """);
         doubles.put("com/trippycraft/substance/dmt/DmtEffectState.java", """
                 package com.trippycraft.substance.dmt;
+                import com.trippycraft.substance.psilocybin.PsilocybinEnvironmentSnapshot;
                 public record DmtEffectState(boolean active, double activeDoseUnits, double progress,
                         double visualIntensity, double intensity, int tier, DmtTripSignature signature,
-                        DmtFractalScaffold fractalScaffold) {
+                        DmtFractalScaffold fractalScaffold, PsilocybinEnvironmentSnapshot environment) {
+                    public DmtEffectState(boolean active, double activeDoseUnits, double progress,
+                            double visualIntensity, double intensity, int tier, DmtTripSignature signature,
+                            DmtFractalScaffold fractalScaffold) {
+                        this(active,activeDoseUnits,progress,visualIntensity,intensity,tier,signature,fractalScaffold,
+                            PsilocybinEnvironmentSnapshot.empty());
+                    }
                     public static DmtEffectState inactive() {
                         return new DmtEffectState(false,0,1,0,0,0,new DmtTripSignature(0),new DmtFractalScaffold(0,0));
                     }
                     public int remainingTicks() { return active ? 1000 : 0; }
                     public int ageTicks() { return active ? 100 : 0; }
+                }
+                """);
+        doubles.put("com/trippycraft/substance/psilocybin/PsilocybinEnvironmentSnapshot.java", """
+                package com.trippycraft.substance.psilocybin;
+                public record PsilocybinEnvironmentSnapshot(double organicBlocks, double artificialBlocks, double cave,
+                        double depth, double water, double forest, double village, double light, double night,
+                        double rain, double entities, double hostileEntities, double moving) {
+                    public static PsilocybinEnvironmentSnapshot empty() {
+                        return new PsilocybinEnvironmentSnapshot(0,0,0,0,0,0,0,.5,0,0,0,0,0);
+                    }
                 }
                 """);
         doubles.put("com/trippycraft/substance/psilocybin/PsilocybinEffectState.java", """
@@ -146,6 +163,23 @@ public final class ValidateDmtFractalControls {
                     public static Vec3 headPosition(){return head;}
                 }
                 """);
+        doubles.put("com/trippycraft/client/DmtWorldInfluenceSampler.java", """
+                package com.trippycraft.client;
+                import net.minecraft.client.Minecraft;
+                public final class DmtWorldInfluenceSampler {
+                    public record Sample(double red, double green, double blue, double relief,
+                            double directionX, double directionY, double directionZ, double directionStrength,
+                            double attractorX, double attractorY, double attractorZ, double attractorStrength) {
+                        public Sample(double red,double green,double blue,double relief) {
+                            this(red,green,blue,relief,0,0,0,0,0,0,0,0);
+                        }
+                    }
+                    public static Sample value = new Sample(.3,.6,.2,.1);
+                    public static int calls;
+                    public static Sample sample(Minecraft minecraft){calls++;return value;}
+                    public static void reset(){calls=0;}
+                }
+                """);
         doubles.put("com/trippycraft/client/WorldWarpPostProcessor.java", """
                 package com.trippycraft.client;
                 import java.util.ArrayList;
@@ -174,7 +208,7 @@ public final class ValidateDmtFractalControls {
             Files.writeString(file,source.getValue());
             compile.add(file.toString());
         }
-        for (String production : new String[]{"client/DmtFractalWorldPass.java",
+        for (String production : new String[]{"client/DmtFractalWorldPass.java","client/DmtRealmDynamics.java",
                 "substance/PsychedelicBlendState.java","substance/CompositeEffectResolver.java"}) {
             compile.add(root.resolve("src/main/java/com/trippycraft/"+production).toString());
         }
@@ -189,8 +223,8 @@ public final class ValidateDmtFractalControls {
             if(exception.getCause() instanceof Error error) throw error;
             throw exception;
         }
-        System.out.println("Scope: production controller + production blend resolver executed with time/state/render doubles.");
-        System.out.println("Not covered: NeoForge config disk persistence, key events, Minecraft framegraph, live pause or a VR headset.");
+        System.out.println("Scope: production controller + dose/cinematic helper + blend resolver executed with time/state/terrain/render doubles.");
+        System.out.println("Not covered: real terrain sampling, NeoForge config disk persistence, key events, Minecraft framegraph, live pause or a VR headset.");
     }
 
     private static final String PROBE = """
@@ -200,39 +234,48 @@ public final class ValidateDmtFractalControls {
             import com.trippycraft.substance.CompositeEffectResolver;
             import com.trippycraft.substance.dmt.*;
             import com.trippycraft.substance.lsd.LsdEffectState;
+            import com.trippycraft.substance.psilocybin.PsilocybinEnvironmentSnapshot;
             import net.minecraft.client.Minecraft;
             import net.minecraft.world.phys.Vec3;
             public final class DmtFractalControlProbe {
                 private static int assertions;
+                private static double now;
+                private static boolean started;
                 private static final Minecraft MC=Minecraft.getInstance();
                 public static void run() {
-                    disabled(); peakAndEnvelope(); clockAndMotion(); stationaryAnimation(); qualityAndAccessibility();
-                    mixtureAndIntensity(); fractalIntensity(); fractalCContract(); liveFractalIntensity();
-                    scaffoldContinuity(); anchorsAndReset(); stereoHead();
+                    gates(); cinematicEntry(); doseGrowth(); clockAndMotion(); stationaryAnimation();
+                    qualityAndAccessibility(); mixtureAndIntensity(); liveIntensity(); scaffoldContinuity();
+                    environmentMemory(); spatialWorldInfluence(); anchorsAndReset(); stereoHead();
                     System.out.println("PASS: "+assertions+" behavioral assertions");
                 }
                 private static void setup() {
-                    DmtFractalWorldPass.reset();
+                    DmtFractalWorldPass.reset(); now=0; started=false;
                     MC.level=new Minecraft.Level(); MC.player=new Object();
                     MC.gameRenderer.camera.position=new Vec3(10,64,-5);
                     VivecraftCompat.vr=false; VivecraftCompat.head=null;
                     TrippyClientConfig.dmtFractalWorld=true; TrippyClientConfig.rendererEnabled=true;
                     TrippyClientConfig.visualIntensity=1; TrippyClientConfig.motionIntensity=1;
-                    TrippyClientConfig.dmtFractalIntensity=1;
-                    TrippyClientConfig.dmtFractalQuality=1; TrippyClientConfig.motionReduction=false;
-                    TrippyClientConfig.photosensitivityReduction=false;
+                    TrippyClientConfig.dmtFractalIntensity=1; TrippyClientConfig.dmtFractalQuality=1;
+                    TrippyClientConfig.motionReduction=false; TrippyClientConfig.photosensitivityReduction=false;
                     TrippyConfig.enableDmtEffects=true; TrippyConfig.dmtWorldWarp=true;
                     TrippyConfig.dmtAccessibilityMode=false; TrippyConfig.globalIntensity=1;
                     ClientExperienceStore.lsdState=LsdEffectState.inactive();
                     ClientExperienceStore.state=state(4,.5,1,1234567);
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.3,.6,.2,.1);
                     WorldWarpPostProcessor.calls.clear();
                 }
                 private static DmtEffectState state(double dose,double progress,double visual,long seed) {
                     return new DmtEffectState(true,dose,progress,visual,visual,5,
                         new DmtTripSignature(seed),new DmtFractalScaffold(.7,.6));
                 }
-                private static WorldWarpPostProcessor.Draw tick(double time) {
-                    MC.level.time=(long)Math.floor(time); WorldWarpPostProcessor.calls.clear();
+                private static void environment(PsilocybinEnvironmentSnapshot environment) {
+                    var s=ClientExperienceStore.state;
+                    ClientExperienceStore.state=new DmtEffectState(s.active(),s.activeDoseUnits(),s.progress(),
+                        s.visualIntensity(),s.intensity(),s.tier(),s.signature(),s.fractalScaffold(),environment);
+                }
+                private static WorldWarpPostProcessor.Draw at(double time) {
+                    now=time; started=true; MC.level.time=(long)Math.floor(time);
+                    WorldWarpPostProcessor.calls.clear();
                     DmtFractalWorldPass.render((float)(time-Math.floor(time)));
                     check(WorldWarpPostProcessor.calls.size()<=1,"Controller emitted duplicate draws");
                     if(WorldWarpPostProcessor.calls.isEmpty()) return null;
@@ -240,28 +283,40 @@ public final class ValidateDmtFractalControls {
                     check(draw.effect().equals("dmt_fractal_world_warp") && draw.depth(),"Wrong effect or missing depth request");
                     for(var uniform:draw.uniforms()) for(float value:uniform.values())
                         check(Float.isFinite(value),"Non-finite "+uniform.name());
+                    check(a(draw)[0]>=0 && a(draw)[0]<=1,"Physical opacity exceeded its bounds");
                     return draw;
                 }
-                private static WorldWarpPostProcessor.Draw settle(int from,int to) {
-                    WorldWarpPostProcessor.Draw draw=null;
-                    for(int time=from;time<=to;time++) draw=tick(time);
+                private static WorldWarpPostProcessor.Draw advance(double ticks) {
+                    if(!started) at(0);
+                    var draw=(WorldWarpPostProcessor.Draw)null;
+                    while(ticks>0) {
+                        double step=Math.min(1,ticks); draw=at(now+step); ticks-=step;
+                    }
+                    return draw==null ? at(now) : draw;
+                }
+                private static WorldWarpPostProcessor.Draw peak() {
+                    setup(); var draw=advance(1000);
+                    near(a(draw)[0],1,0,"High-dose isolated realm did not reach an opaque peak after cinematic entry");
                     return draw;
                 }
                 private static float[] a(WorldWarpPostProcessor.Draw draw) {
                     check(draw!=null,"Expected a realm draw"); return draw.get("FractalA");
                 }
-                private static void disabled() {
+                private static double baseRate() {
+                    return DmtRealmDynamics.transformationRate(DmtRealmDynamics.doseLog(4,2.4));
+                }
+                private static void gates() {
                     setup(); TrippyClientConfig.dmtFractalWorld=false;
-                    check(settle(0,200)==null,"Disabled option emitted a draw");
+                    for(int i=0;i<100;i++) check(advance(1)==null,"Disabled option emitted a draw");
                     TrippyClientConfig.dmtFractalWorld=true;
-                    check(tick(201)==null,"Enabling resurrected stale opacity");
-                    check(a(settle(202,401))[0]==1,"Enabled realm failed to enter");
+                    check(advance(1)==null,"Enabling resurrected stale opacity");
+                    near(a(advance(1000))[0],1,0,"Enabled realm could not complete entry");
                     TrippyClientConfig.dmtFractalWorld=false;
-                    check(tick(402)==null,"Off switch failed during a visible realm");
+                    check(advance(1)==null,"Off switch failed during a visible realm");
                     TrippyClientConfig.dmtFractalWorld=true;
-                    check(tick(403)==null,"Off switch did not clear the controller");
+                    check(advance(1)==null,"Off switch did not clear the controller");
                     for(int gate=0;gate<7;gate++) {
-                        setup(); settle(0,200);
+                        peak();
                         switch(gate) {
                             case 0 -> TrippyClientConfig.rendererEnabled=false;
                             case 1 -> TrippyConfig.enableDmtEffects=false;
@@ -271,243 +326,330 @@ public final class ValidateDmtFractalControls {
                             case 5 -> MC.player=null;
                             case 6 -> TrippyClientConfig.dmtFractalIntensity=0;
                         }
-                        check(tick(201)==null,"Disabled renderer/intensity/player gate ignored: "+gate);
+                        check(advance(1)==null,"Disabled renderer/intensity/player gate ignored: "+gate);
                     }
-                    setup(); settle(0,200); MC.level=null; WorldWarpPostProcessor.calls.clear();
-                    DmtFractalWorldPass.render(0);
+                    peak(); MC.level=null; WorldWarpPostProcessor.calls.clear(); DmtFractalWorldPass.render(0);
                     check(WorldWarpPostProcessor.calls.isEmpty(),"Missing world emitted a draw");
-                    System.out.println("PASS: off switch, renderer/common controls, zero intensity and absent world/player emit no new pass");
-                }
-                private static void peakAndEnvelope() {
-                    setup();
-                    double gain=CompositeEffectResolver.resolve(ClientExperienceStore.psilocybin(),ClientExperienceStore.lsd(),
-                        ClientExperienceStore.dmt(),ClientExperienceStore.hoMet(),ClientExperienceStore.alLad(),ClientExperienceStore.twoCe()).dmtShaderGain();
-                    near(gain,1,0,"Production isolated-DMT blend gain");
-                    check(tick(0)==null,"First frame skipped the entry fade");
-                    check(a(tick(1))[0]>0 && a(tick(1))[0]<1,"Entry must be gradual");
-                    near(a(settle(2,200))[0],1,0,"High dose peak never fully replaces scene");
-                    ClientExperienceStore.state=state(4,.80,1,1234567);
-                    float returning=a(tick(201))[0]; check(returning>0 && returning<1,"Return did not start fading");
-                    ClientExperienceStore.state=state(4,.90,1,1234567);
-                    check(settle(202,500)==null,"Afterglow did not restore old rendering");
                     setup(); ClientExperienceStore.state=state(4,.10,1,1234567);
-                    check(settle(0,200)==null,"Pre-transition onset rendered the realm");
+                    check(advance(1000)==null,"Pre-transition onset rendered the realm");
                     setup(); ClientExperienceStore.state=state(.2,.5,1,1234567);
-                    check(settle(0,200)==null,"Sub-threshold dose entered full realm");
+                    check(advance(1000)==null,"Sub-threshold dose entered the realm");
                     setup(); ClientExperienceStore.state=state(4,.5,0,1234567);
-                    check(settle(0,200)==null,"Zero visual state rendered the realm");
-                    setup(); settle(0,200); ClientExperienceStore.state=DmtEffectState.inactive();
-                    float fade=a(tick(201))[0]; check(fade>0 && fade<1,"Session end did not retain fading palette");
-                    check(settle(202,500)==null,"Session end never released realm draw");
-                    check(tick(501)==null,"Sober frame resurrected realm");
-                    System.out.println("PASS: actual isolated blend reaches opaque peak; onset/dose/visual gates, return and session-end fade release rendering");
+                    check(advance(1000)==null,"Zero visual state rendered the realm");
+                    System.out.println("PASS: disabled mode/renderer/intensity, absent world/player, onset, low-dose and zero-visual gates");
+                }
+                private static void cinematicEntry() {
+                    for(double dose:new double[]{2.4,4,64,1.0e8}) {
+                        double log=DmtRealmDynamics.doseLog(dose,2.4), last=0;
+                        near(DmtRealmDynamics.cinematicEntry(0,log),0,0,"Cinematic entry starts above zero");
+                        for(double seconds=.25;seconds<=35;seconds+=.25) {
+                            double next=DmtRealmDynamics.cinematicEntry(seconds,log);
+                            check(next>=last && next<=1,"Cinematic phase regressed or exceeded one"); last=next;
+                        }
+                        check(DmtRealmDynamics.cinematicEntry(20,log)<1,"Cinematic entry completed before deliberate ingress");
+                        near(DmtRealmDynamics.cinematicEntry(35,log),1,0,"Cinematic entry did not complete within35 seconds");
+                        check(DmtRealmDynamics.cinematicEntry(.1,log)<.001,"Cinematic entrance lacks eased start");
+                    }
+                    setup(); check(at(0)==null,"First frame skipped cinematic entry");
+                    var five=advance(100); var ten=advance(100); var twenty=advance(200);
+                    check(a(five)[0]>0 && a(five)[0]<a(ten)[0] && a(ten)[0]<a(twenty)[0],"Entry is not gradual over5/10/20 seconds");
+                    check(twenty.get("RealmDynamics")[1]<1 && a(twenty)[0]<.95,"Scene became opaque before cinematic crossing completed");
+                    var thirtyFive=advance(300);
+                    near(thirtyFive.get("RealmDynamics")[1],1,0,"Controller did not finish cinematic ingress");
+                    near(thirtyFive.get("RealmDynamics")[2],35,1e-5,"Trip clock is not real elapsed game seconds");
+                    near(a(advance(300))[0],1,0,"Settled cinematic peak is not opaque");
+                    ClientExperienceStore.state=state(4,.80,1,1234567);
+                    float returning=a(advance(1))[0]; check(returning>0 && returning<1,"Return did not fade the realm");
+                    ClientExperienceStore.state=state(4,.90,1,1234567);
+                    check(advance(1100)==null,"Afterglow failed to restore old rendering");
+                    peak(); ClientExperienceStore.state=DmtEffectState.inactive();
+                    float fade=a(advance(1))[0]; check(fade>0 && fade<1,"Session end lost its retained fade");
+                    check(advance(1100)==null,"Session end failed to release realm rendering");
+                    check(advance(1)==null,"Sober frame resurrected realm");
+                    System.out.println("PASS: eased 20-35-second cinematic ingress, real trip clock, gradual return and completed-session release");
+                }
+                private static void doseGrowth() {
+                    double last=0;
+                    for(double dose:new double[]{4,8.5,34,136,1000000,Double.MAX_VALUE}) {
+                        double log=DmtRealmDynamics.doseLog(dose,2.4);
+                        check(Double.isFinite(log) && log>last,"Logarithmic dose drive capped or became non-finite"); last=log;
+                    }
+                    check(Double.isFinite(DmtRealmDynamics.doseLog(Double.MAX_VALUE,Double.MIN_NORMAL)),"Dose/threshold division overflowed");
+                    peak(); var before=at(now); float previous=before.get("RealmDynamics")[0];
+                    double previousRate=DmtRealmDynamics.transformationRate(previous);
+                    float[] origin=before.get("RealmOrigin").clone(), identity=before.get("FractalC").clone();
+                    for(double dose:new double[]{8.5,34,136,1000000}) {
+                        var old=at(now); ClientExperienceStore.state=state(dose,.5,1,1234567);
+                        var first=advance(1);
+                        near(first.get("RealmDynamics")[2]-old.get("RealmDynamics")[2],.05,1e-4,"Redose restarted or jumped trip time");
+                        double nextRate=DmtRealmDynamics.transformationRate(DmtRealmDynamics.doseLog(dose,2.4));
+                        double firstPhaseStep=a(first)[1]-a(old)[1];
+                        check(firstPhaseStep>0 && firstPhaseStep<=.05*nextRate+1e-4,
+                            "Redose rescaled elapsed phase instead of integrating its new speed");
+                        near(first.get("RealmDynamics")[1],old.get("RealmDynamics")[1],0,"Redose changed completed ingress phase");
+                        var settled=advance(1000); var dynamics=settled.get("RealmDynamics");
+                        check(dynamics[0]>previous,"Beyond-maximum dose stopped increasing geometry drive");
+                        near(dynamics[0],DmtRealmDynamics.doseLog(dose,2.4),1e-4,"Uncapped dose drive not forwarded");
+                        near(dynamics[3],DmtRealmDynamics.doseLog(dose),1e-4,"Actual raw dose logarithm not forwarded");
+                        near(a(settled)[0],1,0,"Uncapped complexity exceeded or reduced physical opacity");
+                        same(settled.get("RealmOrigin"),origin,"Redose moved realm anchor");
+                        for(int i=1;i<4;i++) near(settled.get("FractalC")[i],identity[i],0,"Redose rerolled realm identity");
+                        previous=dynamics[0];
+                        check(nextRate>previousRate,"Higher dose did not increase transformation rate");
+                        float phase=a(settled)[1]; var second=advance(20);
+                        near(a(second)[1]-phase,nextRate,2e-4,"Actual phase speed ignored settled dose rate");
+                        previousRate=nextRate;
+                    }
+                    // Redosing during entry changes dose strength, not the elapsed
+                    // cinematic phase or its independent real-time clock.
+                    setup(); var entry=advance(200); ClientExperienceStore.state=state(136,.5,1,1234567);
+                    var redosed=advance(1);
+                    near(redosed.get("RealmDynamics")[2]-entry.get("RealmDynamics")[2],.05,1e-5,"Entry redose changed trip-clock origin");
+                    check(redosed.get("RealmDynamics")[1]<.5,"Entry redose jumped straight to full crossing");
+                    advance(1000); float highDosePhase=a(at(now))[1];
+                    TrippyClientConfig.motionIntensity=0;
+                    near(a(advance(20))[1],highDosePhase,0,"High dose overrode the zero-motion control");
+                    System.out.println("PASS: uncapped logarithmic detail/speed growth, high-dose motion freeze and continuous redose identity/anchor/cinematic time");
                 }
                 private static void clockAndMotion() {
-                    setup(); float before=a(settle(0,200))[1];
-                    near(a(tick(200))[1],before,0,"Frozen game time advanced animation");
-                    near(a(tick(199))[1],before,0,"Clock reversal moved animation");
-                    near(a(tick(10000))[1]-before,.25,1e-5,"Long clock jump was not capped");
-                    setup(); TrippyClientConfig.motionIntensity=0;
-                    near(a(settle(0,200))[1],0,0,"Zero motion did not freeze animation");
+                    var base=peak(); float phase=a(base)[1];
+                    near(a(at(now))[1],phase,0,"Paused timestamp advanced animation");
+                    near(a(at(now-1))[1],phase,0,"Reversed clock moved animation");
+                    near(a(at(now+10000))[1]-phase,.25*baseRate(),1e-4,"Large game-clock discontinuity was not capped");
+                    peak(); TrippyClientConfig.motionIntensity=0; var paused=advance(1);
+                    float fixed=a(paused)[1], trip=paused.get("RealmDynamics")[2];
+                    var later=advance(20); near(a(later)[1],fixed,0,"Motion0 failed to freeze field animation");
+                    near(later.get("RealmDynamics")[2]-trip,1,1e-5,"Motion0 incorrectly froze cinematic/game time");
                     TrippyClientConfig.motionIntensity=1;
-                    float resumed=a(tick(201))[1]; near(resumed,.05,1e-6,"Motion change rescaled elapsed animation");
-                    TrippyClientConfig.motionIntensity=0;
-                    near(a(tick(202))[1],resumed,0,"Disabling motion changed phase");
-                    setup(); TrippyClientConfig.motionReduction=true;
-                    near(a(settle(0,200))[1],1.5,1e-5,"Motion reduction multiplier");
-                    setup(); TrippyConfig.dmtAccessibilityMode=true;
-                    near(a(settle(0,200))[1],2.5,1e-5,"DMT accessibility motion multiplier");
-                    setup(); float clipped=a(settle(0,200))[1];
-                    TrippyClientConfig.motionIntensity=-100;
-                    near(a(tick(201))[1],clipped,0,"Negative motion intensity did not clip to zero");
+                    near(a(advance(1))[1]-fixed,.05*baseRate(),1e-4,"Motion resume rescaled elapsed phase");
+                    var clipped=at(now); TrippyClientConfig.motionIntensity=-100;
+                    near(a(advance(1))[1],a(clipped)[1],0,"Negative motion did not clip to zero");
                     TrippyClientConfig.motionIntensity=100;
-                    near(a(tick(202))[1]-clipped,.10,1e-5,"High motion intensity did not clip to double speed");
-                    System.out.println("PASS: frozen/reversed/clamped clocks, motion pause/resume continuity and accessibility rates");
+                    near(a(advance(1))[1]-a(clipped)[1],.10*baseRate(),1e-4,"High motion did not clip to double speed");
+                    setup(); TrippyClientConfig.motionReduction=true;
+                    near(a(advance(1000))[1],7.5*baseRate(),1e-4,"Motion reduction multiplier");
+                    setup(); TrippyConfig.dmtAccessibilityMode=true;
+                    near(a(advance(1000))[1],12.5*baseRate(),1e-4,"DMT accessibility motion multiplier");
+                    System.out.println("PASS: pause/reverse/gap clocks, motion clipping, independent cinematic time and reduction rates");
                 }
                 private static void stationaryAnimation() {
-                    setup(); var snapshot=ClientExperienceStore.state;
-                    var first=settle(0,200); float phase=a(first)[1], start=phase;
+                    var first=peak(); var snapshot=ClientExperienceStore.state;
+                    float phase=a(first)[1], start=phase; double begin=now;
                     float[] origin=first.get("RealmOrigin").clone();
-                    // 1,200 rendered frames across 20 game ticks: the camera and
-                    // snapshot (including its age) stay completely unchanged.
                     for(int frame=1;frame<=1200;frame++) {
-                        var draw=tick(200+frame/60.0);
-                        float next=a(draw)[1];
-                        check(next>phase,"Stationary sub-tick frame froze animation at frame "+frame);
-                        check(ClientExperienceStore.state==snapshot && snapshot.ageTicks()==100,
-                            "Stationary fixture unexpectedly advanced the server snapshot");
-                        for(int i=0;i<origin.length;i++) near(draw.get("RealmOrigin")[i],origin[i],0,
-                            "Stationary animation moved the camera anchor");
-                        phase=next;
+                        var draw=at(begin+frame/60.0); float next=a(draw)[1];
+                        check(next>phase,"Stationary fractional frame froze animation: "+frame);
+                        check(ClientExperienceStore.state==snapshot && snapshot.ageTicks()==100,"Snapshot fixture age unexpectedly advanced");
+                        same(draw.get("RealmOrigin"),origin,"Stationary animation moved the camera anchor"); phase=next;
                     }
-                    near(phase-start,1.0,1e-5,"20 game ticks did not advance animation by one second");
-                    near(a(tick(220))[1],phase,0,"Paused timestamp advanced stationary animation");
-                    // Replacing a synchronized snapshot with equivalent state
-                    // must not restart or wait for the snapshot's age to move.
+                    near(phase-start,baseRate(),1e-4,"20 game ticks did not advance field phase at its dose-dependent rate");
+                    near(a(at(now))[1],phase,0,"Paused stationary frame changed phase");
                     ClientExperienceStore.state=state(4,.5,1,1234567);
-                    near(a(tick(220.25))[1]-phase,.0125,1e-5,"Equivalent snapshot reset the render clock");
-                    System.out.println("PASS: stationary camera + unchanged snapshot age animate every fractional frame over 20 ticks; pause and snapshot replacement remain continuous");
+                    near(a(advance(.25))[1]-phase,.0125*baseRate(),1e-4,"Equivalent synchronized snapshot restarted animation");
+                    System.out.println("PASS: 1,200 stationary fractional frames animate with identical snapshot age and stable anchor");
                 }
                 private static void qualityAndAccessibility() {
-                    setup(); settle(0,200);
+                    peak();
                     for(int quality:new int[]{-10,0,1,2,10}) {
                         TrippyClientConfig.dmtFractalQuality=quality;
-                        near(a(tick(201))[2],Math.max(0,Math.min(2,quality)),0,"Quality bounds");
+                        near(a(at(now))[2],Math.max(0,Math.min(2,quality)),0,"Quality bounds");
                     }
-                    near(a(tick(201))[3],0,0,"Unexpected soft-color flag");
+                    near(a(at(now))[3],0,0,"Unexpected soft-color flag");
                     TrippyClientConfig.photosensitivityReduction=true;
-                    near(a(tick(201))[3],1,0,"Photosensitivity reduction not forwarded");
+                    near(a(at(now))[3],1,0,"Photosensitivity flag not forwarded");
                     TrippyClientConfig.photosensitivityReduction=false; TrippyConfig.dmtAccessibilityMode=true;
-                    near(a(tick(201))[3],1,0,"DMT accessibility colors not forwarded");
-                    System.out.println("PASS: live quality bounds and both color-reduction controls reach shader uniforms");
+                    near(a(at(now))[3],1,0,"DMT accessibility flag not forwarded");
+                    System.out.println("PASS: live quality bounds and both soft-color controls");
                 }
                 private static void mixtureAndIntensity() {
                     setup(); TrippyClientConfig.visualIntensity=.5; TrippyConfig.globalIntensity=.5;
-                    near(a(settle(0,200))[0],.25,1e-5,"Client/common intensity scaling");
+                    near(a(advance(1000))[0],.25,1e-5,"Client/common visual gain multiplication");
                     setup(); ClientExperienceStore.lsdState=new LsdEffectState(true,.5,7,7,250,5);
                     double gain=CompositeEffectResolver.resolve(ClientExperienceStore.psilocybin(),ClientExperienceStore.lsd(),
                         ClientExperienceStore.dmt(),ClientExperienceStore.hoMet(),ClientExperienceStore.alLad(),ClientExperienceStore.twoCe()).dmtShaderGain();
-                    check(gain>0 && gain<1,"Fixture did not exercise real mixed-effect weighting");
-                    near(a(settle(0,250))[0],gain,1e-5,"Mixed-effect blend gain ignored");
-                    System.out.println("PASS: real LSD/DMT blend weighting and client/common intensity scale replacement opacity");
-                }
-                private static void fractalIntensity() {
+                    check(gain>0 && gain<1,"Fixture missed real mixture weighting");
+                    near(a(advance(1000))[0],gain,1e-5,"Production mixture gain ignored");
                     for(double setting:new double[]{.25,.5,.75,1}) {
                         setup(); TrippyClientConfig.dmtFractalIntensity=setting;
-                        near(a(settle(0,200))[0],setting,1e-5,"Fractal peak intensity "+setting);
-                        // At the midpoint of the configured entry envelope, the
-                        // real controller must scale a partial trip as well.
-                        setup(); TrippyClientConfig.dmtFractalIntensity=setting;
-                        ClientExperienceStore.state=state(4,.24,1,1234567);
-                        near(a(settle(0,200))[0],setting*.5,1e-5,"Fractal partial-entry intensity "+setting);
-                        setup(); TrippyClientConfig.dmtFractalIntensity=setting;
-                        TrippyClientConfig.visualIntensity=.5; TrippyConfig.globalIntensity=.5;
-                        near(a(settle(0,200))[0],setting*.25,1e-5,"Fractal/common/client intensity multiplication "+setting);
+                        var draw=advance(1000); near(a(draw)[0],setting,1e-5,"Selected peak intensity");
+                        near(draw.get("RealmDynamics")[0],DmtRealmDynamics.doseLog(4,2.4)*setting,1e-4,"Selected intensity did not scale geometric dose drive");
                     }
-                    setup(); TrippyClientConfig.dmtFractalIntensity=4;
-                    near(a(settle(0,200))[0],1,0,"Out-of-range intensity exceeds full replacement");
-                    setup(); settle(0,200); TrippyClientConfig.dmtFractalIntensity=0;
-                    check(tick(201)==null,"Zero fractal intensity retained visible realm");
-                    TrippyClientConfig.dmtFractalIntensity=1;
-                    check(tick(202)==null,"Restored intensity revived old peak opacity");
-                    near(a(tick(203))[1],.05,1e-6,"Zero intensity did not clear stale clock");
-                    near(a(settle(204,403))[0],1,0,"Nonzero intensity could not restart entry");
-                    System.out.println("PASS: 25/50/75/100% peaks and partial-entry scaling, composed intensity gain, upper bound and zero/re-enable reset");
+                    System.out.println("PASS: production mixture weighting and independent selected/global intensity scale opacity and dose drive");
                 }
-                private static void liveFractalIntensity() {
-                    setup(); settle(0,200);
-                    MC.gameRenderer.camera.position=new Vec3(12,65,-7);
-                    var before=tick(201);
-                    float[] origin=before.get("RealmOrigin").clone(), field=before.get("FractalB").clone();
-                    TrippyClientConfig.dmtFractalIntensity=.25;
-                    var reduced=tick(202);
-                    check(a(reduced)[0]<=.25,"Lowering intensity failed to cap existing peak immediately");
-                    continuity(before,reduced,origin,field,"Lowering intensity");
-                    TrippyClientConfig.dmtFractalIntensity=.75;
-                    var rising=tick(203);
-                    check(a(rising)[0]>a(reduced)[0] && a(rising)[0]<.75,"Increasing intensity skipped smooth rise");
-                    continuity(reduced,rising,origin,field,"Increasing intensity");
-                    var duplicate=tick(203);
-                    near(a(duplicate)[0],a(rising)[0],0,"Repeated frame changed intensity transition");
-                    near(a(duplicate)[1],a(rising)[1],0,"Repeated frame changed animation phase");
-                    near(a(settle(204,403))[0],.75,1e-5,"Live intensity failed to settle at 75%");
-                    TrippyClientConfig.dmtFractalIntensity=.5;
-                    var half=tick(404);
-                    check(a(half)[0]<=.5,"Live 75% to 50% exceeded new cap");
-                    near(a(settle(405,604))[0],.5,1e-5,"Live intensity failed to settle at 50%");
-                    // Retained session-end opacity follows the same current cap.
-                    ClientExperienceStore.state=DmtEffectState.inactive();
-                    TrippyClientConfig.dmtFractalIntensity=.25;
-                    var fading=tick(605);
-                    check(a(fading)[0]>0 && a(fading)[0]<=.25,"Lowering intensity failed to cap retained fade");
-                    TrippyClientConfig.dmtFractalIntensity=.75;
-                    var continued=tick(606);
-                    check(a(continued)[0]<a(fading)[0],"Increasing intensity resurrected a completed trip");
-                    continuity(fading,continued,origin,field,"Retained fade intensity change");
-                    TrippyClientConfig.dmtFractalIntensity=0;
-                    check(tick(607)==null,"Zero intensity failed during retained fade");
-                    TrippyClientConfig.dmtFractalIntensity=1;
-                    check(tick(608)==null,"Re-enabling intensity resurrected inactive trip");
-                    System.out.println("PASS: live nonzero intensity preserves seed/origin/clock, smooth rises, immediate lower caps and retained-fade limits");
-                }
-                private static void fractalCContract() {
+                private static void liveIntensity() {
+                    peak(); MC.gameRenderer.camera.position=new Vec3(12,65,-7); var before=advance(1);
+                    float[] origin=before.get("RealmOrigin").clone(), identity=before.get("FractalC").clone();
+                    for(double selected:new double[]{.25,.75,.5,1,.33}) {
+                        var old=at(now); TrippyClientConfig.dmtFractalIntensity=selected;
+                        var changed=advance(1);
+                        check(a(changed)[0]<=selected+1e-6,"Live intensity failed to cap existing opacity");
+                        double selectedRate=DmtRealmDynamics.transformationRate(DmtRealmDynamics.doseLog(4,2.4)*selected);
+                        near(a(changed)[1]-a(old)[1],.05*selectedRate,1e-4,"Nonzero intensity reset/rescaled animation");
+                        near(changed.get("FractalC")[0],(float)selected,0,"Selected intensity missing from FractalC");
+                        same(changed.get("RealmOrigin"),origin,"Nonzero intensity moved anchor");
+                        for(int i=1;i<4;i++) near(changed.get("FractalC")[i],identity[i],0,"Nonzero intensity rerolled identity");
+                        near(changed.get("RealmDynamics")[2]-old.get("RealmDynamics")[2],.05,1e-4,"Nonzero intensity reset cinematic clock");
+                        near(a(advance(1000))[0],selected,1e-5,"Live intensity failed to settle");
+                    }
+                    TrippyClientConfig.dmtFractalIntensity=0; check(advance(1)==null,"Intensity0 retained visible realm");
+                    TrippyClientConfig.dmtFractalIntensity=1; check(advance(1)==null,"Re-enabled intensity resurrected stale opacity");
+                    var fresh=advance(100); check(fresh.get("RealmDynamics")[1]<.1,"Re-enabled intensity inherited completed crossing");
                     long bits=(0x12AL<<5)|(0xABCL<<17)|(0x67DL<<31)|(0xD39L<<43);
                     for(long seed:new long[]{bits,-1L,Long.MIN_VALUE,1234567L}) {
-                        setup(); ClientExperienceStore.state=state(4,.5,1,seed);
-                        var draw=settle(0,200); float[] c=draw.get("FractalC");
-                        near(c[0],1,0,"Selected intensity missing from FractalC");
-                        near(c[1],((seed>>>17)&4095L)/4095.0F,0,"FractalC seed C bits lost");
-                        near(c[2],((seed>>>43)&4095L)/4095.0F,0,"FractalC seed D bits lost");
-                        near(c[3],ClientExperienceStore.state.signature().hyperspaceStyle(),0,"FractalC realm style lost");
-                        for(double selected:new double[]{.25,.5,.75,1,.33}) {
-                            TrippyClientConfig.dmtFractalIntensity=selected;
-                            var changed=tick(201); float[] next=changed.get("FractalC");
-                            near(next[0],(float)selected,0,"FractalC did not forward selected intensity directly");
-                            for(int i=1;i<4;i++) near(next[i],c[i],0,"Intensity change regenerated a realm identity field");
-                            near(a(changed)[1]-a(draw)[1],.05,1e-5,"Intensity change restarted or rescaled realm phase");
-                        }
+                        setup(); ClientExperienceStore.state=state(4,.5,1,seed); var draw=advance(1000);
+                        float[] c=draw.get("FractalC");
+                        near(c[1],((seed>>>17)&4095L)/4095.0F,0,"Seed C bit slice lost");
+                        near(c[2],((seed>>>43)&4095L)/4095.0F,0,"Seed D bit slice lost");
+                        near(c[3],ClientExperienceStore.state.signature().hyperspaceStyle(),0,"Session style lost");
                     }
-                    System.out.println("PASS: selected intensity and four disparate seed/style fixtures reach FractalC without rerolling on intensity changes");
+                    System.out.println("PASS: live intensity continuity, immediate lower caps, zero/reset and disparate seed/style identity forwarding");
                 }
                 private static void scaffoldContinuity() {
-                    setup(); var before=settle(0,200);
-                    var current=ClientExperienceStore.state;
-                    ClientExperienceStore.state=new DmtEffectState(current.active(),current.activeDoseUnits(),current.progress(),
-                        current.visualIntensity(),current.intensity(),current.tier(),current.signature(),new DmtFractalScaffold(.1,.2));
-                    var changed=tick(201); float[] b=changed.get("FractalB");
+                    var before=peak(); var s=ClientExperienceStore.state;
+                    ClientExperienceStore.state=new DmtEffectState(s.active(),s.activeDoseUnits(),s.progress(),s.visualIntensity(),
+                        s.intensity(),s.tier(),s.signature(),new DmtFractalScaffold(.1,.2),s.environment());
+                    var changed=advance(1); float[] b=changed.get("FractalB");
                     check(b[2]>.1 && b[2]<before.get("FractalB")[2],"Snapshot depth snapped instead of easing");
                     check(b[3]>.2 && b[3]<before.get("FractalB")[3],"Snapshot flow snapped instead of easing");
-                    var duplicate=tick(201);
-                    near(duplicate.get("FractalB")[2],b[2],0,"Duplicate eye frame advanced depth easing");
-                    near(duplicate.get("FractalB")[3],b[3],0,"Duplicate eye frame advanced flow easing");
-                    var settled=settle(202,500);
+                    same(at(now).get("FractalB"),b,"Duplicate stereo timestamp advanced scaffold easing");
+                    var settled=advance(500);
                     near(settled.get("FractalB")[2],.1,1e-5,"Depth easing failed to converge");
                     near(settled.get("FractalB")[3],.2,1e-5,"Flow easing failed to converge");
-                    var oldSeed=settled.get("FractalC");
-                    for(int i=1;i<4;i++) near(oldSeed[i],before.get("FractalC")[i],0,"Scaffold update changed realm identity");
-                    ClientExperienceStore.state=state(4,.5,1,7654321);
-                    check(tick(501)==null,"New trip did not reset smoothing/opacity");
-                    var fresh=tick(502);
-                    near(fresh.get("FractalB")[2],.7,1e-6,"New trip inherited previous depth easing");
-                    near(fresh.get("FractalB")[3],.6,1e-6,"New trip inherited previous flow easing");
-                    System.out.println("PASS: changing snapshot depth/flow eases without eye-frame duplication, converges and resets for a new trip");
+                    ClientExperienceStore.state=state(4,.5,1,7654321); check(at(now)==null,"New trip retained old opacity");
+                    var fresh=advance(100);
+                    near(fresh.get("FractalB")[2],.7,1e-6,"New trip retained previous depth memory");
+                    near(fresh.get("FractalB")[3],.6,1e-6,"New trip retained previous flow memory");
+                    System.out.println("PASS: snapshot structural easing, duplicate-frame invariance and new-trip reset");
                 }
-                private static void continuity(WorldWarpPostProcessor.Draw before,WorldWarpPostProcessor.Draw after,
-                        float[] origin,float[] field,String message) {
-                    near(a(after)[1]-a(before)[1],.05,1e-5,message+" reset or rescaled animation");
-                    for(int i=0;i<origin.length;i++) near(after.get("RealmOrigin")[i],origin[i],0,message+" changed origin");
-                    for(int i=0;i<field.length;i++) near(after.get("FractalB")[i],field[i],0,message+" changed session field");
-                    near(after.get("FractalC")[0],(float)TrippyClientConfig.dmtFractalIntensity,0,message+" lost selected intensity");
-                    for(int i=1;i<4;i++) near(after.get("FractalC")[i],before.get("FractalC")[i],0,message+" changed session seed/style");
+                private static void environmentMemory() {
+                    setup(); environment(new PsilocybinEnvironmentSnapshot(1,0,0,0,0,1,0,1,0,0,0,0,0));
+                    var forest=advance(1000); float[] identity=forest.get("FractalC").clone(), origin=forest.get("RealmOrigin").clone();
+                    check(forest.get("WorldInfluenceA")[0]>0,"Forest/organic snapshot did not influence opaque realm");
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.8,.2,.1,.9);
+                    environment(new PsilocybinEnvironmentSnapshot(0,1,1,1,1,0,1,.1,1,1,1,.7,1));
+                    var early=advance(1);
+                    check(early.get("WorldInfluenceA")[0]>0,"Environment memory discarded previous organic world in one frame");
+                    same(at(now).get("WorldInfluenceA"),early.get("WorldInfluenceA"),"Repeated eye advanced world memory");
+                    var changed=advance(1500); float[] wa=changed.get("WorldInfluenceA"), wb=changed.get("WorldInfluenceB"), wc=changed.get("WorldInfluenceC");
+                    near(a(changed)[0],1,0,"Opaque environment influence depended on visible source image");
+                    check(wa[1]>forest.get("WorldInfluenceA")[1] && wa[2]>forest.get("WorldInfluenceA")[2]
+                        && wa[3]>forest.get("WorldInfluenceA")[3],"Constructed/cave/water environment changes were not forwarded");
+                    check(wb[1]>forest.get("WorldInfluenceB")[1] && wb[2]>forest.get("WorldInfluenceB")[2]
+                        && wb[3]>forest.get("WorldInfluenceB")[3],"Night/rain/entities/movement influence was not forwarded");
+                    check(wb[0]<forest.get("WorldInfluenceB")[0],"Changing ambient light was not forwarded");
+                    check(wc[0]>forest.get("WorldInfluenceC")[0] && wc[3]>forest.get("WorldInfluenceC")[3],"Actual terrain color/relief was not forwarded");
+                    near(wc[0],.8,1e-6,"Terrain red channel"); near(wc[1],.2,1e-6,"Terrain green channel");
+                    near(wc[2],.1,1e-6,"Terrain blue channel"); near(wc[3],.9,1e-6,"Terrain relief channel");
+                    same(changed.get("FractalC"),identity,"Environment change rerolled trip seed/style");
+                    same(changed.get("RealmOrigin"),origin,"Environment change moved realm anchor");
+                    MC.gameRenderer.camera.position=new Vec3(12,64,-5); var moved=at(now);
+                    same(moved.get("WorldInfluenceA"),wa,"Camera movement changed environment memory at same timestamp");
+                    same(moved.get("WorldInfluenceB"),wb,"Camera movement changed dynamic world influence");
+                    same(moved.get("WorldInfluenceC"),wc,"Camera movement changed cached terrain influence");
+                    System.out.println("PASS: opaque realm receives organic/constructed/cave/water/light/weather/entities/movement and real terrain inputs with smooth world memory");
                 }
                 private static void anchorsAndReset() {
-                    setup(); ClientExperienceStore.state=state(4,.1,1,1234567); settle(0,100);
-                    MC.gameRenderer.camera.position=new Vec3(1010,64,-5); tick(101);
-                    ClientExperienceStore.state=state(4,.5,1,1234567);
-                    near(a(tick(102))[0]>0?WorldWarpPostProcessor.calls.get(0).get("RealmOrigin")[0]:99,0,0,"Walking before entry displaced entrance");
-                    var peak=settle(103,303);
-                    MC.gameRenderer.camera.position=new Vec3(1012,67,-9);
-                    var moved=tick(304).get("RealmOrigin");
-                    near(moved[0],.7,1e-6,"World movement x parallax"); near(moved[1],1.05,1e-6,"World movement y parallax");
-                    near(moved[2],-1.4,1e-6,"World movement z parallax");
-                    ClientExperienceStore.state=state(4,.5,1,2222222);
-                    check(tick(305)==null,"New signature retained old realm");
-                    var fresh=settle(306,506); near(fresh.get("RealmOrigin")[0],0,0,"New signature did not reanchor");
-                    MC.level=new Minecraft.Level(); check(tick(507)==null,"New world retained old opacity");
-                    near(a(settle(508,708))[1],10.05,1e-4,"New world retained animation phase");
-                    DmtFractalWorldPass.reset(); check(tick(709)==null,"Explicit reset retained old opacity");
-                    System.out.println("PASS: pre-entry walking, world-space parallax, new signatures/worlds and explicit reset");
+                    setup(); ClientExperienceStore.state=state(4,.1,1,1234567); advance(100);
+                    MC.gameRenderer.camera.position=new Vec3(1010,64,-5); advance(1);
+                    ClientExperienceStore.state=state(4,.5,1,1234567); var first=advance(100);
+                    near(first.get("RealmOrigin")[0],0,0,"Walking before entry displaced entrance");
+                    advance(1000); MC.gameRenderer.camera.position=new Vec3(1012,67,-9);
+                    var moved=advance(1).get("RealmOrigin");
+                    near(moved[0],.7,1e-6,"World parallax x"); near(moved[1],1.05,1e-6,"World parallax y"); near(moved[2],-1.4,1e-6,"World parallax z");
+                    ClientExperienceStore.state=state(4,.5,1,2222222); check(at(now)==null,"New signature retained old realm");
+                    var fresh=advance(1000); near(fresh.get("RealmOrigin")[0],0,0,"New trip failed to reanchor");
+                    MC.level=new Minecraft.Level(); check(at(now)==null,"New world retained old opacity");
+                    var world=advance(1000); near(world.get("RealmDynamics")[2],50,1e-5,"New world retained old trip clock");
+                    DmtFractalWorldPass.reset(); check(at(now)==null,"Explicit reset retained old opacity");
+                    System.out.println("PASS: pre-entry walking, world parallax, new-signature/world and explicit lifecycle resets");
+                }
+                private static void spatialWorldInfluence() {
+                    setup();
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.3,.6,.2,.1,
+                        -.6,.3,-.8,.75,30,70,-25,.8);
+                    var initial=advance(1000);
+                    float[] direction=initial.get("WorldInfluenceD").clone();
+                    near(direction[0],-.6,1e-6,"Negative terrain gradient X was clipped");
+                    near(direction[1],.3,1e-6,"Terrain gradient Y was lost");
+                    near(direction[2],-.8,1e-6,"Negative terrain gradient Z was clipped");
+                    near(direction[3],.75,1e-6,"Terrain directional strength was lost");
+                    float[] entity=initial.get("WorldAttractor").clone();
+                    near(entity[0],7,1e-5,"World entity X did not map relative to trip anchor");
+                    near(entity[1],2.1,1e-5,"World entity Y did not map relative to trip anchor");
+                    near(entity[2],-7,1e-5,"Negative entity Z was clipped or used head coordinates");
+                    near(entity[3],.8,1e-6,"Entity strength was not forwarded");
+                    // A stationary cached WORLD entity must not follow the head.
+                    MC.gameRenderer.camera.position=new Vec3(13,66,-9);
+                    var movedHead=at(now);
+                    same(movedHead.get("WorldAttractor"),entity,"Stationary entity followed head movement");
+                    near(movedHead.get("RealmOrigin")[0],1.05,1e-6,"Head movement did not preserve world-space separation");
+                    float[] identity=movedHead.get("FractalC").clone(), anchor=movedHead.get("RealmOrigin").clone();
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.3,.6,.2,.1,
+                        .8,-.2,.6,.5,-20,50,35,.9);
+                    var changing=advance(1); float[] first=changing.get("WorldAttractor");
+                    check(first[0]<entity[0] && first[0]>-10.5,"Entity switch snapped instead of easing");
+                    check(changing.get("WorldInfluenceD")[0]>direction[0]
+                        && changing.get("WorldInfluenceD")[0]<.8,"Terrain direction change snapped instead of easing");
+                    near(a(changing)[1]-a(movedHead)[1],.05*baseRate(),1e-4,"Entity update restarted animation");
+                    near(changing.get("RealmDynamics")[2]-movedHead.get("RealmDynamics")[2],.05,1e-4,"Entity update restarted cinematic time");
+                    same(changing.get("FractalC"),identity,"Spatial world update rerolled realm identity");
+                    same(changing.get("RealmOrigin"),anchor,"Spatial world update moved realm anchor");
+                    same(at(now).get("WorldAttractor"),first,"Repeated stereo frame advanced entity smoothing");
+                    var settled=advance(1500); float[] target=settled.get("WorldAttractor").clone();
+                    near(target[0],-10.5,1e-5,"Entity attractor X easing did not converge");
+                    near(target[1],-4.9,1e-5,"Entity attractor Y easing did not converge");
+                    near(target[2],14,1e-5,"Entity attractor Z easing did not converge");
+                    near(target[3],.9,1e-6,"Entity attractor strength easing did not converge");
+                    float[] terrain=settled.get("WorldInfluenceD");
+                    near(terrain[0],.8,1e-6,"Positive terrain gradient X");
+                    near(terrain[1],-.2,1e-6,"Negative terrain gradient Y");
+                    near(terrain[2],.6,1e-6,"Positive terrain gradient Z");
+                    near(terrain[3],.5,1e-6,"Changed terrain directional strength");
+                    // Disappearing entities must fade without an attraction point
+                    // suddenly sweeping toward world/realm zero.
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.3,.6,.2,.1,
+                        .8,-.2,.6,.5,0,0,0,0);
+                    var absent=advance(1); float[] fading=absent.get("WorldAttractor");
+                    for(int i=0;i<3;i++) near(fading[i],target[i],0,"Absent entity pulled retained position toward zero");
+                    check(fading[3]>0 && fading[3]<target[3],"Missing entity did not fade strength gradually");
+                    var disappeared=advance(1000); float[] gone=disappeared.get("WorldAttractor");
+                    for(int i=0;i<3;i++) near(gone[i],target[i],0,"Faded entity lost retained position");
+                    near(gone[3],0,1e-5,"Missing entity attraction never faded out");
+                    same(disappeared.get("FractalC"),identity,"Entity disappearance reset realm identity");
+                    near(a(disappeared)[0],1,0,"Entity disappearance reset opaque coverage");
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.3,.6,.2,.1,
+                        .8,-.2,.6,.5,25,68,-15,.7);
+                    var returned=advance(1); float[] reappearing=returned.get("WorldAttractor");
+                    check(reappearing[0]>target[0] && reappearing[0]<5.25,
+                        "Reappearing entity snapped to a new position instead of easing from retained memory");
+                    check(reappearing[3]>gone[3] && reappearing[3]<.7,"Reappearing entity skipped strength easing");
+                    same(returned.get("FractalC"),identity,"Entity reappearance reset realm identity");
+                    same(returned.get("RealmOrigin"),anchor,"Entity reappearance reset realm anchor");
+                    near(returned.get("RealmDynamics")[2]-disappeared.get("RealmDynamics")[2],.05,1e-4,
+                        "Entity reappearance restarted cinematic time");
+                    System.out.println("PASS: signed terrain directions and trip-anchored entity positions ease across updates; head motion, disappearance and stereo replay preserve identity/clocks");
                 }
                 private static void stereoHead() {
                     setup(); VivecraftCompat.vr=true; VivecraftCompat.head=new Vec3(100,65,100);
-                    MC.gameRenderer.camera.position=new Vec3(-999,2,-999);
-                    var first=settle(0,200); near(first.get("RealmOrigin")[0],0,0,"VR anchor used eye camera");
-                    MC.gameRenderer.camera.position=new Vec3(100.032,65,100);
-                    var right=tick(200); near(a(right)[1],a(first)[1],0,"Repeated eye frame advanced clock");
-                    near(right.get("RealmOrigin")[0],0,0,"Eye offset moved shared realm origin");
+                    DmtWorldInfluenceSampler.value=new DmtWorldInfluenceSampler.Sample(.3,.6,.2,.1,
+                        -.4,.2,.7,.6,101,67,98,.8);
+                    MC.gameRenderer.camera.position=new Vec3(-999,2,-999); var left=advance(1000);
+                    near(left.get("RealmOrigin")[0],0,0,"VR anchor used eye camera instead of shared head");
+                    near(left.get("WorldAttractor")[0],.35,1e-6,"VR entity anchor used eye instead of shared head X");
+                    near(left.get("WorldAttractor")[1],.7,1e-6,"VR entity anchor used eye instead of shared head Y");
+                    near(left.get("WorldAttractor")[2],-.7,1e-6,"VR entity anchor used eye instead of shared head Z");
+                    MC.gameRenderer.camera.position=new Vec3(100.032,65,100); var right=at(now);
+                    for(String uniform:new String[]{"FractalA","FractalB","FractalC","RealmDynamics","WorldInfluenceA","WorldInfluenceB","WorldInfluenceC","WorldInfluenceD","WorldAttractor","RealmOrigin"})
+                        same(right.get(uniform),left.get(uniform),"Stereo replay changed "+uniform);
                     VivecraftCompat.head=new Vec3(101,65,100);
-                    near(tick(201).get("RealmOrigin")[0],.35,1e-6,"Tracked head translation lost parallax");
-                    System.out.println("PASS: VR uses shared tracked-head origin; eye-camera offsets and repeated timestamps do not advance it");
+                    var moved=advance(1);
+                    near(moved.get("RealmOrigin")[0],.35,1e-6,"Tracked head translation lost realm parallax");
+                    same(moved.get("WorldAttractor"),left.get("WorldAttractor"),"Stationary VR entity followed tracked head translation");
+                    System.out.println("PASS: shared tracked-head anchor and identical dose/cinematic/environment uniforms across repeated eye timestamps");
+                }
+                private static void same(float[] actual,float[] expected,String message) {
+                    check(actual.length==expected.length,message+" length");
+                    for(int i=0;i<actual.length;i++) near(actual[i],expected[i],0,message+"["+i+"]");
                 }
                 private static void near(double actual,double expected,double tolerance,String message) {
                     check(Double.isFinite(actual) && Math.abs(actual-expected)<=tolerance,
