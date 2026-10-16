@@ -14,6 +14,8 @@ dmtFractalQuality = 1
 
 Quality `0` is low, `1` is balanced, and `2` is high. Assign **Toggle DMT Fractal World** under **Options → Controls → Key Binds → Vice and Villagers** to switch modes in game; the binding starts unassigned and saves your preference. The generated realm is visual only, with Minecraft's existing blocks and collisions.
 
+Assign **Cycle DMT Fractal Quality** under **Options → Controls → Key Binds → Vice and Villagers** to cycle **Low → Balanced → High → Low**. It starts unassigned; Balanced is the default, so the first press selects High. Each press applies the quality live, shows its name above the hotbar, and saves `dmtFractalQuality` for future launches.
+
 For the largest detail budget, select 100% intensity and set `dmtFractalQuality = 2`. In isolated 1080p tests on an RX 6800 XT, the high-quality realm pass measured 14–16 ms in the standard scene and 41–42 ms in a demanding nested-room scene. These figures exclude Minecraft's other rendering and a second VR eye. Complexity changes throughout a trip, so rendering cost changes too; lowering quality does not guarantee a particular frame rate.
 
 Assign **Cycle DMT Fractal Intensity** in the same Key Binds category to cycle **25% → 50% → 75% → 100% → 25%**. The selected percentage appears above the hotbar and is saved for future launches. It multiplies the dose response while preserving the trip's seed, position and clocks. At 100%, dose-driven intricacy continues beyond the old visual ceiling. Opaque coverage remains at most 100%; nested detail and transformations continue scaling. Quality controls rendering cost, and the realm's on/off toggle stays separate.

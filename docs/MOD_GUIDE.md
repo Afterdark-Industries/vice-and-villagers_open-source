@@ -107,6 +107,8 @@ Set `dmtFractalQuality` in the same file to choose the rendering budget:
 | `1` | Balanced: default | 112 |
 | `2` | High: more detail, greater GPU cost | 192 |
 
+Assign **Cycle DMT Fractal Quality** under **Options → Controls → Key Binds → Vice and Villagers** to cycle **Low → Balanced → High → Low**. The binding starts unassigned; the default is Balanced, so the first press selects High. Each press applies the quality immediately, shows its name above the hotbar, and saves `dmtFractalQuality` in the client config.
+
 Unresolved rays can use up to 160/192/224 forward recovery samples followed by 8/10/12 local exact-field refinements, respectively. Proven empty regions permit cheaper advances. This recovers solid surfaces at lower quality without lowering image resolution; higher quality resolves more of the recursive geometry directly.
 
 The fractal realm is a visual effect only. It does not generate blocks, change world generation, or add collision; movement and interaction still use the Minecraft world.

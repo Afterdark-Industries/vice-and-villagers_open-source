@@ -90,6 +90,19 @@ public final class TrippyClientConfig {
         return dmtFractalIntensity;
     }
 
+    public static void setDmtFractalQuality(int quality) {
+        int normalized = Math.max(0, Math.min(2, quality));
+        DMT_FRACTAL_QUALITY.set(normalized);
+        dmtFractalQuality = normalized;
+        SPEC.save();
+    }
+
+    public static int cycleDmtFractalQuality() {
+        int current = Math.max(0, Math.min(2, dmtFractalQuality));
+        setDmtFractalQuality((current + 1) % 3);
+        return dmtFractalQuality;
+    }
+
     private static double normalizedFractalIntensity(double intensity) {
         return Double.isFinite(intensity) ? Math.max(0.0D, Math.min(1.0D, intensity)) : 1.0D;
     }

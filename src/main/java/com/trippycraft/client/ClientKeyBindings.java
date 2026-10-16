@@ -36,6 +36,14 @@ public final class ClientKeyBindings {
             "key.categories.trippycraft"
     );
 
+    public static final KeyMapping CYCLE_DMT_FRACTAL_QUALITY = new KeyMapping(
+            "key.trippycraft.cycle_dmt_fractal_quality",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_UNKNOWN,
+            "key.categories.trippycraft"
+    );
+
     private ClientKeyBindings() {
     }
 
@@ -43,6 +51,7 @@ public final class ClientKeyBindings {
         event.register(OPEN_TRIP_SCRUB);
         event.register(TOGGLE_DMT_FRACTAL_WORLD);
         event.register(CYCLE_DMT_FRACTAL_INTENSITY);
+        event.register(CYCLE_DMT_FRACTAL_QUALITY);
     }
 
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -60,6 +69,16 @@ public final class ClientKeyBindings {
             double intensity = TrippyClientConfig.cycleDmtFractalIntensity();
             mc.player.displayClientMessage(Component.translatable("message.trippycraft.dmt_fractal_intensity",
                     Math.round(intensity * 100.0D)), true);
+        }
+        while (CYCLE_DMT_FRACTAL_QUALITY.consumeClick()) {
+            int quality = TrippyClientConfig.cycleDmtFractalQuality();
+            String qualityKey = switch (quality) {
+                case 0 -> "options.trippycraft.dmt_fractal_quality.low";
+                case 2 -> "options.trippycraft.dmt_fractal_quality.high";
+                default -> "options.trippycraft.dmt_fractal_quality.balanced";
+            };
+            mc.player.displayClientMessage(Component.translatable("message.trippycraft.dmt_fractal_quality",
+                    Component.translatable(qualityKey)), true);
         }
         while (OPEN_TRIP_SCRUB.consumeClick()) {
             if (ClientExperienceStore.psilocybin().active() || ClientExperienceStore.hoMet().active()
