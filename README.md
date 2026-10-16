@@ -4,6 +4,10 @@ Vice and Villagers **2.2.0**, by **Afterdark Industries**, is a Minecraft **1.21
 
 All substance quantities, effects and production chains are fictional gameplay values. They are not real-world dosing, preparation or medical instructions.
 
+## DMT fractal branch download
+
+This branch includes an optional generated 3D DMT fractal realm. The [built mod JAR](artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar) is in this repository's `artifacts/` folder, beside its [installation instructions, settings and checksum](artifacts/README.md). Existing DMT effects remain the default; enable the fractal realm in client settings or assign its toggle key.
+
 ## What the mod contains
 
 The substance systems cover **cannabis, psilocybin, LSD, 2C-B, 4-HO-MET, AL-LAD, 2C-E, mescaline, DMT, salvia, cocaine, heroin, ketamine, MDMA, alcohol and nitrous oxide**. Koka and crack are routes within the cocaine system; different drinks share the alcohol system. Sessions can stack and interact, with tolerance, dependence, recovery, visual, audio and movement effects.

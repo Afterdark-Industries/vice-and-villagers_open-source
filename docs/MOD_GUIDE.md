@@ -85,6 +85,20 @@ Acacia bark/leaves and brewing support extracts and crystal variants. `AcaciaHar
 
 The package includes stages, transitions, encounters, themes, signatures and a fractal scaffold, beyond a single generic effect curve. `DmtVisualRenderer`, `DmtWorldGeometryRenderer` and `DmtWorldWarpPass` compose symbols, encounters, architecture and breakthrough/world-replacement presentation. Review stage continuity, geometry lifecycle, ordinary-world visibility and stereo anchoring together.
 
+The optional **DMT Fractal World** renders a 3D fractal realm during an active DMT experience. It starts disabled, preserving the existing DMT visuals by default. Enable `dmtFractalWorld` in your instance's `config/trippycraft-client.toml`, or assign **Toggle DMT Fractal World** under **Options → Controls → Key Binds → Vice and Villagers**. The binding starts unassigned; pressing your assigned key in game toggles the realm, displays its on/off state above the hotbar, and saves the setting for future launches. These settings affect only your client.
+
+The realm fades in during the breakthrough crossing, can fully replace the ordinary world at the peak with sufficient active gameplay strength, and fades out during the return. It ray-marches a seeded 3D Mandelbox field with connected chambers, tunnels, surface normals, lighting and ambient occlusion. Looking and moving change the actual perspective; desktop and VR eyes share the same anchored geometry. Visual intensity scales the replacement, motion intensity scales animation, and motion/photosensitivity reduction also apply. Turning the realm off immediately returns to the existing presentation.
+
+Set `dmtFractalQuality` in the same file to choose the rendering budget:
+
+| Value | Quality | Maximum ray-march steps |
+|---|---|---|
+| `0` | Low: lowest GPU cost | 48 |
+| `1` | Balanced: default | 72 |
+| `2` | High: more detail, greater GPU cost | 104 |
+
+The fractal realm is a visual effect only. It does not generate blocks, change world generation, or add collision; movement and interaction still use the Minecraft world.
+
 ### Heroin and opioid intermediates
 
 Poppy tapping and processing connect latex, opium, morphine, chemistry base and advanced doses. Consumable intermediates also route into the heroin engine; inspect their item registrations instead of treating them as inert materials. [`substance/heroin/`](../src/main/java/com/trippycraft/substance/heroin/) owns sedation, pain/hunger effects, motor/mining behavior, tolerance, dependence, recovery and overdose state.

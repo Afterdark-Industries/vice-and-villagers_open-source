@@ -82,6 +82,8 @@ Shader generation requires Python 3. GPU scripts require Windows OpenGL and the 
 ```powershell
 python scripts/generate-vr-shaders.py --check
 .\scripts\validate-vr-shaders.ps1
+.\scripts\validate-dmt-fractal-shaders.ps1
+.\scripts\validate-dmt-fractal-controls.ps1
 .\scripts\validate-psilocybin-shaders.ps1
 .\scripts\validate-lsd-shaders.ps1
 .\scripts\validate-substance-audio.ps1
@@ -89,7 +91,11 @@ python scripts/generate-vr-shaders.py --check
 
 The generator's `--check` mode verifies checked-in desktop/stereo parity and reproducibility without rewriting resources. When deliberately editing a desktop shader or the shared VR helper, regenerate without `--check`, inspect the runtime resource diff, then repeat the GPU and relevant native/manual checks.
 
-The VR validator compiles program shaders and checks the fourteen world-warp effects, asymmetric eye optics, depth/sky behavior, composition and finite mathematical output. Cannabis and heroin have additional shared/overlay paths; this does not provide complete scene coverage for them. These isolated GPU checks do not launch a headset or establish comfort, live compatibility or whole-game performance.
+The DMT fractal GPU harness checks all quality levels, exact disabled output, full-replacement independence from the Minecraft image, intermediate blends, movement/rotation, seeded geometry, animation, accessibility and shared coordinates between asymmetric stereo eyes. It writes a rendered contact sheet and isolated GPU timings under `build/`. Retest the player toggle, breakthrough/return transitions, resource reload and performance in Minecraft; offscreen checks do not establish live headset behavior.
+
+The DMT fractal controls harness compiles and executes the production pass and blend resolver against isolated time, session and render-target substitutes. It checks mode/renderer gates, dose and phase transitions, mixed effects, animation controls, session/world resets and VR head anchoring. These tests exercise Java control flow without launching Minecraft or proving config-file persistence.
+
+The VR validator compiles program shaders and checks the fifteen world-warp effects, asymmetric eye optics, depth/sky behavior, composition and finite mathematical output. Cannabis and heroin have additional shared/overlay paths; this does not provide complete scene coverage for them. These isolated GPU checks do not launch a headset or establish comfort, live compatibility or whole-game performance.
 
 The audio validator exercises all sixteen dedicated substance states across world, ambient, music, record and tavern routing. It checks toggles, sober reset, sound identity and synthetic PCM processing. It does not play the real tracks or establish subjective audio quality.
 

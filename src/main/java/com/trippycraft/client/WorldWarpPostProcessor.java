@@ -58,6 +58,7 @@ public final class WorldWarpPostProcessor {
             new EffectDefinition("al_lad_world_warp", true),
             new EffectDefinition("two_ce_world_warp", true),
             new EffectDefinition("dmt_world_warp", true),
+            new EffectDefinition("dmt_fractal_world_warp", true),
             new EffectDefinition("salvia_world_warp", true),
             new EffectDefinition("mdma_world_warp", false),
             new EffectDefinition("nitrous_world_warp", false)
@@ -179,6 +180,7 @@ public final class WorldWarpPostProcessor {
         AlLadWorldWarpPass.render(partialTick);
         TwoCeWorldWarpPass.render(partialTick);
         DmtWorldWarpPass.render(partialTick);
+        DmtFractalWorldPass.render(partialTick);
         SalviaWorldWarpPass.render(partialTick);
         MdmaWorldWarpPass.render(partialTick);
         NitrousWorldWarpPass.render(partialTick);
@@ -288,6 +290,7 @@ public final class WorldWarpPostProcessor {
     }
 
     private static void reset() {
+        DmtFractalWorldPass.reset();
         PASSES.values().forEach(WorldWarpPostProcessor::close);
         PASSES.clear();
         FAILED_EFFECTS.clear();

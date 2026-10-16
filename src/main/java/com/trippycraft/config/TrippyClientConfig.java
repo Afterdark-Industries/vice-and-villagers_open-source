@@ -10,6 +10,16 @@ public final class TrippyClientConfig {
             .comment("Enables Vice and Villagers client visuals.")
             .define("rendererEnabled", true);
 
+    private static final ModConfigSpec.BooleanValue DMT_FRACTAL_WORLD = BUILDER
+            .comment("Enables the optional 3D DMT fractal realm. Existing DMT visuals remain the default.")
+            .translation("trippycraft.configuration.dmtFractalWorld")
+            .define("dmtFractalWorld", false);
+
+    private static final ModConfigSpec.IntValue DMT_FRACTAL_QUALITY = BUILDER
+            .comment("3D DMT fractal quality: 0 = low (48 steps), 1 = balanced (72 steps), 2 = high (104 steps). Higher values use more GPU time.")
+            .translation("trippycraft.configuration.dmtFractalQuality")
+            .defineInRange("dmtFractalQuality", 1, 0, 2);
+
     private static final ModConfigSpec.DoubleValue VISUAL_INTENSITY = BUILDER
             .comment("Global multiplier for screen-space and color visuals.")
             .defineInRange("visualIntensity", 1.0D, 0.0D, 2.0D);
@@ -41,6 +51,8 @@ public final class TrippyClientConfig {
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     public static boolean rendererEnabled = true;
+    public static boolean dmtFractalWorld = false;
+    public static int dmtFractalQuality = 1;
     public static double visualIntensity = 1.0D;
     public static double motionIntensity = 1.0D;
     public static boolean audioEnabled = true;
@@ -52,11 +64,19 @@ public final class TrippyClientConfig {
     private TrippyClientConfig() {
     }
 
+    public static void setDmtFractalWorld(boolean enabled) {
+        DMT_FRACTAL_WORLD.set(enabled);
+        dmtFractalWorld = enabled;
+        SPEC.save();
+    }
+
     public static void onLoad(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
         }
         rendererEnabled = RENDERER_ENABLED.get();
+        dmtFractalWorld = DMT_FRACTAL_WORLD.get();
+        dmtFractalQuality = DMT_FRACTAL_QUALITY.get();
         visualIntensity = VISUAL_INTENSITY.get();
         motionIntensity = MOTION_INTENSITY.get();
         audioEnabled = AUDIO_ENABLED.get();
