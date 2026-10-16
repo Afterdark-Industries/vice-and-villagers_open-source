@@ -8,10 +8,13 @@ The original DMT effects remain the default. To enable the optional 3D fractal r
 
 ```toml
 dmtFractalWorld = true
+dmtFractalIntensity = 1.0
 dmtFractalQuality = 1
 ```
 
 Quality `0` is low, `1` is balanced, and `2` is high. Assign **Toggle DMT Fractal World** under **Options → Controls → Key Binds → Vice and Villagers** to switch modes in game; the binding starts unassigned and saves your preference. The generated realm is visual only, with Minecraft's existing blocks and collisions.
+
+Assign **Cycle DMT Fractal Intensity** in the same Key Binds category to cycle **25% → 50% → 75% → 100% → 25%**. The selected percentage appears above the hotbar and is saved for future launches. It adjusts the realm's visibility while preserving the trip's geometry and animation; the realm's on/off toggle stays separate. Lower intensity leaves more of the existing view visible. The default is 100%.
 
 Build, isolated GPU shader checks and controller tests pass. Live Minecraft and headset testing remain outstanding. See the [mod guide](../docs/MOD_GUIDE.md#dmt) for behavior and [development guide](../docs/DEVELOPMENT.md#shader-and-audio-checks) for validation commands.
 

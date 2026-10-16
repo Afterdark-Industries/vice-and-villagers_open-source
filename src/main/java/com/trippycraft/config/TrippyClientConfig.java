@@ -20,6 +20,11 @@ public final class TrippyClientConfig {
             .translation("trippycraft.configuration.dmtFractalQuality")
             .defineInRange("dmtFractalQuality", 1, 0, 2);
 
+    private static final ModConfigSpec.DoubleValue DMT_FRACTAL_INTENSITY = BUILDER
+            .comment("Opacity multiplier for the optional 3D DMT fractal realm only. 0.0 = hidden, 1.0 = full strength.")
+            .translation("trippycraft.configuration.dmtFractalIntensity")
+            .defineInRange("dmtFractalIntensity", 1.0D, 0.0D, 1.0D);
+
     private static final ModConfigSpec.DoubleValue VISUAL_INTENSITY = BUILDER
             .comment("Global multiplier for screen-space and color visuals.")
             .defineInRange("visualIntensity", 1.0D, 0.0D, 2.0D);
@@ -53,6 +58,7 @@ public final class TrippyClientConfig {
     public static boolean rendererEnabled = true;
     public static boolean dmtFractalWorld = false;
     public static int dmtFractalQuality = 1;
+    public static double dmtFractalIntensity = 1.0D;
     public static double visualIntensity = 1.0D;
     public static double motionIntensity = 1.0D;
     public static boolean audioEnabled = true;
@@ -70,6 +76,24 @@ public final class TrippyClientConfig {
         SPEC.save();
     }
 
+    public static void setDmtFractalIntensity(double intensity) {
+        double normalized = normalizedFractalIntensity(intensity);
+        DMT_FRACTAL_INTENSITY.set(normalized);
+        dmtFractalIntensity = normalized;
+        SPEC.save();
+    }
+
+    public static double cycleDmtFractalIntensity() {
+        double current = normalizedFractalIntensity(dmtFractalIntensity);
+        double next = (Math.floor(current * 4.0D) + 1.0D) * 0.25D;
+        setDmtFractalIntensity(next > 1.0D ? 0.25D : next);
+        return dmtFractalIntensity;
+    }
+
+    private static double normalizedFractalIntensity(double intensity) {
+        return Double.isFinite(intensity) ? Math.max(0.0D, Math.min(1.0D, intensity)) : 1.0D;
+    }
+
     public static void onLoad(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
@@ -77,6 +101,7 @@ public final class TrippyClientConfig {
         rendererEnabled = RENDERER_ENABLED.get();
         dmtFractalWorld = DMT_FRACTAL_WORLD.get();
         dmtFractalQuality = DMT_FRACTAL_QUALITY.get();
+        dmtFractalIntensity = normalizedFractalIntensity(DMT_FRACTAL_INTENSITY.get());
         visualIntensity = VISUAL_INTENSITY.get();
         motionIntensity = MOTION_INTENSITY.get();
         audioEnabled = AUDIO_ENABLED.get();

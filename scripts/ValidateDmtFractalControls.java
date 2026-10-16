@@ -20,7 +20,7 @@ public final class ValidateDmtFractalControls {
                 package com.trippycraft.config;
                 public final class TrippyClientConfig {
                     public static boolean dmtFractalWorld, rendererEnabled = true, motionReduction, photosensitivityReduction;
-                    public static double visualIntensity = 1, motionIntensity = 1;
+                    public static double visualIntensity = 1, motionIntensity = 1, dmtFractalIntensity = 1;
                     public static int dmtFractalQuality = 1;
                 }
                 """);
@@ -205,7 +205,7 @@ public final class ValidateDmtFractalControls {
                 private static final Minecraft MC=Minecraft.getInstance();
                 public static void run() {
                     disabled(); peakAndEnvelope(); clockAndMotion(); qualityAndAccessibility();
-                    mixtureAndIntensity(); anchorsAndReset(); stereoHead();
+                    mixtureAndIntensity(); fractalIntensity(); liveFractalIntensity(); anchorsAndReset(); stereoHead();
                     System.out.println("PASS: "+assertions+" behavioral assertions");
                 }
                 private static void setup() {
@@ -215,6 +215,7 @@ public final class ValidateDmtFractalControls {
                     VivecraftCompat.vr=false; VivecraftCompat.head=null;
                     TrippyClientConfig.dmtFractalWorld=true; TrippyClientConfig.rendererEnabled=true;
                     TrippyClientConfig.visualIntensity=1; TrippyClientConfig.motionIntensity=1;
+                    TrippyClientConfig.dmtFractalIntensity=1;
                     TrippyClientConfig.dmtFractalQuality=1; TrippyClientConfig.motionReduction=false;
                     TrippyClientConfig.photosensitivityReduction=false;
                     TrippyConfig.enableDmtEffects=true; TrippyConfig.dmtWorldWarp=true;
@@ -256,7 +257,7 @@ public final class ValidateDmtFractalControls {
                     check(tick(402)==null,"Off switch failed during a visible realm");
                     TrippyClientConfig.dmtFractalWorld=true;
                     check(tick(403)==null,"Off switch did not clear the controller");
-                    for(int gate=0;gate<6;gate++) {
+                    for(int gate=0;gate<7;gate++) {
                         setup(); settle(0,200);
                         switch(gate) {
                             case 0 -> TrippyClientConfig.rendererEnabled=false;
@@ -265,6 +266,7 @@ public final class ValidateDmtFractalControls {
                             case 3 -> TrippyClientConfig.visualIntensity=0;
                             case 4 -> TrippyConfig.globalIntensity=0;
                             case 5 -> MC.player=null;
+                            case 6 -> TrippyClientConfig.dmtFractalIntensity=0;
                         }
                         check(tick(201)==null,"Disabled renderer/intensity/player gate ignored: "+gate);
                     }
@@ -336,6 +338,71 @@ public final class ValidateDmtFractalControls {
                     check(gain>0 && gain<1,"Fixture did not exercise real mixed-effect weighting");
                     near(a(settle(0,250))[0],gain,1e-5,"Mixed-effect blend gain ignored");
                     System.out.println("PASS: real LSD/DMT blend weighting and client/common intensity scale replacement opacity");
+                }
+                private static void fractalIntensity() {
+                    for(double setting:new double[]{.25,.5,.75,1}) {
+                        setup(); TrippyClientConfig.dmtFractalIntensity=setting;
+                        near(a(settle(0,200))[0],setting,1e-5,"Fractal peak intensity "+setting);
+                        // At the midpoint of the configured entry envelope, the
+                        // real controller must scale a partial trip as well.
+                        setup(); TrippyClientConfig.dmtFractalIntensity=setting;
+                        ClientExperienceStore.state=state(4,.24,1,1234567);
+                        near(a(settle(0,200))[0],setting*.5,1e-5,"Fractal partial-entry intensity "+setting);
+                        setup(); TrippyClientConfig.dmtFractalIntensity=setting;
+                        TrippyClientConfig.visualIntensity=.5; TrippyConfig.globalIntensity=.5;
+                        near(a(settle(0,200))[0],setting*.25,1e-5,"Fractal/common/client intensity multiplication "+setting);
+                    }
+                    setup(); TrippyClientConfig.dmtFractalIntensity=4;
+                    near(a(settle(0,200))[0],1,0,"Out-of-range intensity exceeds full replacement");
+                    setup(); settle(0,200); TrippyClientConfig.dmtFractalIntensity=0;
+                    check(tick(201)==null,"Zero fractal intensity retained visible realm");
+                    TrippyClientConfig.dmtFractalIntensity=1;
+                    check(tick(202)==null,"Restored intensity revived old peak opacity");
+                    near(a(tick(203))[1],.05,1e-6,"Zero intensity did not clear stale clock");
+                    near(a(settle(204,403))[0],1,0,"Nonzero intensity could not restart entry");
+                    System.out.println("PASS: 25/50/75/100% peaks and partial-entry scaling, composed intensity gain, upper bound and zero/re-enable reset");
+                }
+                private static void liveFractalIntensity() {
+                    setup(); settle(0,200);
+                    MC.gameRenderer.camera.position=new Vec3(12,65,-7);
+                    var before=tick(201);
+                    float[] origin=before.get("RealmOrigin").clone(), field=before.get("FractalB").clone();
+                    TrippyClientConfig.dmtFractalIntensity=.25;
+                    var reduced=tick(202);
+                    check(a(reduced)[0]<=.25,"Lowering intensity failed to cap existing peak immediately");
+                    continuity(before,reduced,origin,field,"Lowering intensity");
+                    TrippyClientConfig.dmtFractalIntensity=.75;
+                    var rising=tick(203);
+                    check(a(rising)[0]>a(reduced)[0] && a(rising)[0]<.75,"Increasing intensity skipped smooth rise");
+                    continuity(reduced,rising,origin,field,"Increasing intensity");
+                    var duplicate=tick(203);
+                    near(a(duplicate)[0],a(rising)[0],0,"Repeated frame changed intensity transition");
+                    near(a(duplicate)[1],a(rising)[1],0,"Repeated frame changed animation phase");
+                    near(a(settle(204,403))[0],.75,1e-5,"Live intensity failed to settle at 75%");
+                    TrippyClientConfig.dmtFractalIntensity=.5;
+                    var half=tick(404);
+                    check(a(half)[0]<=.5,"Live 75% to 50% exceeded new cap");
+                    near(a(settle(405,604))[0],.5,1e-5,"Live intensity failed to settle at 50%");
+                    // Retained session-end opacity follows the same current cap.
+                    ClientExperienceStore.state=DmtEffectState.inactive();
+                    TrippyClientConfig.dmtFractalIntensity=.25;
+                    var fading=tick(605);
+                    check(a(fading)[0]>0 && a(fading)[0]<=.25,"Lowering intensity failed to cap retained fade");
+                    TrippyClientConfig.dmtFractalIntensity=.75;
+                    var continued=tick(606);
+                    check(a(continued)[0]<a(fading)[0],"Increasing intensity resurrected a completed trip");
+                    continuity(fading,continued,origin,field,"Retained fade intensity change");
+                    TrippyClientConfig.dmtFractalIntensity=0;
+                    check(tick(607)==null,"Zero intensity failed during retained fade");
+                    TrippyClientConfig.dmtFractalIntensity=1;
+                    check(tick(608)==null,"Re-enabling intensity resurrected inactive trip");
+                    System.out.println("PASS: live nonzero intensity preserves seed/origin/clock, smooth rises, immediate lower caps and retained-fade limits");
+                }
+                private static void continuity(WorldWarpPostProcessor.Draw before,WorldWarpPostProcessor.Draw after,
+                        float[] origin,float[] field,String message) {
+                    near(a(after)[1]-a(before)[1],.05,1e-5,message+" reset or rescaled animation");
+                    for(int i=0;i<origin.length;i++) near(after.get("RealmOrigin")[i],origin[i],0,message+" changed origin");
+                    for(int i=0;i<field.length;i++) near(after.get("FractalB")[i],field[i],0,message+" changed session field");
                 }
                 private static void anchorsAndReset() {
                     setup(); ClientExperienceStore.state=state(4,.1,1,1234567); settle(0,100);

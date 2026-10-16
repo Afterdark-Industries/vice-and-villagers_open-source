@@ -89,6 +89,8 @@ The optional **DMT Fractal World** renders a 3D fractal realm during an active D
 
 The realm fades in during the breakthrough crossing, can fully replace the ordinary world at the peak with sufficient active gameplay strength, and fades out during the return. It ray-marches a seeded 3D Mandelbox field with connected chambers, tunnels, surface normals, lighting and ambient occlusion. Looking and moving change the actual perspective; desktop and VR eyes share the same anchored geometry. Visual intensity scales the replacement, motion intensity scales animation, and motion/photosensitivity reduction also apply. Turning the realm off immediately returns to the existing presentation.
 
+Assign **Cycle DMT Fractal Intensity** in the same Key Binds category to select **25%, 50%, 75% or 100%**, then wrap back to 25%. The binding starts unassigned. Each press shows the selected percentage above the hotbar and saves it as `dmtFractalIntensity` in `config/trippycraft-client.toml` (default `1.0`, range `0.0` to `1.0`). This controls how strongly the fractal realm replaces the existing view; lower values keep more of the original effects visible. It applies during an active realm without restarting its geometry or animation, and does not switch the realm on or alter other substances' intensity. A value of `0.0` in the config disables the fractal pass.
+
 Set `dmtFractalQuality` in the same file to choose the rendering budget:
 
 | Value | Quality | Maximum ray-march steps |

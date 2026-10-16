@@ -27,6 +27,7 @@ public final class DmtFractalWorldPass {
         // No new shader pass or render target is requested while disabled.
         if (!TrippyClientConfig.dmtFractalWorld || !TrippyClientConfig.rendererEnabled
                 || !TrippyConfig.enableDmtEffects || !TrippyConfig.dmtWorldWarp
+                || TrippyClientConfig.dmtFractalIntensity <= 0.0D
                 || TrippyClientConfig.visualIntensity <= 0.0D || TrippyConfig.globalIntensity <= 0.0D
                 || minecraft.level == null || minecraft.player == null) {
             reset();
@@ -55,6 +56,10 @@ public final class DmtFractalWorldPass {
         // Pauses, lag and clock discontinuities must not jump the realm animation.
         delta = Double.isFinite(delta) && delta >= 0.0D ? Math.min(5.0D, delta) : 0.0D;
         lastTicks = ticks;
+        double selectedIntensity = clamp(TrippyClientConfig.dmtFractalIntensity);
+        // Lowering the player-selected limit takes effect immediately. Raising
+        // it eases into the new amount without resetting the realm or its clock.
+        opacity = Math.min(opacity, selectedIntensity);
         double target = 0.0D;
         if (state.active()) {
             lastState = state;
@@ -71,6 +76,7 @@ public final class DmtFractalWorldPass {
                     ClientExperienceStore.lsd(), state, ClientExperienceStore.hoMet(),
                     ClientExperienceStore.alLad(), ClientExperienceStore.twoCe()).dmtShaderGain();
             target = clamp(entry * exit * dose * visual * gain
+                    * selectedIntensity
                     * Math.min(1.0D, TrippyClientConfig.visualIntensity)
                     * Math.min(1.0D, TrippyConfig.globalIntensity));
         }
