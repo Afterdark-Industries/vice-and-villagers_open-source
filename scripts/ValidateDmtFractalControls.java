@@ -69,6 +69,7 @@ public final class ValidateDmtFractalControls {
         doubles.put("com/trippycraft/substance/dmt/DmtTripSignature.java", """
                 package com.trippycraft.substance.dmt;
                 public record DmtTripSignature(long seed) {
+                    public int hyperspaceStyle(){return Math.floorMod(seed,7);}
                     public int primaryRed(){return 210;} public int primaryGreen(){return 120;} public int primaryBlue(){return 245;}
                     public int secondaryRed(){return 65;} public int secondaryGreen(){return 220;} public int secondaryBlue(){return 180;}
                     public int accentRed(){return 255;} public int accentGreen(){return 190;} public int accentBlue(){return 80;}
@@ -87,6 +88,7 @@ public final class ValidateDmtFractalControls {
                         return new DmtEffectState(false,0,1,0,0,0,new DmtTripSignature(0),new DmtFractalScaffold(0,0));
                     }
                     public int remainingTicks() { return active ? 1000 : 0; }
+                    public int ageTicks() { return active ? 100 : 0; }
                 }
                 """);
         doubles.put("com/trippycraft/substance/psilocybin/PsilocybinEffectState.java", """
@@ -204,8 +206,9 @@ public final class ValidateDmtFractalControls {
                 private static int assertions;
                 private static final Minecraft MC=Minecraft.getInstance();
                 public static void run() {
-                    disabled(); peakAndEnvelope(); clockAndMotion(); qualityAndAccessibility();
-                    mixtureAndIntensity(); fractalIntensity(); liveFractalIntensity(); anchorsAndReset(); stereoHead();
+                    disabled(); peakAndEnvelope(); clockAndMotion(); stationaryAnimation(); qualityAndAccessibility();
+                    mixtureAndIntensity(); fractalIntensity(); fractalCContract(); liveFractalIntensity();
+                    scaffoldContinuity(); anchorsAndReset(); stereoHead();
                     System.out.println("PASS: "+assertions+" behavioral assertions");
                 }
                 private static void setup() {
@@ -314,7 +317,36 @@ public final class ValidateDmtFractalControls {
                     near(a(settle(0,200))[1],1.5,1e-5,"Motion reduction multiplier");
                     setup(); TrippyConfig.dmtAccessibilityMode=true;
                     near(a(settle(0,200))[1],2.5,1e-5,"DMT accessibility motion multiplier");
+                    setup(); float clipped=a(settle(0,200))[1];
+                    TrippyClientConfig.motionIntensity=-100;
+                    near(a(tick(201))[1],clipped,0,"Negative motion intensity did not clip to zero");
+                    TrippyClientConfig.motionIntensity=100;
+                    near(a(tick(202))[1]-clipped,.10,1e-5,"High motion intensity did not clip to double speed");
                     System.out.println("PASS: frozen/reversed/clamped clocks, motion pause/resume continuity and accessibility rates");
+                }
+                private static void stationaryAnimation() {
+                    setup(); var snapshot=ClientExperienceStore.state;
+                    var first=settle(0,200); float phase=a(first)[1], start=phase;
+                    float[] origin=first.get("RealmOrigin").clone();
+                    // 1,200 rendered frames across 20 game ticks: the camera and
+                    // snapshot (including its age) stay completely unchanged.
+                    for(int frame=1;frame<=1200;frame++) {
+                        var draw=tick(200+frame/60.0);
+                        float next=a(draw)[1];
+                        check(next>phase,"Stationary sub-tick frame froze animation at frame "+frame);
+                        check(ClientExperienceStore.state==snapshot && snapshot.ageTicks()==100,
+                            "Stationary fixture unexpectedly advanced the server snapshot");
+                        for(int i=0;i<origin.length;i++) near(draw.get("RealmOrigin")[i],origin[i],0,
+                            "Stationary animation moved the camera anchor");
+                        phase=next;
+                    }
+                    near(phase-start,1.0,1e-5,"20 game ticks did not advance animation by one second");
+                    near(a(tick(220))[1],phase,0,"Paused timestamp advanced stationary animation");
+                    // Replacing a synchronized snapshot with equivalent state
+                    // must not restart or wait for the snapshot's age to move.
+                    ClientExperienceStore.state=state(4,.5,1,1234567);
+                    near(a(tick(220.25))[1]-phase,.0125,1e-5,"Equivalent snapshot reset the render clock");
+                    System.out.println("PASS: stationary camera + unchanged snapshot age animate every fractional frame over 20 ticks; pause and snapshot replacement remain continuous");
                 }
                 private static void qualityAndAccessibility() {
                     setup(); settle(0,200);
@@ -398,11 +430,55 @@ public final class ValidateDmtFractalControls {
                     check(tick(608)==null,"Re-enabling intensity resurrected inactive trip");
                     System.out.println("PASS: live nonzero intensity preserves seed/origin/clock, smooth rises, immediate lower caps and retained-fade limits");
                 }
+                private static void fractalCContract() {
+                    long bits=(0x12AL<<5)|(0xABCL<<17)|(0x67DL<<31)|(0xD39L<<43);
+                    for(long seed:new long[]{bits,-1L,Long.MIN_VALUE,1234567L}) {
+                        setup(); ClientExperienceStore.state=state(4,.5,1,seed);
+                        var draw=settle(0,200); float[] c=draw.get("FractalC");
+                        near(c[0],1,0,"Selected intensity missing from FractalC");
+                        near(c[1],((seed>>>17)&4095L)/4095.0F,0,"FractalC seed C bits lost");
+                        near(c[2],((seed>>>43)&4095L)/4095.0F,0,"FractalC seed D bits lost");
+                        near(c[3],ClientExperienceStore.state.signature().hyperspaceStyle(),0,"FractalC realm style lost");
+                        for(double selected:new double[]{.25,.5,.75,1,.33}) {
+                            TrippyClientConfig.dmtFractalIntensity=selected;
+                            var changed=tick(201); float[] next=changed.get("FractalC");
+                            near(next[0],(float)selected,0,"FractalC did not forward selected intensity directly");
+                            for(int i=1;i<4;i++) near(next[i],c[i],0,"Intensity change regenerated a realm identity field");
+                            near(a(changed)[1]-a(draw)[1],.05,1e-5,"Intensity change restarted or rescaled realm phase");
+                        }
+                    }
+                    System.out.println("PASS: selected intensity and four disparate seed/style fixtures reach FractalC without rerolling on intensity changes");
+                }
+                private static void scaffoldContinuity() {
+                    setup(); var before=settle(0,200);
+                    var current=ClientExperienceStore.state;
+                    ClientExperienceStore.state=new DmtEffectState(current.active(),current.activeDoseUnits(),current.progress(),
+                        current.visualIntensity(),current.intensity(),current.tier(),current.signature(),new DmtFractalScaffold(.1,.2));
+                    var changed=tick(201); float[] b=changed.get("FractalB");
+                    check(b[2]>.1 && b[2]<before.get("FractalB")[2],"Snapshot depth snapped instead of easing");
+                    check(b[3]>.2 && b[3]<before.get("FractalB")[3],"Snapshot flow snapped instead of easing");
+                    var duplicate=tick(201);
+                    near(duplicate.get("FractalB")[2],b[2],0,"Duplicate eye frame advanced depth easing");
+                    near(duplicate.get("FractalB")[3],b[3],0,"Duplicate eye frame advanced flow easing");
+                    var settled=settle(202,500);
+                    near(settled.get("FractalB")[2],.1,1e-5,"Depth easing failed to converge");
+                    near(settled.get("FractalB")[3],.2,1e-5,"Flow easing failed to converge");
+                    var oldSeed=settled.get("FractalC");
+                    for(int i=1;i<4;i++) near(oldSeed[i],before.get("FractalC")[i],0,"Scaffold update changed realm identity");
+                    ClientExperienceStore.state=state(4,.5,1,7654321);
+                    check(tick(501)==null,"New trip did not reset smoothing/opacity");
+                    var fresh=tick(502);
+                    near(fresh.get("FractalB")[2],.7,1e-6,"New trip inherited previous depth easing");
+                    near(fresh.get("FractalB")[3],.6,1e-6,"New trip inherited previous flow easing");
+                    System.out.println("PASS: changing snapshot depth/flow eases without eye-frame duplication, converges and resets for a new trip");
+                }
                 private static void continuity(WorldWarpPostProcessor.Draw before,WorldWarpPostProcessor.Draw after,
                         float[] origin,float[] field,String message) {
                     near(a(after)[1]-a(before)[1],.05,1e-5,message+" reset or rescaled animation");
                     for(int i=0;i<origin.length;i++) near(after.get("RealmOrigin")[i],origin[i],0,message+" changed origin");
                     for(int i=0;i<field.length;i++) near(after.get("FractalB")[i],field[i],0,message+" changed session field");
+                    near(after.get("FractalC")[0],(float)TrippyClientConfig.dmtFractalIntensity,0,message+" lost selected intensity");
+                    for(int i=1;i<4;i++) near(after.get("FractalC")[i],before.get("FractalC")[i],0,message+" changed session seed/style");
                 }
                 private static void anchorsAndReset() {
                     setup(); ClientExperienceStore.state=state(4,.1,1,1234567); settle(0,100);

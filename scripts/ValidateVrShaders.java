@@ -197,7 +197,7 @@ public final class ValidateVrShaders {
         return output;
     }
 
-    private static final String[] ART = {"WarpA", "WarpB", "WarpC", "WarpD", "WarpE", "PaletteA", "PaletteB", "PaletteC", "Profile", "Env", "EnvA", "EnvB", "EnvDetail", "Dose", "DoseA", "DoseDetail", "LayersC", "MusicA", "MusicB", "MixA", "MixB", "MotionA", "MotionB", "Focus", "Intensity", "ExtraDose", "HighDose", "FractalA", "FractalB", "RealmOrigin"};
+    private static final String[] ART = {"WarpA", "WarpB", "WarpC", "WarpD", "WarpE", "PaletteA", "PaletteB", "PaletteC", "Profile", "Env", "EnvA", "EnvB", "EnvDetail", "Dose", "DoseA", "DoseDetail", "LayersC", "MusicA", "MusicB", "MixA", "MixB", "MotionA", "MotionB", "Focus", "Intensity", "ExtraDose", "HighDose", "FractalA", "FractalB", "FractalC", "RealmOrigin"};
 
     private static void art(int p, String effect, boolean active, boolean strong, boolean accessibility, float time) {
         for (String uniform : ART) vec(p, uniform, 0, 0, 0, 0);
@@ -256,6 +256,7 @@ public final class ValidateVrShaders {
             case "dmt_fractal" -> {
                 vec(p, "FractalA", strong ? 1 : 0.5f, time, 1, access);
                 vec(p, "FractalB", 0.317f, 0.631f, 0.78f, 0.65f);
+                vec(p, "FractalC", strong ? 1 : 0.5f, 0.19f, 0.83f, 3);
                 vec(p, "RealmOrigin", 0.18f, -0.12f, 0.37f, 0.35f);
             }
             case "psilocybin" -> {

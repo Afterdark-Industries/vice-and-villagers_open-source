@@ -87,17 +87,19 @@ The package includes stages, transitions, encounters, themes, signatures and a f
 
 The optional **DMT Fractal World** renders a 3D fractal realm during an active DMT experience. It starts disabled, preserving the existing DMT visuals by default. Enable `dmtFractalWorld` in your instance's `config/trippycraft-client.toml`, or assign **Toggle DMT Fractal World** under **Options → Controls → Key Binds → Vice and Villagers**. The binding starts unassigned; pressing your assigned key in game toggles the realm, displays its on/off state above the hotbar, and saves the setting for future launches. These settings affect only your client.
 
-The realm fades in during the breakthrough crossing, can fully replace the ordinary world at the peak with sufficient active gameplay strength, and fades out during the return. It ray-marches a seeded 3D Mandelbox field with connected chambers, tunnels, surface normals, lighting and ambient occlusion. Looking and moving change the actual perspective; desktop and VR eyes share the same anchored geometry. Visual intensity scales the replacement, motion intensity scales animation, and motion/photosensitivity reduction also apply. Turning the realm off immediately returns to the existing presentation.
+During the breakthrough crossing, visible Minecraft surfaces bend and acquire patterns as they morph into the realm. The transition reconstructs surface positions/normals from world depth, advects the existing textures through 3D space and grows patterned material across the changing surfaces. At sufficient peak strength, the view becomes entirely generated fractal geometry; the return reverses this transition. It ray-marches seeded geometry with evolving vaults and tunnels, patterned surface relief, lighting and ambient occlusion. Session styles and several independent seed channels vary geometry, materials, color arrangements and animation. Looking and moving change the actual perspective; desktop and VR eyes share the same anchored geometry. Visual intensity scales the replacement, motion intensity scales animation, and motion/photosensitivity reduction also apply. Turning the realm off immediately returns to the existing presentation.
 
-Assign **Cycle DMT Fractal Intensity** in the same Key Binds category to select **25%, 50%, 75% or 100%**, then wrap back to 25%. The binding starts unassigned. Each press shows the selected percentage above the hotbar and saves it as `dmtFractalIntensity` in `config/trippycraft-client.toml` (default `1.0`, range `0.0` to `1.0`). This controls how strongly the fractal realm replaces the existing view; lower values keep more of the original effects visible. It applies during an active realm without restarting its geometry or animation, and does not switch the realm on or alter other substances' intensity. A value of `0.0` in the config disables the fractal pass.
+Assign **Cycle DMT Fractal Intensity** in the same Key Binds category to select **25%, 50%, 75% or 100%**, then wrap back to 25%. The binding starts unassigned. Each press shows the selected percentage above the hotbar and saves it as `dmtFractalIntensity` in `config/trippycraft-client.toml` (default `1.0`, range `0.0` to `1.0`). Intensity controls replacement strength, geometric and material detail, and morphing activity. At 100% the renderer adds richer surface relief and ornament; lower values retain more of the existing view. Use quality to control the ray-march budget: intensity is not a proportional frame-rate control. Adjustments preserve the trip's seed, position and animation clock, and do not switch the realm on or alter other substances' intensity. A value of `0.0` in the config disables the fractal pass.
+
+The realm evolves while the player stands still. Its animation clock advances independently of synchronized gameplay snapshots; changing snapshot depth/flow values ease into the field. Setting `motionIntensity` to zero freezes animation, and motion reduction slows it. Pausing a singleplayer game pauses its visual clock as well.
 
 Set `dmtFractalQuality` in the same file to choose the rendering budget:
 
 | Value | Quality | Maximum ray-march steps |
 |---|---|---|
-| `0` | Low: lowest GPU cost | 48 |
-| `1` | Balanced: default | 72 |
-| `2` | High: more detail, greater GPU cost | 104 |
+| `0` | Low: lowest GPU cost | 72 |
+| `1` | Balanced: default | 112 |
+| `2` | High: more detail, greater GPU cost | 160 |
 
 The fractal realm is a visual effect only. It does not generate blocks, change world generation, or add collision; movement and interaction still use the Minecraft world.
 

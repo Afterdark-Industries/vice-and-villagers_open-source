@@ -16,12 +16,12 @@ public final class TrippyClientConfig {
             .define("dmtFractalWorld", false);
 
     private static final ModConfigSpec.IntValue DMT_FRACTAL_QUALITY = BUILDER
-            .comment("3D DMT fractal quality: 0 = low (48 steps), 1 = balanced (72 steps), 2 = high (104 steps). Higher values use more GPU time.")
+            .comment("3D DMT fractal quality: 0 = low (72 steps), 1 = balanced (112 steps), 2 = high (160 steps). Intensity scales detail within this budget. Higher values use more GPU time.")
             .translation("trippycraft.configuration.dmtFractalQuality")
             .defineInRange("dmtFractalQuality", 1, 0, 2);
 
     private static final ModConfigSpec.DoubleValue DMT_FRACTAL_INTENSITY = BUILDER
-            .comment("Opacity multiplier for the optional 3D DMT fractal realm only. 0.0 = hidden, 1.0 = full strength.")
+            .comment("Strength of the optional 3D DMT fractal realm: visibility, geometric detail, morphing and material complexity. 0.0 = hidden, 1.0 = full strength. Use quality to control the ray-march rendering budget; intensity is not a frame-rate limiter.")
             .translation("trippycraft.configuration.dmtFractalIntensity")
             .defineInRange("dmtFractalIntensity", 1.0D, 0.0D, 1.0D);
 

@@ -7,6 +7,9 @@
   "samplers": [
     {
       "name": "DiffuseSampler"
+    },
+    {
+      "name": "DepthSampler"
     }
   ],
   "uniforms": [
@@ -39,6 +42,29 @@
       "count": 2,
       "values": [
         1.0,
+        1.0
+      ]
+    },
+    {
+      "name": "WorldViewProjection",
+      "type": "matrix4x4",
+      "count": 16,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         1.0
       ]
     },
@@ -106,6 +132,17 @@
         0.0,
         0.0,
         0.0,
+        0.0
+      ]
+    },
+    {
+      "name": "FractalC",
+      "type": "float",
+      "count": 4,
+      "values": [
+        1.0,
+        0.19,
+        0.83,
         0.0
       ]
     },

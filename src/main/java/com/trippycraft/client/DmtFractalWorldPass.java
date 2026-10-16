@@ -17,6 +17,9 @@ public final class DmtFractalWorldPass {
     private static double lastTicks = Double.NaN;
     private static double animationSeconds;
     private static double opacity;
+    private static boolean fieldInitialized;
+    private static double smoothDimensionalDepth;
+    private static double smoothTemporalFlow;
 
     private DmtFractalWorldPass() {
     }
@@ -103,6 +106,12 @@ public final class DmtFractalWorldPass {
 
         var signature = lastState.signature();
         var scaffold = lastState.fractalScaffold();
+        // Gameplay snapshots arrive on ticks. Ease their structural parameters
+        // while the independent render clock keeps the realm moving every frame.
+        double fieldEase = fieldInitialized ? 1.0D - Math.exp(-delta / 18.0D) : 1.0D;
+        smoothDimensionalDepth += (clamp(scaffold.dimensionalDepth()) - smoothDimensionalDepth) * fieldEase;
+        smoothTemporalFlow += (clamp(scaffold.temporalFlow()) - smoothTemporalFlow) * fieldEase;
+        fieldInitialized = true;
         Vec3 realmPosition = head.subtract(tripAnchor).scale(WORLD_SCALE);
         boolean softerColors = TrippyClientConfig.photosensitivityReduction || TrippyConfig.dmtAccessibilityMode;
         // WorldInverseViewProjection and the actual per-eye/head positions are
@@ -113,7 +122,10 @@ public final class DmtFractalWorldPass {
                         Math.max(0, Math.min(2, TrippyClientConfig.dmtFractalQuality)), softerColors ? 1.0F : 0.0F),
                 WorldWarpPostProcessor.uniform("FractalB", ((tripSeed >>> 5) & 4095L) / 4095.0F,
                         ((tripSeed >>> 31) & 4095L) / 4095.0F,
-                        (float) scaffold.dimensionalDepth(), (float) scaffold.temporalFlow()),
+                        (float) smoothDimensionalDepth, (float) smoothTemporalFlow),
+                WorldWarpPostProcessor.uniform("FractalC", (float) selectedIntensity,
+                        ((tripSeed >>> 17) & 4095L) / 4095.0F,
+                        ((tripSeed >>> 43) & 4095L) / 4095.0F, signature.hyperspaceStyle()),
                 WorldWarpPostProcessor.uniform("RealmOrigin", (float) realmPosition.x, (float) realmPosition.y,
                         (float) realmPosition.z, (float) WORLD_SCALE),
                 WorldWarpPostProcessor.uniform("PaletteA", signature.primaryRed() / 255.0F,
@@ -132,6 +144,9 @@ public final class DmtFractalWorldPass {
         lastTicks = Double.NaN;
         animationSeconds = 0.0D;
         opacity = 0.0D;
+        fieldInitialized = false;
+        smoothDimensionalDepth = 0.0D;
+        smoothTemporalFlow = 0.0D;
     }
 
     private static double smoothstep(double low, double high, double value) {
