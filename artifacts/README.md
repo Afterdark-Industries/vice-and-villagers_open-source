@@ -18,6 +18,10 @@ Craft one empty Bong or Ancient Pipe with one **DMT Powder**, **Dried Cannabis B
 
 The smoking update passed nine focused server GameTests and a fresh native Minecraft check: all seventeen related item models/names, all six paired device appearances, the updated journal pages and real inventory-based recipe discovery synchronized to the client. The first two supplied icons are included; the accidental third image is excluded.
 
+**Market Broker coverage:** products from all sixteen substance families can be sold, including DMT Powder, MDMA capsules, bulk crystals/powders, AL-LAD concentrate, ethanol and all twelve loaded smoking devices. Sales and contracts require full, unused stock; partly used containers remain yours, and equivalent older item IDs count toward the current product. Selling a loaded Bong or Ancient Pipe transfers the whole vessel. Empty tools and custom blend capsules are excluded. Existing full-stock prices, demand/reputation rules and deferred payouts on market close are preserved.
+
+The broker update passed seven focused server GameTests, covering all 111 product rows, all Dealer products, fourteen legacy item variants, full/partial inventory handling, emerald payouts, contracts and saved market data.
+
 Open **Mods → Vice and Villagers → Config** from Minecraft's title screen or in-game Mods menu. The settings screen offers the DMT realm toggle, intensity **0/25/50/75/100%**, and **Low/Balanced/High** quality. Changes apply immediately and save for future launches; existing custom intensity values are preserved when the menu opens. **Key Binds...** opens shortcut assignment, and **Open Trip Scrubber...** is available during supported active trips. The settings screen is organized into sections for future additions.
 
 The config-menu build passed native Minecraft tests for Mods entry navigation, saved values, custom/zero intensity, a 320×240 GUI, parent-screen return and synchronization with the original key bindings. The JAR and checksum below include this menu.

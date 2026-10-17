@@ -68,11 +68,14 @@ A successful build proves compilation and packaging, not a running world or comp
 .\scripts\build.ps1 build
 .\scripts\build.ps1 runHoMetGameTestServer
 .\scripts\build.ps1 runSmokingGameTestServer
+.\scripts\build.ps1 runMarketGameTestServer
 ```
 
 Despite its historical name, `runHoMetGameTestServer` runs the retained whole-mod GameTest suite, including substance/session, crafting/content, plants, exploration loot, commands and village/bartender contracts. Its test world and logs are under ignored `build/` directories. Check the actual failed-test summary and process exit; assembly alone does not execute GameTests.
 
 `runSmokingGameTestServer` runs the focused `trippycraft_smoking` namespace using its small empty structure fixture. It covers Ancient Pipe crafting with any planks, all twelve device loads in both crafting grids, actual ingredient/remainder handling, rejected loads, mortar yields/capacity/save/shift-click behavior, processing-only crystals, powder and capsule compatibility, correct substance amounts, cooldowns, findings, recipe-book discovery and empty-device returns in both hands and game modes. The whole-mod run includes this namespace too. Change `-PsmokingGameTestDir` and `-PsmokingGameTestWorldDir` to isolate a run's logs and test world.
+
+`runMarketGameTestServer` runs the focused `trippycraft_market` namespace and is also included in the whole-mod suite. Its contracts exercise every broker catalog entry, all sixteen families and Dealer products, fourteen saved item aliases, full/partial stock, exact inventory removal and deferred emerald settlement, reputation/demand, contract replay, unavailable/distant requests and saved market data. `MarketStock.matches` is shared by the client counts and server transactions. Use `-PmarketGameTestDir` and `-PmarketGameTestWorldDir` to isolate logs and the disposable test world.
 
 Coverage is uneven. There are dedicated LSD and psilocybin contracts, cannabis-bong and bartender tests, and extensive tests for several later substance systems. Cannabis, cocaine, heroin, alcohol, MDMA and ketamine lack dedicated full-session GameTest classes, and DMT's complete session/stage behavior also needs direct manual checks. Focused item/crafting tests do not replace that coverage. Passing the suite does not prove every substance, saved world or modpack.
 
@@ -183,6 +186,7 @@ Use `/viceandvillagers status` and `sync` for inspection, and the permission-lev
 - Exercise Mortar and Pestle, Cannabis Press, Chemistry Table, Advanced Chemistry Table and Brew Cauldron: input/output counts, fuel, progress, blocking, shift-click and saved branch/dose choices.
 - Test supported partial-content processing, legacy formats and reusable vessels in both hands/modes; reject unsupported ingredients and loaded/mixed vessel combinations.
 - Open Dealer, Market Broker and Customer menus; check categories/search/scroll, stock, offers, transaction counts and saved market state with two clients.
+- For brokers, check all sixteen substance categories and Dealer-product coverage, full versus partial stock, equivalent older item IDs and mixed inventories. Sales and contracts must count and remove the same eligible stacks; partial containers must remain untouched. Selling a loaded device transfers the vessel too. Verify empty tools/blend capsules are excluded and payouts settle on close without changing demand, reputation or saved progression.
 - Visit all regional village bars on flat, steep and shoreline terrain; check entrance/foundation/path, schedules, bartender anchoring, revisits/restarts and player-edited/broken stations.
 - Check bartender stock and vanilla trading UI. Role assignment must keep bartenders distinct from dealer, broker and customer systems.
 - Open Cursed Findings, verify discovery gates, tabs, recipe references and text, then scroll through the final entry. Hidden/clipped rows must not react to clicks.

@@ -47,13 +47,13 @@ neoForge {
         gameTestServer {
             type = 'gameTestServer'
             gameDirectory = project.file('build/gametest-server')
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},trippycraft_smoking"
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},trippycraft_smoking,trippycraft_market"
         }
 
         hoMetGameTestServer {
             type = 'gameTestServer'
             gameDirectory = project.file('build/homet-gametest-run')
-            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},trippycraft_smoking"
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},trippycraft_smoking,trippycraft_market"
             programArguments.addAll '--universe', project.file('build/homet-gametest').absolutePath, '--world', 'homet-tests', '--nogui'
         }
 
@@ -63,6 +63,14 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', 'trippycraft_smoking'
             programArguments.addAll '--universe', project.file(providers.gradleProperty('smokingGameTestWorldDir').getOrElse('build/smoking-gametest')).absolutePath,
                     '--world', 'smoking-tools-tests', '--nogui'
+        }
+
+        marketGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file(providers.gradleProperty('marketGameTestDir').getOrElse('build/market-gametest-run'))
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'trippycraft_market'
+            programArguments.addAll '--universe', project.file(providers.gradleProperty('marketGameTestWorldDir').getOrElse('build/market-gametest')).absolutePath,
+                    '--world', 'market-broker-tests', '--nogui'
         }
 
         hoMetSmoke {

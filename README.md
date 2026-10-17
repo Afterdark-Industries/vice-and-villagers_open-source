@@ -12,6 +12,8 @@ Intensity defaults to **75%**, recommended for the best experience. Try **50%** 
 
 This build also adds **DMT Powder** and the reusable **Ancient Pipe**. Grind DMT crystals in the Mortar and Pestle (1x → 1 powder; 5x → 5 powders) before use. Craft either empty smoking device with one powder, dried cannabis bud or salvia extract, then right-click the loaded device to smoke and keep the empty vessel. Cursed Findings includes the new recipes and instructions.
 
+Market Brokers now buy products from **all 16 substance families**, including the new powder, capsules, bulk formats and loaded smoking devices. Sales and contracts accept **full, unused stock only**; partly used items stay in your inventory, and equivalent older item IDs are recognized. Selling a loaded Bong or Ancient Pipe transfers the whole device. Empty tools and custom blend capsules are excluded. Emerald payouts still settle when the market closes.
+
 ## What the mod contains
 
 The substance systems cover **cannabis, psilocybin, LSD, 2C-B, 4-HO-MET, AL-LAD, 2C-E, mescaline, DMT, salvia, cocaine, heroin, ketamine, MDMA, alcohol and nitrous oxide**. Koka and crack are routes within the cocaine system; different drinks share the alcohol system. Sessions can stack and interact, with tolerance, dependence, recovery, visual, audio and movement effects.

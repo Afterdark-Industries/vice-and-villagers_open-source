@@ -1444,12 +1444,13 @@ public final class CursedFindingsRegistry {
                         "The result is not one shop but a loop. Dealers sell finished formats for emeralds, customers create local street demand, and brokers handle the larger market where demand, contracts, raw materials, and reputation all start pushing back."
                 ),
                 List.of(
-                        "Dealers are the quick-access side of the system. Interact with a nearby dealer villager and the catalog opens within eight blocks, selling finished cannabis, psychedelic, stimulant, opioid, dissociative, salvia, and alcohol formats for straight emerald prices.",
+                        "Dealers are the quick-access side of the system. Interact with a nearby dealer villager and the catalog opens within eight blocks, selling finished cannabis, psychedelic, stimulant, opioid, dissociative, salvia, and nitrous formats for straight emerald prices. Bartenders handle the served drinks.",
                         "The psychedelic catalog includes 4-HO-MET and Mescaline bottles, plus AL-LAD tabs, at 25mg, 100mg, 250mg, and 500mg. The renamed 4-HO-MET and AL-LAD formats retain their existing effect, price, and customer demand tiers.",
                         "Customers are smaller but smarter buyers. Each customer rolls four offers per Minecraft day, and those offers are weighted by your business level, the product's unlock tier, and that villager's remembered habit history with exact products and whole categories.",
                         "Dropped samples matter. If a valid dealer product item lands close enough to a customer, that villager can consume one unit, gain exposure, and start biasing future requests toward that substance family.",
                         "Habit pressure changes the language of demand. Light interest shows up as Quick Sale, Private Order, or Repeat Buyer. Stronger histories escalate into Craving, Habit Order, Strong Craving, Compulsive Craving, and even Compulsive Bulk Order.",
-                        "Market brokers run the structured trade layer. They buy sellable product stock, sell a huge catalog of materials and vanilla goods, track daily demand multipliers for each product, and post four rotating contracts that refresh on roughly a Minecraft-day cadence.",
+                        "Market brokers run the structured trade layer. Their product catalog covers all sixteen substance families, including Dealer products, DMT Powder, MDMA capsules, bulk crystals and powders, AL-LAD concentrate, ethanol, and loaded smoking devices. They also sell materials and vanilla goods, track daily demand, and post four rotating contracts that refresh on roughly a Minecraft-day cadence.",
+                        "Bring full, unused stock for sales and contracts. Partly used joints, pens, edibles, ethanol, crystals, and concentrate stay in your inventory. Equivalent older item IDs count toward the current product without needing to be replaced.",
                         "Demand is alive instead of fixed. Each sellable product keeps its own multiplier between 0.80x and 1.50x, prices are recalculated from base value, demand, and business level, and heavier sales push that product's demand back down.",
                         "Reputation is the ladder under the whole system. Sales and completed contracts add reputation, every 250 reputation becomes another business level, higher levels make broker prices slightly better, and deeper levels widen the range of customer asks and contract templates."
                 ),
@@ -1457,11 +1458,11 @@ public final class CursedFindingsRegistry {
                         step(() -> Items.BELL, "Village cluster", () -> Items.CLOCK, "Automatic economy scan", () -> Items.VILLAGER_SPAWN_EGG, "Dealer / Broker / Customer roles",
                                 "Nearby adult villagers are grouped into linked village clusters. Small settlements aim for one dealer and one broker; larger ones can grow two of each, with a slice of the remaining adults becoming customers."),
                         step(() -> Items.EMERALD, "Emerald bankroll", () -> Items.NAME_TAG, "Dealer catalog", ModItems.CANNABIS_JOINT, "Finished formats",
-                                "Dealers sell ready-to-use product formats for fixed emerald prices. The current dealer path is a cash catalog rather than a crafting gate."),
+                                "Dealers sell registered product formats for fixed emerald prices. DMT crystals still require grinding before use. The current dealer path is a cash catalog rather than a crafting gate."),
                         step(ModItems.CANNABIS_JOINT, "Product stock or dropped sample", () -> Items.PAPER, "Customer demand", () -> Items.BOOK, "Daily offers + habit memory",
                                 "Customers remember samples and purchases. Their daily offers, quantities, request types, and product reach all react to stored habit data."),
-                        step(() -> Items.CHEST, "Sellable stock", () -> Items.EMERALD, "Market Broker", () -> Items.WRITABLE_BOOK, "Demand, reputation, contracts",
-                                "Broker sales feed the larger economy loop: queued emerald payout, reputation gain, demand drift, and rotating contract work.")
+                        step(() -> Items.CHEST, "Full, unused product stock", () -> Items.EMERALD, "Market Broker", () -> Items.WRITABLE_BOOK, "Demand, reputation, contracts",
+                                "Sell eligible full stock or complete a listed contract. Partly used items remain yours. Emeralds are queued until the market closes; sales also affect reputation and demand.")
                 ),
                 List.of(recipe("System Page", CursedFindingRecipeType.CRAFTING_TABLE,
                         List.of(ref(Items.BOOK, "Journal page")),
@@ -1472,6 +1473,8 @@ public final class CursedFindingsRegistry {
                         "Nitwits lean toward broker duty in the current rules, while dealers are kept away from broker-like reserved names so the roles do not overlap by accident.",
                         "Customer offers are not random noise. Habit level can lift unlock reach, raise quantities toward large stack sales, and add extra premium pressure without ever quite overtaking the dealer's own buy price.",
                         "Broker trades and customer sales queue emerald payouts through a ledger and flush them when the relevant screen opens or closes, so some market money is collected in batches instead of appearing instantly.",
+                        "Selling a loaded Bong or Ancient Pipe transfers the whole loaded device. An empty vessel returns when you use a prepared hit, not when you sell it. Empty tools and custom blend capsules are outside the broker's fixed-product catalog.",
+                        "The newly added reservoir crystals, AL-LAD concentrate, loaded devices, and ethanol can be sold directly but are not contract targets. Contracts keep their listed product and quantity; only full, unused matching stock counts.",
                         "Contracts currently rotate through Small Order, Steady Buyer, Bulk Order, Premium Order, and Warehouse Order templates. Higher business levels make the heavier templates available.",
                         "The market buy side is broad on purpose. Beyond mod materials, the broker registry also exposes a huge vanilla catalog grouped into categories like Wood, Stone, Gear, Food, Rare / OP, Spawn Eggs, and Misc.",
                         "Dealer products still carry unlock tiers in the registry, but in this build those tiers matter most for customer demand weighting rather than for hard dealer-side locks.",

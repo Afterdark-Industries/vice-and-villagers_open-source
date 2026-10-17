@@ -176,7 +176,7 @@ public final class MarketService {
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (!stack.isEmpty() && stack.is(item)) {
+            if (MarketStock.matches(stack, item)) {
                 count += stack.getCount();
             }
         }
@@ -385,7 +385,7 @@ public final class MarketService {
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize() && remaining > 0; slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (stack.isEmpty() || !stack.is(item)) {
+            if (!MarketStock.matches(stack, item)) {
                 continue;
             }
             int removed = Math.min(remaining, stack.getCount());

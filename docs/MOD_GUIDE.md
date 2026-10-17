@@ -224,12 +224,16 @@ The [`economy/`](../src/main/java/com/trippycraft/economy/) services own catalog
 | Role/system | Entry points | Behavior to preserve or deliberately review |
 |---|---|---|
 | Dealer | `DealerVillageEvents`, `DealerService`, `DealerRegistries`, `DealerProduct` | Village assignment, catalog categories, products/legacy aliases and purchase validation |
-| Market Broker | `MarketService`, `MarketRegistries`, `MarketMath`, `MarketPlayerData`, `MarketContract` | Buying/selling, demand, reputation, levels, daily contracts and saved progression |
+| Market Broker | `MarketService`, `MarketRegistries`, `MarketStock`, `MarketMath`, `MarketPlayerData`, `MarketContract` | Buying/selling, full-stock and legacy-item matching, demand, reputation, levels, daily contracts and saved progression |
 | Customer | `CustomerService`, `CustomerSampleEvents`, `CustomerAddictionProfile`, `CustomerOffer` | Daily cached requests, sampling, habits and offer completion |
 | Currency/payouts | `EmeraldWallet`, `EmeraldPayoutLedger` | Inventory accounting, change, deferred payouts and transaction completion |
 | Bartender | `BartenderService`, `ModVillagers` | Native merchant offers, drink stock, job-site identity and tavern anchoring |
 
 Loaded-village role assignment excludes bartenders and temporary nightlife guests. Trading validates server-side context, proximity, inventory, quantities and catalog state. Some payouts are retained until a suitable completion/close path. MDMA social state can affect discounts. Changing these systems can change balance even when a GUI looks identical.
+
+The broker catalog covers all sixteen substance families and every Dealer product, with individual finished formats, DMT powder, MDMA capsules, bulk crystals/powders, AL-LAD concentrate, ethanol and all twelve loaded smoking devices. Sales and contracts accept only full, unused stock. `MarketStock.matches(ItemStack, Item)` supplies the shared client/server eligibility rule, including fourteen saved-ID aliases; partial cannabis formats, ethanol and reservoirs remain in inventory rather than selling for a fresh item's price. Existing full-stock prices are preserved.
+
+A loaded Bong or Ancient Pipe is sold as a whole item, including the vessel; trading does not return an empty device. Empty tools, variable-content blend capsules and other unlisted production ingredients are outside this catalog. The new reservoir crystals, concentrate, loaded devices and ethanol are direct-sale products rather than contract targets. Demand still ranges from 0.80x to 1.50x, reputation still drives business levels and prices, and queued broker payouts still settle when the market closes (or next opens).
 
 Known gameplay exploits are not silently corrected by documentation or asset maintenance; see [Security](../SECURITY.md). Tests must distinguish existing behavior from an intentionally proposed gameplay fix.
 

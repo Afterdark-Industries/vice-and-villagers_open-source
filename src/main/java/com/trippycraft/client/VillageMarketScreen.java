@@ -4,6 +4,7 @@ import com.trippycraft.economy.BuyableMarketMaterial;
 import com.trippycraft.economy.EmeraldWallet;
 import com.trippycraft.economy.MarketMath;
 import com.trippycraft.economy.MarketRegistries;
+import com.trippycraft.economy.MarketStock;
 import com.trippycraft.economy.SellableMarketProduct;
 import com.trippycraft.network.MarketActionPacket;
 import com.trippycraft.network.MarketSnapshotPacket;
@@ -250,7 +251,8 @@ public final class VillageMarketScreen extends Screen {
         int y = layout.contentY;
         fillBorder(graphics, x, y, layout.contentWidth, layout.contentHeight, 0xFF130D09, 0xFF251B15);
         graphics.drawString(font, Component.literal("Sell Products"), x + 9, y + 8, TEXT_LIGHT, false);
-        graphics.drawString(font, Component.literal("Demand changes prices, never access."), x + layout.contentWidth - 190, y + 8, TEXT_MUTED, false);
+        Component stockHint = Component.translatable("trippycraft.market.full_stock");
+        graphics.drawString(font, stockHint, x + layout.contentWidth - 9 - font.width(stockHint), y + 8, TEXT_MUTED, false);
 
         int viewportX = x + 7;
         int viewportY = y + 24;
@@ -663,7 +665,7 @@ public final class VillageMarketScreen extends Screen {
         int count = 0;
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (!stack.isEmpty() && stack.is(item)) {
+            if (MarketStock.matches(stack, item)) {
                 count += stack.getCount();
             }
         }
