@@ -6,6 +6,7 @@ New-Item -ItemType Directory -Path (Join-Path $taskRoot 'build') -Force | Out-Nu
     'Vice and Villagers: isolated DMT fractal world GPU validation',
     ('UTC: ' + [DateTime]::UtcNow.ToString('yyyy-MM-dd HH:mm:ss')),
     'Render scope: hidden OpenGL 3.2 context; 128x96 functional/temporal checks, 40-second 30fps cinematic entry, dose/ecology/lane probes, 640x360 previews/GIFs, warmed 720p/1080p GPU timing.',
+    'Checks include every player preset, return settling, world-hue continuity, sampled demanding chapters, same-revision 2048-step nearest-hit reference, and stereo correspondence.',
     'Minecraft and a VR headset are not launched, attached to, or controlled.',
     'These checks validate shader execution and world-space stereo geometry, not live integration, headset comfort, or total game frame time.',
     ''

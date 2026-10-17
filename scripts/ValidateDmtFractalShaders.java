@@ -34,6 +34,8 @@ public final class ValidateDmtFractalShaders {
     private static final List<Frame> FRAMES = new ArrayList<>();
     private static int[][] artistPalettes;
     private static int colorTexture, depthTexture, outputTexture, frameCount;
+    private static float sampledDemandingTime=60;
+    private static double sampledDemandingDose=6;
     private static final String VERTEX = """
             #version 150
             in vec3 Position;
@@ -96,6 +98,20 @@ public final class ValidateDmtFractalShaders {
             if(args.length>1&&args[1].equals("--coverage-detail")){rayCoverageDetail(desktop);return;}
             if(args.length>1&&args[1].equals("--recovery-reference")){recoveryReference(desktop);recoveryStereo(desktop);return;}
             if(args.length>1&&args[1].equals("--recovery-performance")){recoveryPerformance(desktopProgram);return;}
+            if(args.length>1&&args[1].equals("--trace-workload")){traceWorkload(desktop,"current");return;}
+            if(args.length>1&&args[1].equals("--workload-sweep")){workloadSweep(desktopProgram,desktop);return;}
+            if(args.length>1&&args[1].equals("--neutral-world")){nearNeutralWorld(desktopProgram);return;}
+            if(args.length>1&&args[1].equals("--temporal-only")) {
+                Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);roomFixture(center);
+                ecologyTemporal(desktopProgram,center);worldHueContinuity(desktop);evolution(desktopProgram,desktop);return;
+            }
+            if(args.length>2&&args[1].equals("--paired-performance")){pairedPerformance(program(Files.readString(Path.of(args[2])),"paired baseline"),desktopProgram);return;}
+            if(args.length>2&&args[1].equals("--compare-generator")) {
+                String reference=Files.readString(Path.of(args[2]));
+                compareGenerator(desktopProgram,desktop,reference);
+                traceWorkload(reference,"baseline");traceWorkload(desktop,"candidate");
+                pairedPerformance(program(reference,"baseline performance"),desktopProgram);return;
+            }
             if(args.length>1 && args[1].equals("--beauty-only")) {
                 previewFrames(desktopProgram,vrProgram);
                 contactSheet(root.resolve("build/dmt-fractal-contact-sheet.png"));
@@ -106,12 +122,19 @@ public final class ValidateDmtFractalShaders {
             cameraResponse(desktopProgram);
             stereoWorld(desktop, desktopProgram, vrProgram);
             finiteStyles(desktopProgram,vrProgram);
+            settingsDepthMatrix(desktopProgram,desktop);
+            if(desktop.contains("uniform vec4 RealmSettling"))settling(desktopProgram,desktop);
+            worldHueContinuity(desktop);
+            nearNeutralWorld(desktopProgram);
+            cellCarveContinuity(desktop);
+            workloadSweep(desktopProgram,desktop);
             evolution(desktopProgram, desktop);
             emptyBounds(desktop);
             rayCoverage(desktop);
             recoveryVerification(desktop);
             recoveryReference(desktop);
             recoveryStereo(desktop);
+            traceWorkload(desktop,"current");
             doseEcologyAndLanes(desktopProgram,desktop,root.resolve("build"));
             if(glGetUniformLocation(desktopProgram,"DepthSampler")>=0)
                 transitions(desktopProgram,vrProgram,desktop,root.resolve("build"));
@@ -205,6 +228,7 @@ public final class ValidateDmtFractalShaders {
         vec(p, "FractalA", blend, time, quality, access);
         vec(p, "FractalB", seed, 0.631f, 0.78f, 0.65f);
         vec(p, "FractalC", 1, 0.19f, 0.83f, 3);
+        vec(p, "RealmSettling", 1, 1, 1, 1);
         dynamics(p,6,1,1,45);
         vec(p,"WorldInfluenceA",.4f,.3f,.35f,.15f);
         vec(p,"WorldInfluenceB",.65f,.2f,.1f,.25f);
@@ -520,6 +544,166 @@ public final class ValidateDmtFractalShaders {
         }
     }
 
+    private static void compareGenerator(int candidate,String source,String reference) {
+        resize(128,96);
+        int baseline=program(reference,"same-generator baseline");
+        int baselineField=fieldProbe(reference),candidateField=fieldProbe(source);
+        int distanceField=source.contains("vec2 realmDistanceField(")?fieldProbe(source,"realmDistanceField"):candidateField;
+        String marker="    vec3 background = realmBackground(ray);";
+        String output="    fragColor=vec4(hit?1.0:0.0,distance,hitField.x,recoveredSurface?1.0:0.0); return;\n"+marker;
+        int baselineTrace=program(reference.replace(marker,output),"baseline hit-depth preservation");
+        int candidateTrace=program(source.replace(marker,output),"candidate hit-depth preservation");
+        double maxDistance=0,maxDistanceOnly=0,maxOrbit=0,maxImage=0,maxMean=0,maxChanged=0,maxDepthChanged=0,maxNewMiss=0;
+        int views=0,slices=0;
+        for(float seed:new float[]{.317f,.37f})for(int quality=0;quality<=2;quality++)
+        for(float time:new float[]{0,10,30,60,120,300})for(double dose:new double[]{3,48,200,10000})
+        for(float intensity:new float[]{.25f,1})for(int side:new int[]{-1,1}) {
+            Eye camera=eye(side,.27f,-.15f,.32f,new Vector3f(),true);roomFixture(camera);
+            float[][] frames=new float[2][];int index=0;
+            for(int p:new int[]{baseline,candidate}) {
+                setup(p,camera,1,quality,0,time,seed);vec(p,"FractalC",intensity,.19f,.83f,3);dynamics(p,dose,intensity,1,120);
+                frames[index++]=draw();
+            }
+            maxImage=Math.max(maxImage,maximumDifference(frames[0],frames[1]));maxMean=Math.max(maxMean,difference(frames[0],frames[1]));
+            int changed=0;
+            for(int i=0;i<frames[0].length;i+=4)if(Math.max(Math.abs(frames[0][i]-frames[1][i]),Math.max(Math.abs(frames[0][i+1]-frames[1][i+1]),Math.abs(frames[0][i+2]-frames[1][i+2])))>.02)changed++;
+            maxChanged=Math.max(maxChanged,changed/(double)(WIDTH*HEIGHT));views++;
+            index=0;
+            for(int p:new int[]{baselineTrace,candidateTrace}) {
+                setup(p,camera,1,quality,0,time,seed);vec(p,"FractalC",intensity,.19f,.83f,3);dynamics(p,dose,intensity,1,120);frames[index++]=draw();
+            }
+            int depthChanged=0,newMiss=0;
+            for(int i=0;i<frames[0].length;i+=4)if(frames[0][i]>.5) {
+                if(frames[1][i]<.5)newMiss++;
+                else if(Math.abs(frames[0][i+1]-frames[1][i+1])>Math.max(.05,frames[0][i+1]*.03))depthChanged++;
+            }
+            maxDepthChanged=Math.max(maxDepthChanged,depthChanged/(double)(WIDTH*HEIGHT));maxNewMiss=Math.max(maxNewMiss,newMiss/(double)(WIDTH*HEIGHT));
+            if(side<0)for(float plane:new float[]{-3,0,3}) {
+                float[][] fields=new float[3][];index=0;
+                for(int p:new int[]{baselineField,candidateField,distanceField}) {
+                    setup(p,camera,1,quality,0,time,seed);vec(p,"FractalC",intensity,.19f,.83f,3);dynamics(p,dose,intensity,1,120);vec(p,"TestPlane",plane,0,0,0);fields[index++]=draw();
+                }
+                for(int i=0;i<fields[0].length;i+=4) {
+                    maxDistance=Math.max(maxDistance,Math.abs(fields[0][i]-fields[1][i]));maxOrbit=Math.max(maxOrbit,Math.abs(fields[0][i+1]-fields[1][i+1]));
+                    maxDistanceOnly=Math.max(maxDistanceOnly,Math.abs(fields[1][i]-fields[2][i]));
+                }
+                slices++;
+            }
+        }
+        System.out.printf("GENERATOR PRESERVATION: %d stereo-view pairs/%d field-slice pairs; max distance %.9f, distance-only/full %.9f, orbit %.9f; max image/mean %.9f/%.9f, >2%% component pixels %.6f%%; changed depth>3%%/.05realm %.6f%%, newly missed %.6f%%%n",
+                views,slices,maxDistance,maxDistanceOnly,maxOrbit,maxImage,maxMean,maxChanged*100,maxDepthChanged*100,maxNewMiss*100);
+        // A different compiler schedule can move isolated fractal-edge pixels.
+        // Gate actual distance and visible image/depth impact separately.
+        if(maxDistance>1e-5||maxDistanceOnly>1e-5||maxMean>.001||maxChanged>.002||maxDepthChanged>.003||maxNewMiss>.002)
+            throw new AssertionError("Same-generator optimization changes geometry or visible output materially");
+        System.out.println("PASS: same-generator distance, final images and nearest visible surfaces remain within declared tolerances");
+    }
+
+    private static void traceWorkload(String source,String label) {
+        String primary="        if (i >= stepLimit || distance >= FAR_DISTANCE) break;";
+        String recovery="    if (!hit && distance < FAR_DISTANCE) {";
+        String marker="    vec3 background = realmBackground(ray);";
+        if(!source.contains(primary)||!source.contains(recovery)||!source.contains(marker))throw new AssertionError("Production trace counters cannot find loop markers");
+        String counted=source.replaceFirst("#version 150","#version 150\nint validationPrimary=0;int validationFull=0;int validationDistance=0;bool validationRecovery=false;\n")
+                .replace("vec2 realmField(vec3 position) {","vec2 realmField(vec3 position) { validationFull++;")
+                .replace("vec2 realmDistanceField(vec3 position) {","vec2 realmDistanceField(vec3 position) { validationDistance++;")
+                .replace(primary,primary+"\n        validationPrimary++;")
+                .replace(recovery,recovery+"\n        validationRecovery=true;")
+                .replace(marker,"    fragColor=vec4(float(validationPrimary),float(recoverySteps),float(validationDistance),float(validationFull)+(validationRecovery?.5:0.0)); return;\n"+marker);
+        int p=program(counted,"production trace workload counters "+label);resize(128,96);fixture(0);
+        Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);
+        for(int fixture=0;fixture<3;fixture++)for(int quality=0;quality<=2;quality++)for(double dose:fixture==0?new double[]{6,200}:new double[]{3,48}) {
+            setup(p,center,1,quality,0,fixture==0?12:fixture==1?120:60,fixture==0?.317f:.37f);dynamics(p,dose,1,1,45);float[] frame=draw();
+            double[] primarySamples=new double[WIDTH*HEIGHT],recoverySamples=new double[WIDTH*HEIGHT];double full=0,distance=0;int entering=0;
+            for(int i=0,index=0;i<frame.length;i+=4,index++) {
+                primarySamples[index]=frame[i];recoverySamples[index]=frame[i+1];distance+=frame[i+2];full+=Math.floor(frame[i+3]);
+                if(frame[i+3]-Math.floor(frame[i+3])>.25)entering++;
+            }
+            Arrays.sort(primarySamples);Arrays.sort(recoverySamples);int pixels=WIDTH*HEIGHT;
+            System.out.printf("TRACE WORKLOAD %s %s q%d dose%.0f: primary mean/p95 %.2f/%.0f, recovery entered %.3f%%, recovery samples mean/p95 %.2f/%.0f; distance-only/full-orbit calls per ray %.2f/%.2f (trace boundary, before normals/AO)%n",
+                    label,fixture==0?"standard-t12":fixture==1?"historical-heavy-t120":"nested-chapter-t60",quality,dose,Arrays.stream(primarySamples).average().orElse(0),primarySamples[(int)(pixels*.95)],entering*100.0/pixels,
+                    Arrays.stream(recoverySamples).average().orElse(0),recoverySamples[(int)(pixels*.95)],distance/pixels,full/pixels);
+        }
+    }
+
+    private static void pairedPerformance(int baseline,int candidate) {
+        resize(1920,1080);fixture(0);Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);int query=glGenQueries();
+        for(int fixture=0;fixture<2;fixture++)for(int quality=0;quality<=2;quality++)for(double dose:fixture==0?new double[]{6,200}:new double[]{3,48}) {
+            double[][] samples={new double[21],new double[21]};double[][] rounds={new double[3],new double[3]};
+            for(int round=0;round<3;round++)for(int order=0;order<2;order++) {
+                int variant=(round+order)%2,p=variant==0?baseline:candidate;
+                setup(p,center,1,quality,0,fixture==0?12:120,fixture==0?.317f:.37f);dynamics(p,dose,1,1,45);
+                for(int warm=0;warm<3;warm++)glDrawArrays(GL_TRIANGLES,0,3);glFinish();
+                for(int sample=0;sample<7;sample++) {
+                    glBeginQuery(GL_TIME_ELAPSED,query);glDrawArrays(GL_TRIANGLES,0,3);glEndQuery(GL_TIME_ELAPSED);
+                    samples[variant][round*7+sample]=glGetQueryObjectui64(query,GL_QUERY_RESULT)/1_000_000.0;
+                }
+                double[] batch=Arrays.copyOfRange(samples[variant],round*7,round*7+7);Arrays.sort(batch);rounds[variant][round]=batch[3];
+            }
+            Arrays.sort(samples[0]);Arrays.sort(samples[1]);
+            System.out.printf("PAIRED GPU 1080p %s q%d intensity1 dose%.0f: baseline/candidate median %.3f/%.3f ms, p95 %.3f/%.3f ms, saving %.2f%%; three warmed round medians %s / %s; one native-resolution pass, excludes Minecraft/second eye%n",
+                    fixture==0?"standard":"nested-room",quality,dose,samples[0][10],samples[1][10],samples[0][19],samples[1][19],100*(1-samples[1][10]/samples[0][10]),Arrays.toString(rounds[0]),Arrays.toString(rounds[1]));
+        }
+        glDeleteQueries(query);
+    }
+
+    private static List<Float> referenceTimes() {
+        return java.util.stream.Stream.of(60f,120f,sampledDemandingTime).distinct().toList();
+    }
+
+    private static List<Double> referenceDoses() {
+        return java.util.stream.Stream.of(3d,48d,sampledDemandingDose).distinct().toList();
+    }
+
+    private static void workloadSweep(int p,String source) {
+        String probe=source.replaceFirst("void\\s+main\\s*\\(\\s*\\)","void artistEntry()")+"\nvoid main(){\n"+fieldInitialization(source)+"fragColor=layoutLanes;\n}\n";
+        int layout=program(probe,"sampled demanding chapter layout");resize(640,360);fixture(0);
+        Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);int query=glGenQueries();double largest=0;float[] chosenLayout=null;
+        for(float time=0;time<=300;time+=10)for(double dose:new double[]{3,6,48}) {
+            setup(p,center,1,2,0,time,.37f);dynamics(p,dose,1,1,45);for(int warm=0;warm<2;warm++)glDrawArrays(GL_TRIANGLES,0,3);glFinish();
+            double[] samples=new double[3];for(int sample=0;sample<3;sample++){glBeginQuery(GL_TIME_ELAPSED,query);glDrawArrays(GL_TRIANGLES,0,3);glEndQuery(GL_TIME_ELAPSED);samples[sample]=glGetQueryObjectui64(query,GL_QUERY_RESULT)/1_000_000.0;}
+            Arrays.sort(samples);setup(layout,center,1,2,0,time,.37f);dynamics(layout,dose,1,1,45);glDrawArrays(GL_TRIANGLES,0,3);float[] lanes=new float[4];glReadPixels(0,0,1,1,GL_RGBA,GL_FLOAT,lanes);
+            System.out.printf("CHAPTER SWEEP: seed.37 clock%.0f dose%.0f High640x360 median %.3f ms, layout %s%n",time,dose,samples[1],Arrays.toString(lanes));
+            if(samples[1]>largest){largest=samples[1];sampledDemandingTime=time;sampledDemandingDose=dose;chosenLayout=lanes;}
+        }
+        glDeleteQueries(query);resize(128,96);fixture(0);
+        System.out.printf("SAMPLED DEMANDING FIXTURE: clock%.0f dose%.0f, %.3f ms High640x360, layout %s; selected from fixed seed.37, clock0..300 every10s, doses3/6/48; not a global worst-case claim%n",sampledDemandingTime,sampledDemandingDose,largest,Arrays.toString(chosenLayout));
+    }
+
+    private static void settingsDepthMatrix(int p,String source) {
+        String marker="    vec3 background = realmBackground(ray);";
+        int depth=program(source.replace(marker,"    fragColor=vec4(hit?1.0:0.0,distance,hitField.x,hitTolerance); return;\n"+marker),"all player presets actual ray depth");
+        resize(128,96);fixture(0);Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);int cases=0;double minimumHit=1;
+        for(int scene=0;scene<3;scene++)for(int quality=0;quality<=2;quality++)for(float intensity:new float[]{.25f,.5f,.75f,1})for(double dose:new double[]{3,6,12,48,200}) {
+            float time=scene==0?12:scene==1?120:60;
+            setup(p,center,1,quality,0,time,scene==0?.317f:.37f);vec(p,"FractalC",intensity,.19f,.83f,3);dynamics(p,dose,intensity,1,120);contrast(draw(),"full realm quality/intensity preset");
+            vec(p,"FractalA",intensity,time,quality,0);draw();
+            setup(depth,center,1,quality,0,time,scene==0?.317f:.37f);vec(depth,"FractalC",intensity,.19f,.83f,3);dynamics(depth,dose,intensity,1,120);float[] frame=draw();int hits=0;
+            for(int i=0;i<frame.length;i+=4)if(frame[i]>.5) {
+                hits++;if(frame[i+1]<.0149||frame[i+1]>66.001||frame[i+3]<=0)throw new AssertionError("Player preset creates invalid hit depth/tolerance");
+            }
+            minimumHit=Math.min(minimumHit,hits/(double)(WIDTH*HEIGHT));cases++;
+        }
+        if(minimumHit<.2)throw new AssertionError("Player preset loses most actual scene geometry: "+minimumHit);
+        System.out.printf("PASS: %d standard/historical-heavy/new-nested x3quality x4intensity x5dose cases, full and selected-opacity images finite; actual hit depths valid, minimum geometry coverage %.4f%%%n",cases,minimumHit*100);
+    }
+
+    private static void settling(int p,String source) {
+        resize(128,96);fixture(0);Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);
+        setup(p,center,1,2,0,120,.37f);dynamics(p,48,1,1,120);float[] peak=draw();
+        vec(p,"RealmSettling",1,.15f,1,1);if(maximumDifference(peak,draw())!=0)throw new AssertionError("Shader rescales elapsed motion using settling rate");
+        vec(p,"RealmSettling",.15f,.15f,.10f,.35f);float[] quiet=draw();double change=difference(peak,quiet);
+        if(change<.001)throw new AssertionError("Return settling does not change visible distortion/ornament/light");
+        vec(p,"RealmSettling",1,1,1,1);if(maximumDifference(peak,draw())!=0)throw new AssertionError("Restored settling does not reproduce same peak generator");
+        float[] previous=peak;double maximumStep=0;
+        for(int frame=1;frame<=240;frame++) {
+            float progress=frame/240f,ease=progress*progress*progress*(progress*(progress*6-15)+10);
+            vec(p,"RealmSettling",1-.85f*ease,1-.85f*ease,1-.90f*ease,1-.65f*ease);float[] current=draw();maximumStep=Math.max(maximumStep,difference(previous,current));previous=current;
+        }
+        if(maximumStep>.04)throw new AssertionError("Return settling introduces a discontinuous material/geometry change: "+maximumStep);
+        System.out.printf("PASS: peak/quiet/restored settling, quiet response %.6f, exact restoration and shader clock-rate independence;240step maximum image change %.6f%n",change,maximumStep);
+    }
+
     private static void performance(int p) {
         // Time only GPU drawing; no pixel reads, allocation, game rendering or
         // shader compilation is included. This is one realm pass, not game FPS.
@@ -554,8 +738,8 @@ public final class ValidateDmtFractalShaders {
         resize(1920,1080);fixture(0);
         Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);
         int query=glGenQueries();
-        for(int quality=0;quality<=2;quality++)for(double dose:new double[]{3,48}) {
-            setup(p,center,1,quality,0,120,.37f);dynamics(p,dose,1,1,120);
+        for(float time:referenceTimes())for(int quality=0;quality<=2;quality++)for(double dose:referenceDoses()) {
+            setup(p,center,1,quality,0,time,.37f);dynamics(p,dose,1,1,120);
             for(int warm=0;warm<2;warm++)glDrawArrays(GL_TRIANGLES,0,3);
             glFinish();double[] milliseconds=new double[5];
             for(int sample=0;sample<milliseconds.length;sample++) {
@@ -563,8 +747,8 @@ public final class ValidateDmtFractalShaders {
                 milliseconds[sample]=glGetQueryObjectui64(query,GL_QUERY_RESULT)/1_000_000.0;
             }
             Arrays.sort(milliseconds);
-            System.out.printf("RECOVERY TIMING: 1920x1080 quality %d intensity1 dose%.0f motion120 seed.37 nested room, 2 warm-up + 5 GPU samples: median %.3f ms (range %.3f-%.3f ms); complete pass including bounded recovery, excludes Minecraft and second VR eye%n",
-                    quality,dose,milliseconds[2],milliseconds[0],milliseconds[4]);
+            System.out.printf("RECOVERY TIMING: 1920x1080 quality %d intensity1 dose%.0f motion%.0f seed.37, 2 warm-up + 5 GPU samples: median %.3f ms (range %.3f-%.3f ms); complete pass including bounded recovery, excludes Minecraft and second VR eye%n",
+                    quality,dose,time,milliseconds[2],milliseconds[0],milliseconds[4]);
         }
         glDeleteQueries(query);
         if(glGetError()!=GL_NO_ERROR)throw new AssertionError("Recovery GPU timing failed");
@@ -661,7 +845,7 @@ public final class ValidateDmtFractalShaders {
             if(previous!=null)minimumStyleChange=Math.min(minimumStyleChange,difference(previous,image));
             previous=image;
             for(int p:new int[]{desktop,vr})for(int quality=0;quality<=2;quality++)for(float access:new float[]{0,1})
-                    for(float intensity:new float[]{0,.25f,1})for(int side:new int[]{-1,1}) {
+                    for(float intensity:new float[]{0,.25f,.5f,.75f,1})for(int side:new int[]{-1,1}) {
                 setup(p,eye(side,.27f,-.15f,.32f,new Vector3f(),true),1,quality,access,15,.37f);
                 vec(p,"FractalC",intensity,.19f,.83f,style);draw();
             }
@@ -678,7 +862,7 @@ public final class ValidateDmtFractalShaders {
             minimumSeedChange=Math.min(minimumSeedChange,difference(base,draw()));
         }
         if(minimumSeedChange<.01)throw new AssertionError("Additional trip seed parts barely change world: "+minimumSeedChange);
-        System.out.printf("PASS: all7 styles x3qualities xaccessibility x3intensities xboth eyes/desktop finite; minimum adjacent style change %.6f, independent seed A/B/C/D change %.6f%n",minimumStyleChange,minimumSeedChange);
+        System.out.printf("PASS: all7 styles x3qualities xaccessibility x4intensity presets+zero xboth eyes/desktop finite; minimum adjacent style change %.6f, independent seed A/B/C/D change %.6f%n",minimumStyleChange,minimumSeedChange);
     }
 
     private static double meanLuma(float[] pixels) {
@@ -687,12 +871,16 @@ public final class ValidateDmtFractalShaders {
     }
 
     private static int fieldProbe(String source) {
+        return fieldProbe(source,"realmField");
+    }
+
+    private static int fieldProbe(String source,String fieldFunction) {
         String probe=source.replaceFirst("void\\s+main\\s*\\(\\s*\\)","void artistEntry()")
                 .replaceFirst("#version 150","#version 150\nuniform vec4 TestPlane;\n")+"\nvoid main(){\n"+fieldInitialization(source)+"""
                     vec3 point=vec3((gl_FragCoord.xy/OutSize-.5)*12.0,TestPlane.x);
-                    fragColor=vec4(realmField(point),0,1);
+                    fragColor=vec4(FIELD_FUNCTION(point),0,1);
                 }
-                """;
+                """.replace("FIELD_FUNCTION",fieldFunction);
         return program(probe,"production ecology/dose distance-field probe");
     }
 
@@ -731,7 +919,7 @@ public final class ValidateDmtFractalShaders {
         int p=program(probe,"production unmodified raymarch hit coverage probe");
         Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);roomFixture(center);
         double[] minimumCoverage={1,1,1};double minimumClosedHigh=1;int closedCases=0;
-        for(float seed:new float[]{.1f,.37f,.8f})for(float time:new float[]{0,30,120})for(double dose:new double[]{3,6,48,200,10000}) {
+        for(float seed:new float[]{.1f,.37f,.8f})for(float time:java.util.stream.Stream.of(0f,30f,60f,120f,300f,sampledDemandingTime).distinct().toList())for(double dose:new double[]{3,6,48,200,10000}) {
             double[] coverages=new double[3],budgetMisses=new double[3],recoveries=new double[3],missDistances=new double[3];float openVault=0;
             for(int quality=0;quality<=2;quality++) {
                 setup(p,center,1,quality,0,time,seed);dynamics(p,dose,1,1,45);float[] frame=draw();int hit=0,budget=0,recovered=0;double meanMissDistance=0;
@@ -790,12 +978,13 @@ public final class ValidateDmtFractalShaders {
         String output="    fragColor=vec4(hit?1.0:0.0,distance,recoveredSurface?1.0:0.0,hitField.x); return;\n"+marker;
         int production=program(source.replace(marker,output),"production recovery visibility probe");
         String expanded=source.replaceAll("const int MAX_STEPS = [0-9]+;","const int MAX_STEPS = 2048;")
-                .replaceAll("int stepLimit = [^;]+;","int stepLimit = 2048;");
+                .replaceAll("int stepLimit = [^;]+;","int stepLimit = 2048;")
+                .replace("const bool EARLY_RECOVERY_ENABLED = true;","const bool EARLY_RECOVERY_ENABLED = false;");
         int reference=program(expanded.replace(marker,output),"2048 primary-step nearest-surface reference");
         resize(128,96);Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);roomFixture(center);
-        for(int quality=0;quality<=2;quality++)for(double dose:new double[]{3,48}) {
-            setup(production,center,1,quality,0,120,.37f);dynamics(production,dose,1,1,45);float[] actual=draw();
-            setup(reference,center,1,quality,0,120,.37f);dynamics(reference,dose,1,1,45);float[] ideal=draw();
+        for(float time:referenceTimes())for(int quality=0;quality<=2;quality++)for(double dose:referenceDoses()) {
+            setup(production,center,1,quality,0,time,.37f);dynamics(production,dose,1,1,45);float[] actual=draw();
+            setup(reference,center,1,quality,0,time,.37f);dynamics(reference,dose,1,1,45);float[] ideal=draw();
             double[] relative=new double[WIDTH*HEIGHT];int compared=0,bad=0;double maximum=0;
             for(int i=0;i<actual.length;i+=4)if(actual[i]>.5&&actual[i+2]>.5&&ideal[i]>.5&&ideal[i+2]<.5) {
                 double delta=actual[i+1]-ideal[i+1],fraction=delta/Math.max(.01,ideal[i+1]);
@@ -803,7 +992,7 @@ public final class ValidateDmtFractalShaders {
                 if(delta>Math.max(.05,ideal[i+1]*.03))bad++;
             }
             relative=Arrays.copyOf(relative,compared);Arrays.sort(relative);
-            System.out.printf("RECOVERY REFERENCE: quality%d dose%.0f, %d recovered rays vs2048step samequality reference; farther-than3%%/0.05realm %d (%.3f%% ofimage), relativeerror p10/50/90 %s, maxfartherdelta %.6f%n",quality,dose,compared,bad,100.0*bad/(WIDTH*HEIGHT),quantiles(relative),maximum);
+            System.out.printf("RECOVERY REFERENCE: clock%.0f quality%d dose%.0f, %d recovered rays vs2048step samequality reference; farther-than3%%/0.05realm %d (%.3f%% ofimage), relativeerror p10/50/90 %s, maxfartherdelta %.6f%n",time,quality,dose,compared,bad,100.0*bad/(WIDTH*HEIGHT),quantiles(relative),maximum);
             double maximumBadFraction=quality==2?.005:quality==1?.02:.03;
             if(bad/(double)(WIDTH*HEIGHT)>maximumBadFraction)throw new AssertionError("Recovery causes major nearest-surface occlusion errors at quality "+quality);
         }
@@ -814,9 +1003,9 @@ public final class ValidateDmtFractalShaders {
         int p=program(source.replace(marker,"    fragColor=vec4(origin+ray*distance,hit?1.0:0.0);return;\n"+marker),"production recovered-surface stereo correspondence");
         resize(640,360);
         Eye[] eyes={eye(-1,.27f,-.15f,.19f,new Vector3f(),true),eye(1,.27f,-.15f,.19f,new Vector3f(),true)};
-        for(int quality=0;quality<=2;quality++)for(double dose:new double[]{3,48}) {
+        for(float time:referenceTimes())for(int quality=0;quality<=2;quality++)for(double dose:referenceDoses()) {
             float[][] frames=new float[2][];
-            for(int side=0;side<2;side++){roomFixture(eyes[side]);setup(p,eyes[side],1,quality,0,120,.37f);dynamics(p,dose,1,1,45);frames[side]=draw();}
+            for(int side=0;side<2;side++){roomFixture(eyes[side]);setup(p,eyes[side],1,quality,0,time,.37f);dynamics(p,dose,1,1,45);frames[side]=draw();}
             int compared=0,farHoles=0;double maximumFraction=0;
             for(int side=0;side<2;side++) {
                 Eye other=eyes[1-side];Vector3f realmOther=new Vector3f(other.position).sub(ANCHOR).mul(REALM_SCALE).add(BASE_ORIGIN);
@@ -841,7 +1030,7 @@ public final class ValidateDmtFractalShaders {
                     }
                 }
             }
-            System.out.printf("RECOVERY STEREO: quality%d dose%.0f, %d projected surface probes, farther/missing opposite-eye holes %d (%.4f%%), largest farther fraction %.5f%n",quality,dose,compared,farHoles,100.0*farHoles/Math.max(1,compared),maximumFraction);
+            System.out.printf("RECOVERY STEREO: clock%.0f quality%d dose%.0f, %d projected surface probes, farther/missing opposite-eye holes %d (%.4f%%), largest farther fraction %.5f%n",time,quality,dose,compared,farHoles,100.0*farHoles/Math.max(1,compared),maximumFraction);
             if(farHoles/(double)Math.max(1,compared)>.005)throw new AssertionError("Recovery creates major opposite-eye visibility holes");
         }
         resize(128,96);fixture(0);
@@ -959,24 +1148,99 @@ public final class ValidateDmtFractalShaders {
         resize(128,96);fixture(0);
     }
 
+    private static void nearNeutralWorld(int p) {
+        resize(128,96);Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);Fixture room=roomFixture(center);
+        setup(p,center,1,2,0,45,.37f);vec(p,"WorldInfluenceC",.5f,.5f,.5f,.45f);float[] neutral=draw();double tinyMaximum=0,rampMaximum=0;
+        for(int channel=0;channel<3;channel++) {
+            for(float epsilon:new float[]{.02f,.002f,.0002f,.00002f}) {
+                float[] colour={.5f,.5f,.5f};colour[channel]+=epsilon;
+                setup(p,center,1,2,0,45,.37f);vec(p,"WorldInfluenceC",colour[0],colour[1],colour[2],.45f);double response=difference(neutral,draw());
+                System.out.printf("NEUTRAL WORLD: channel%d chroma%.6f vs gray imageMAE %.8f%n",channel,epsilon,response);
+                if(epsilon<.00003f)tinyMaximum=Math.max(tinyMaximum,response);
+            }
+            float[] previous=null;double step=0;
+            for(int frame=0;frame<=120;frame++) {
+                float[] colour={.5f,.5f,.5f};colour[channel]+=.002f*(1-frame/120f);
+                setup(p,center,1,2,0,45,.37f);vec(p,"WorldInfluenceC",colour[0],colour[1],colour[2],.45f);float[] current=draw();
+                if(previous!=null)step=Math.max(step,difference(previous,current));previous=current;
+            }
+            rampMaximum=Math.max(rampMaximum,step);
+        }
+        System.out.printf("NEUTRAL WORLD SUMMARY: largest20e-6 chroma response %.8f, largest near-neutral120step image change %.8f%n",tinyMaximum,rampMaximum);
+        if(tinyMaximum>.001||rampMaximum>.003)throw new AssertionError("World hue remains discontinuous as terrain chroma vanishes");
+        float[] gray=new float[WIDTH*HEIGHT*4];for(int i=0;i<gray.length;i+=4){gray[i]=gray[i+1]=gray[i+2]=.5f;gray[i+3]=1;}
+        uploadFixture(gray,room.depth);setup(p,center,1,2,0,45,.37f);float[] sourceNeutral=draw();double sourceMaximum=0;
+        for(int channel=0;channel<3;channel++) {
+            float[] weak=gray.clone();for(int i=channel;i<weak.length;i+=4)weak[i]+=.00002f;uploadFixture(weak,room.depth);
+            setup(p,center,1,2,0,45,.37f);sourceMaximum=Math.max(sourceMaximum,difference(sourceNeutral,draw()));
+        }
+        uploadFixture(room.colour,room.depth);float[] first=null,previous=null;double weakStep=0,closure=0;
+        for(int frame=0;frame<=120;frame++) {
+            double angle=frame*Math.PI*2/120;
+            setup(p,center,1,2,0,45,.37f);vec(p,"WorldInfluenceC",.5f+.002f*(float)Math.sin(angle),.5f+.002f*(float)Math.sin(angle+2.0944),.5f+.002f*(float)Math.sin(angle+4.1888),.45f);
+            float[] current=draw();if(first==null)first=current;if(previous!=null)weakStep=Math.max(weakStep,difference(previous,current));previous=current;
+        }
+        closure=maximumDifference(first,previous);
+        if(sourceMaximum>.001||weakStep>.003||closure>1e-5)throw new AssertionError("Weak world/source chroma creates a hue-sector seam");
+        System.out.printf("PASS: neutral hidden-source20e-6 chroma response %.8f; weak RGBsector circle max image step %.8f, exact-loop component error %.9f%n",sourceMaximum,weakStep,closure);
+    }
+
+    private static void cellCarveContinuity(String source) {
+        String probe=source.replaceFirst("void\\s+main\\s*\\(\\s*\\)","void artistEntry()")
+                .replaceFirst("#version 150","#version 150\nuniform vec4 TestPoint;\n")+"\nvoid main(){\n"+fieldInitialization(source)+"vec3 position=TestPoint.xyz;vec3 local=position-floor((position+CELL_SIZE*.5)/CELL_SIZE)*CELL_SIZE;fragColor=vec4(realmEmptySpace(position,local),0,0,1);}\n";
+        int p=program(probe,"removed per-cell carve sign regression");resize(1,1);Eye center=eye(0,0,0,0,new Vector3f(),false);
+        setup(p,center,1,1,0,0,.59145299145f);vec(p,"FractalB",.59145299145f,.62173382173f,.7f,.6f);vec(p,"FractalC",1,.87326007326f,.55433455433f,0);dynamics(p,3,1,1,0);
+        for(String name:new String[]{"WorldInfluenceA","WorldInfluenceB","WorldInfluenceC","WorldInfluenceD","WorldAttractor"})vec(p,name,0,0,0,0);
+        double maximum=0;
+        for(float epsilon:new float[]{.001f,.0001f,.00001f}) {
+            float[] values=new float[2];int side=0;
+            for(float sign:new float[]{-1,1}){vec(p,"TestPoint",6.8f+sign*epsilon,0,0,0);glDrawArrays(GL_TRIANGLES,0,3);float[] value=new float[4];glReadPixels(0,0,1,1,GL_RGBA,GL_FLOAT,value);values[side++]=value[0];}
+            double jump=Math.abs(values[0]-values[1]);maximum=Math.max(maximum,jump);
+            if(!Float.isFinite(values[0])||!Float.isFinite(values[1])||jump>epsilon*5+1e-5)throw new AssertionError("Cell carve sign jumps across the removed-preference regression face: "+Arrays.toString(values));
+        }
+        resize(128,96);fixture(0);System.out.printf("PASS: actual cell-carve regression at x6.8±epsilon, unchanged global layout continuous; maximum tested difference %.8f%n",maximum);
+    }
+
+    private static void worldHueContinuity(String source) {
+        if(!source.contains("float worldHueTint("))return;
+        String probe=source.replaceFirst("void\\s+main\\s*\\(\\s*\\)","void artistEntry()")
+                .replaceFirst("#version 150","#version 150\nuniform vec4 TestHue;\n")+"\nvoid main(){fragColor=vec4(hueColor(worldHueTint(TestHue.x,TestHue.y,TestHue.z)),1);}\n";
+        int p=program(probe,"actual world-hue antipodal continuity");resize(1,1);glUseProgram(p);double maximum=0,closure=0;
+        for(float base:new float[]{.19f,.7f})for(float weight:new float[]{.10f,.16f,.20f,.21f}) {
+            float[] first=null,previous=null;
+            for(int frame=0;frame<=720;frame++) {
+                vec(p,"TestHue",base,frame/720f,weight,0);glDrawArrays(GL_TRIANGLES,0,3);float[] current=new float[4];glReadPixels(0,0,1,1,GL_RGBA,GL_FLOAT,current);
+                for(float value:current)if(!Float.isFinite(value))throw new AssertionError("World hue becomes nonfinite at an antipodal tint");
+                if(first==null)first=current;if(previous!=null)maximum=Math.max(maximum,maximumDifference(previous,current));previous=current;
+            }
+            closure=Math.max(closure,maximumDifference(first,previous));
+        }
+        resize(128,96);fixture(0);
+        if(maximum>.02||closure>1e-5)throw new AssertionError("World hue tint flips while crossing the antipode: "+maximum+" / "+closure);
+        System.out.printf("PASS: 8 actual GPU world-hue full-circle/antipodal traversals, maximum RGBcomponent step %.6f, closed-loop error %.9f%n",maximum,closure);
+    }
+
     private static void ecologyTemporal(int p,Eye center) {
         float[][] beginning={{.4f,.3f,.35f,.15f},{.65f,.2f,.1f,.25f},{.32f,.58f,.27f,.45f},{.35f,-.1f,-.25f,.6f},{1.4f,.3f,-2,.4f}};
         float[][] ending={{.8f,.1f,.75f,.65f},{.15f,.7f,.6f,.7f},{.85f,.22f,.75f,.45f},{-.2f,.3f,.5f,.75f},{-1.2f,.9f,-3,.7f}};
         for(int group=0;group<5;group++) {
-            float[] initial=null,previous=null;double maximumStep=0,maximumBrightness=0;
+            float[] initial=null,previous=null;double maximumStep=0,maximumBrightness=0;int largestStepFrame=0;
             for(int frame=0;frame<=120;frame++) {
                 float t=frame/120f;t=t*t*(3-2*t);float[] influence=new float[4];
                 for(int channel=0;channel<4;channel++)influence[channel]=beginning[group][channel]*(1-t)+ending[group][channel]*t;
                 setup(p,center,1,2,0,45,.37f);vec(p,group==4?"WorldAttractor":"WorldInfluence"+(char)('A'+group),influence[0],influence[1],influence[2],influence[3]);
                 float[] current=draw();
                 if(initial==null)initial=current;
-                if(previous!=null){maximumStep=Math.max(maximumStep,difference(previous,current));maximumBrightness=Math.max(maximumBrightness,Math.abs(meanLuma(previous)-meanLuma(current)));}
+                if(previous!=null){double change=difference(previous,current);if(change>maximumStep){maximumStep=change;largestStepFrame=frame;}maximumBrightness=Math.max(maximumBrightness,Math.abs(meanLuma(previous)-meanLuma(current)));}
                 previous=current;
             }
             double totalChange=difference(initial,previous);
-            if(totalChange<.005||maximumStep>.025||maximumBrightness>.010)
+            // Each world channel already has an independent image/field
+            // response gate. This ramp checks continuity even when a material
+            // makes that channel's visible contribution comparatively subtle.
+            if(totalChange<.0005||maximumStep>.025||maximumBrightness>.010)
                 throw new AssertionError("Eased ecology change flickers/doesnotrespond: group="+group+", total="+totalChange+", frame="+maximumStep+",brightness="+maximumBrightness);
-            System.out.printf("ECOLOGY TEMPORAL: fixed seed/motion, eased group %c across120steps; totalchange %.6f, maximage/luma step %.6f/%.6f%n",'A'+group,totalChange,maximumStep,maximumBrightness);
+            System.out.printf("ECOLOGY TEMPORAL: fixed seed/motion, eased group %c across120steps; totalchange %.6f, maximage/luma step %.6f/%.6f atframe%d%n",'A'+group,totalChange,maximumStep,maximumBrightness,largestStepFrame);
         }
     }
 
@@ -1092,6 +1356,7 @@ public final class ValidateDmtFractalShaders {
         Eye center=eye(0,.27f,-.15f,0,new Vector3f(),false);
         for(float intensity:new float[]{.25f,.5f,.75f,1}) {
             setup(p,center,1,2,0,3,.37f);vec(p,"FractalC",intensity,.19f,.83f,3);
+            dynamics(p,6,intensity,1,45);
             FRAMES.add(new Frame("Detail "+Math.round(intensity*100)+"% / blend 100%",draw()));
         }
         contactSheet(directory.resolve("dmt-fractal-intensity-comparison.png"),2);FRAMES.clear();

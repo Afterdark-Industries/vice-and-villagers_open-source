@@ -254,6 +254,7 @@ public final class ValidateVrShaders {
                 vec(p, "LayersC", 0.21f, 0.61f, strong ? 2.5f : 1.3f, 45);
             }
             case "dmt_fractal" -> {
+                vec(p, "RealmSettling", 1, 1, 1, 1);
                 vec(p, "FractalA", strong ? 1 : 0.5f, time, 1, access);
                 vec(p, "FractalB", 0.317f, 0.631f, 0.78f, 0.65f);
                 vec(p, "FractalC", strong ? 1 : 0.5f, 0.19f, 0.83f, 3);

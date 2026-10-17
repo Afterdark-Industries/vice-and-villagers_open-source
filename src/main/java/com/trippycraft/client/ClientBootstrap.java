@@ -82,6 +82,8 @@ public final class ClientBootstrap {
         gameEventBus.addListener(ClientWorldHallucinations::onClientTick);
         gameEventBus.addListener(HoMetTrailRenderer::onClientTick);
         gameEventBus.addListener(HoMetClientSmokeTest::onClientTick);
+        gameEventBus.addListener(DmtClientSmokeTest::onClientTick);
+        gameEventBus.addListener(EventPriority.LOWEST, DmtClientSmokeTest::onRenderLevelStage);
         gameEventBus.addListener(GuiSmokeCheck::onClientTick);
         gameEventBus.addListener(TwoCeClientSmokeTest::onClientTick);
         gameEventBus.addListener(AlLadClientSmokeTest::onClientTick);

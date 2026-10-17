@@ -200,6 +200,17 @@ public final class ValidateDmtFractalControls {
                 }
                 """);
         doubles.put("com/trippycraft/client/DmtFractalControlProbe.java", PROBE);
+        runFixtures(root, sources, classes, doubles, new String[]{"client/DmtFractalWorldPass.java","client/DmtRealmDynamics.java",
+                "substance/PsychedelicBlendState.java","substance/CompositeEffectResolver.java"},
+                "com.trippycraft.client.DmtFractalControlProbe");
+        runSamplerFixtures(root, work.resolve("sampler"));
+        System.out.println("Scope: production controller, dose/cinematic helper, blend resolver and loaded-world sampler executed with isolated dependency doubles.");
+        System.out.println("Not covered: NeoForge config disk persistence, key events, Minecraft framegraph, live pause or a VR headset.");
+    }
+
+    private static void runFixtures(Path root, Path sources, Path classes, Map<String,String> doubles,
+                                    String[] productionFiles, String probe) throws Exception {
+        Files.createDirectories(classes);
         ArrayList<String> compile = new ArrayList<>();
         compile.addAll(java.util.List.of("-proc:none","-d",classes.toString()));
         for (var source : doubles.entrySet()) {
@@ -208,24 +219,219 @@ public final class ValidateDmtFractalControls {
             Files.writeString(file,source.getValue());
             compile.add(file.toString());
         }
-        for (String production : new String[]{"client/DmtFractalWorldPass.java","client/DmtRealmDynamics.java",
-                "substance/PsychedelicBlendState.java","substance/CompositeEffectResolver.java"}) {
+        for (String production : productionFiles) {
             compile.add(root.resolve("src/main/java/com/trippycraft/"+production).toString());
         }
         var compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) throw new IllegalStateException("A Java 21 JDK is required");
         if (compiler.run(null,System.out,System.err,compile.toArray(String[]::new)) != 0)
-            throw new AssertionError("Production pass and isolated fixtures did not compile");
+            throw new AssertionError("Production sources and isolated fixtures did not compile: "+probe);
         try (URLClassLoader loader = new URLClassLoader(new java.net.URL[]{classes.toUri().toURL()},
                 ClassLoader.getPlatformClassLoader())) {
-            loader.loadClass("com.trippycraft.client.DmtFractalControlProbe").getMethod("run").invoke(null);
+            loader.loadClass(probe).getMethod("run").invoke(null);
         } catch (InvocationTargetException exception) {
             if(exception.getCause() instanceof Error error) throw error;
             throw exception;
         }
-        System.out.println("Scope: production controller + dose/cinematic helper + blend resolver executed with time/state/terrain/render doubles.");
-        System.out.println("Not covered: real terrain sampling, NeoForge config disk persistence, key events, Minecraft framegraph, live pause or a VR headset.");
     }
+
+    private static void runSamplerFixtures(Path root, Path work) throws Exception {
+        Map<String,String> doubles = new LinkedHashMap<>();
+        doubles.put("net/minecraft/core/BlockPos.java", """
+                package net.minecraft.core;
+                public record BlockPos(int x,int y,int z) {
+                    public int getX(){return x;} public int getY(){return y;} public int getZ(){return z;}
+                    public static BlockPos containing(double x,double y,double z) {
+                        return new BlockPos((int)Math.floor(x),(int)Math.floor(y),(int)Math.floor(z));
+                    }
+                    public BlockPos offset(int dx,int dy,int dz){return new BlockPos(x+dx,y+dy,z+dz);}
+                    public BlockPos immutable(){return this;}
+                    public double distSqr(BlockPos p){double dx=x-p.x,dy=y-p.y,dz=z-p.z;return dx*dx+dy*dy+dz*dz;}
+                }
+                """);
+        doubles.put("net/minecraft/world/phys/AABB.java", """
+                package net.minecraft.world.phys;
+                public record AABB(double minX,double minY,double minZ,double maxX,double maxY,double maxZ) {
+                    public AABB inflate(double r){return new AABB(minX-r,minY-r,minZ-r,maxX+r,maxY+r,maxZ+r);}
+                    public boolean contains(double x,double y,double z){return x>=minX&&x<=maxX&&y>=minY&&y<=maxY&&z>=minZ&&z<=maxZ;}
+                }
+                """);
+        doubles.put("net/minecraft/world/entity/Entity.java", """
+                package net.minecraft.world.entity;
+                import java.util.UUID;
+                import net.minecraft.core.BlockPos;
+                import net.minecraft.world.phys.AABB;
+                public class Entity {
+                    public double x,y,z; public boolean alive=true; public final UUID id=UUID.randomUUID();
+                    public Entity(double x,double y,double z){this.x=x;this.y=y;this.z=z;}
+                    public double getX(){return x;} public double getY(){return y;} public double getZ(){return z;}
+                    public float getBbHeight(){return 2;} public boolean isAlive(){return alive;}
+                    public UUID getUUID(){return id;} public double getEyeY(){return y+1.62;}
+                    public BlockPos blockPosition(){return BlockPos.containing(x,y,z);}
+                    public AABB getBoundingBox(){return new AABB(x-.3,y,z-.3,x+.3,y+2,z+.3);}
+                    public double distanceToSqr(Entity other){double dx=x-other.x,dy=y-other.y,dz=z-other.z;return dx*dx+dy*dy+dz*dz;}
+                }
+                """);
+        doubles.put("net/minecraft/world/entity/LivingEntity.java", """
+                package net.minecraft.world.entity;
+                public class LivingEntity extends Entity {public LivingEntity(double x,double y,double z){super(x,y,z);}}
+                """);
+        doubles.put("net/minecraft/world/level/material/MapColor.java", """
+                package net.minecraft.world.level.material;
+                public final class MapColor {
+                    public static final MapColor NONE=new MapColor(0);
+                    public final int col; public MapColor(int rgb){col=rgb;}
+                }
+                """);
+        doubles.put("net/minecraft/world/level/block/state/BlockState.java", """
+                package net.minecraft.world.level.block.state;
+                import net.minecraft.client.multiplayer.ClientLevel;
+                import net.minecraft.core.BlockPos;
+                import net.minecraft.world.level.material.MapColor;
+                public record BlockState(boolean air,boolean solid,MapColor color) {
+                    public static final BlockState AIR=new BlockState(true,false,MapColor.NONE);
+                    public boolean isAir(){return air;}
+                    public MapColor getMapColor(ClientLevel level,BlockPos pos){return color;}
+                    public boolean isSolidRender(ClientLevel level,BlockPos pos){return solid;}
+                }
+                """);
+        doubles.put("net/minecraft/world/level/levelgen/Heightmap.java", """
+                package net.minecraft.world.level.levelgen;
+                public final class Heightmap {public enum Types {MOTION_BLOCKING_NO_LEAVES}}
+                """);
+        doubles.put("net/minecraft/client/multiplayer/ClientLevel.java", """
+                package net.minecraft.client.multiplayer;
+                import java.util.*;
+                import java.util.function.Predicate;
+                import net.minecraft.core.BlockPos;
+                import net.minecraft.world.entity.Entity;
+                import net.minecraft.world.phys.AABB;
+                import net.minecraft.world.level.block.state.BlockState;
+                import net.minecraft.world.level.levelgen.Heightmap;
+                public final class ClientLevel {
+                    public long time; public int reads,heightReads,entityQueries;
+                    public Predicate<BlockPos> loaded=p->true;
+                    public final Map<BlockPos,BlockState> states=new HashMap<>();
+                    public final List<Entity> entities=new ArrayList<>();
+                    public long getGameTime(){return time;}
+                    public boolean hasChunkAt(BlockPos pos){return loaded.test(pos);}
+                    public int getMinBuildHeight(){return -64;} public int getMaxBuildHeight(){return 320;}
+                    public int getHeight(Heightmap.Types type,int x,int z) {
+                        if(!loaded.test(new BlockPos(x,64,z))) throw new AssertionError("Height requested in unloaded column");
+                        heightReads++; return 64;
+                    }
+                    public BlockState getBlockState(BlockPos pos) {
+                        if(!loaded.test(pos)) throw new AssertionError("Block requested in unloaded chunk: "+pos);
+                        reads++; return states.getOrDefault(pos,BlockState.AIR);
+                    }
+                    public List<Entity> getEntities(Entity exclude,AABB bounds,Predicate<Entity> predicate) {
+                        entityQueries++; var result=new ArrayList<Entity>();
+                        for(var entity:entities) if(entity!=exclude&&bounds.contains(entity.x,entity.y,entity.z)&&predicate.test(entity)) result.add(entity);
+                        return result;
+                    }
+                }
+                """);
+        doubles.put("net/minecraft/client/Minecraft.java", """
+                package net.minecraft.client;
+                import net.minecraft.client.multiplayer.ClientLevel;
+                import net.minecraft.world.entity.LivingEntity;
+                public final class Minecraft {
+                    public ClientLevel level=new ClientLevel();
+                    public LivingEntity player=new LivingEntity(0,64,0);
+                }
+                """);
+        doubles.put("com/trippycraft/client/DmtSamplerProbe.java", SAMPLER_PROBE);
+        runFixtures(root, work.resolve("sources"), work.resolve("classes"), doubles,
+                new String[]{"client/DmtWorldInfluenceSampler.java"}, "com.trippycraft.client.DmtSamplerProbe");
+    }
+
+    private static final String SAMPLER_PROBE = """
+            package com.trippycraft.client;
+            import net.minecraft.client.Minecraft;
+            import net.minecraft.client.multiplayer.ClientLevel;
+            import net.minecraft.core.BlockPos;
+            import net.minecraft.world.entity.*;
+            import net.minecraft.world.level.block.state.BlockState;
+            import net.minecraft.world.level.material.MapColor;
+            public final class DmtSamplerProbe {
+                private static final Minecraft MC=new Minecraft();
+                private static int checks;
+                private static final int[][] SUPPORTS={{-3,-3},{0,-4},{3,-3},{4,0},{3,3},{0,4},{-3,3},{-4,0}};
+                private static final int[][] ROOF={{0,0},{-2,0},{2,0},{0,-2},{0,2}};
+                public static void run() {
+                    boundsAndCache(); directionalEvidence(); entityHysteresis();
+                    System.out.println("PASS: "+checks+" production-sampler fixture assertions");
+                }
+                private static void setup(){DmtWorldInfluenceSampler.reset();MC.level=new ClientLevel();MC.player=new LivingEntity(0,64,0);}
+                private static DmtWorldInfluenceSampler.Sample at(long tick){MC.level.time=tick;return DmtWorldInfluenceSampler.sample(MC);}
+                private static void put(int x,int y,int z,int rgb,boolean solid) {
+                    MC.level.states.put(new BlockPos(x,y,z),new BlockState(false,solid,new MapColor(rgb)));
+                }
+                private static void boundsAndCache() {
+                    setup(); var empty=at(0);
+                    check(MC.level.reads==168,"Empty loaded sample did not obey its168 block-read budget");
+                    check(MC.level.heightReads==8 && MC.level.entityQueries==1,"Supporting/query budget changed");
+                    for(int tick=1;tick<20;tick++) check(at(tick)==empty,"Sub-second sample bypassed cache");
+                    check(MC.level.reads==168 && MC.level.entityQueries==1,"Cached sample performed world work");
+                    at(20); check(MC.level.reads==336 && MC.level.entityQueries==2,"20-tick cache did not refresh");
+                    MC.player.x=8;at(21);check(MC.level.reads==504,"8-block travel did not invalidate cache");
+                    at(0);check(MC.level.reads==672,"Backwards time retained a stale cache");
+                    setup();MC.level.loaded=p->false;at(0);
+                    check(MC.level.reads==0 && MC.level.heightReads==0,"Unloaded chunks were read or queried by heightmap");
+                    setup();MC.level.loaded=p->p.getX()>=0;at(0);
+                    check(MC.level.reads>0 && MC.level.reads<168,"Loaded boundary was not sampled within budget");
+                    MC.player.y=318;at(20);check(MC.level.reads<=336,"Ceiling-bound sample exceeded budget");
+                    var old=MC.level;MC.level=new ClientLevel();at(21);
+                    check(MC.level.entityQueries==1,"New level retained old cached sample");
+                    MC.level=null;near(DmtWorldInfluenceSampler.sample(MC).attractorStrength(),0,0,"Missing world retained entity");
+                    MC.level=old;MC.player=null;near(DmtWorldInfluenceSampler.sample(MC).relief(),0,0,"Missing player did not use empty sample");
+                    System.out.println("PASS: sampler read/query budgets,20-tick and movement cache, world/time invalidation, loaded-boundary guards and height limit");
+                }
+                private static void directionalEvidence() {
+                    setup();for(var p:SUPPORTS)put(p[0],63,p[1],0xFF0000,true);
+                    var floor=at(0);near(floor.red(),1,0,"Supporting color was lost");
+                    check(floor.directionY()<0 && floor.directionStrength()>0,"Supporting terrain did not point down");
+                    setup();for(var p:ROOF)put(p[0],67,p[1],0x0000FF,true);
+                    var roof=at(0);near(roof.blue(),1,0,"Ceiling color was lost");
+                    check(roof.directionY()>0 && roof.directionStrength()>0,"Ceiling did not point up");
+                    setup();for(var p:ROOF)put(p[0],67,p[1],0x00FF00,false);
+                    var canopy=at(0);near(canopy.green(),1,0,"Nonsolid canopy was ignored");
+                    check(canopy.directionY()>0 && canopy.directionStrength()>0,"Canopy lacks directional presence");
+                    setup();put(2,65,0,0x00FF00,true);
+                    var wall=at(0);near(wall.green(),1,0,"Eye-height wall was ignored");
+                    check(wall.directionX()>0 && wall.directionY()==0,"Wall direction was not horizontal");
+                    setup();for(var p:SUPPORTS)put(p[0],63,p[1],0xFF0000,true);
+                    for(var p:ROOF)put(p[0],67,p[1],0x0000FF,true);
+                    var enclosed=at(0);
+                    check(enclosed.red()>0 && enclosed.blue()>0,"Ceiling replaced rather than combined supporting color");
+                    check(enclosed.relief()>floor.relief(),"Floor/ceiling separation did not affect spatial relief");
+                    check(MC.level.reads<=168,"Occupied sample exceeded read budget");
+                    System.out.println("PASS: actual supporting/wall/ceiling/canopy samples have distinct directional/color evidence and combine enclosure relief");
+                }
+                private static void entityHysteresis() {
+                    setup();var a=new LivingEntity(10,64,0);var b=new LivingEntity(-10.2,64,0);
+                    MC.level.entities.add(a);MC.level.entities.add(b);MC.level.entities.add(new Entity(1,64,0));
+                    near(at(0).attractorX(),10,0,"Initial nearest living entity not selected");
+                    b.x=-9.5;near(at(20).attractorX(),10,0,"Small nearest-order change replaced tracked identity");
+                    b.x=-7.9;var replaced=at(40);near(replaced.attractorX(),-7.9,0,"Materially nearer entity failed to replace target");
+                    near(replaced.attractorY(),65,0,"Entity attractor not placed at body center");
+                    near(replaced.attractorStrength(),1-7.9/24,1e-12,"Entity strength not distance based");
+                    a.x=7.8;near(at(60).attractorX(),-7.9,0,"New identity immediately flickered back");
+                    b.alive=false;near(at(80).attractorX(),7.8,0,"Dead tracked target blocked replacement");
+                    a.x=25;near(at(100).attractorStrength(),0,0,"Out-of-range entity retained attraction");
+                    a.x=6;near(at(120).attractorX(),6,0,"Returning living target was not acquired");
+                    DmtWorldInfluenceSampler.reset();b.alive=true;b.x=-5.8;
+                    near(at(121).attractorX(),-5.8,0,"Explicit reset retained identity hysteresis");
+                    MC.level=new ClientLevel();MC.level.entities.add(a);
+                    near(at(122).attractorX(),6,0,"New world retained prior entity identity");
+                    System.out.println("PASS: actual living-entity query filters, UUID hysteresis, stronger replacement, death/range loss and reset/world reacquisition");
+                }
+                private static void near(double actual,double expected,double tolerance,String message) {
+                    check(Double.isFinite(actual)&&Math.abs(actual-expected)<=tolerance,message+": actual="+actual+", expected="+expected);
+                }
+                private static void check(boolean condition,String message){checks++;if(!condition)throw new AssertionError(message);}
+            }
+            """;
 
     private static final String PROBE = """
             package com.trippycraft.client;
@@ -243,7 +449,7 @@ public final class ValidateDmtFractalControls {
                 private static boolean started;
                 private static final Minecraft MC=Minecraft.getInstance();
                 public static void run() {
-                    gates(); cinematicEntry(); doseGrowth(); clockAndMotion(); stationaryAnimation();
+                    gates(); cinematicEntry(); cinematicReturn(); doseGrowth(); clockAndMotion(); stationaryAnimation();
                     qualityAndAccessibility(); mixtureAndIntensity(); liveIntensity(); scaffoldContinuity();
                     environmentMemory(); spatialWorldInfluence(); anchorsAndReset(); stereoHead();
                     System.out.println("PASS: "+assertions+" behavioral assertions");
@@ -367,6 +573,53 @@ public final class ValidateDmtFractalControls {
                     check(advance(1100)==null,"Session end failed to release realm rendering");
                     check(advance(1)==null,"Sober frame resurrected realm");
                     System.out.println("PASS: eased 20-35-second cinematic ingress, real trip clock, gradual return and completed-session release");
+                }
+                private static void cinematicReturn() {
+                    var full=peak();
+                    same(full.get("RealmSettling"),new float[]{1,1,1,1},"Peak realm activity was reduced");
+                    ClientExperienceStore.state=state(4,.8,1,1234567);
+                    same(at(now).get("RealmSettling"),full.get("RealmSettling"),"Snapshot changed return gains without elapsed time");
+                    var first=advance(1); float[] early=first.get("RealmSettling");
+                    for(float gain:early) check(gain<1 && gain>.95,"Return activity snapped instead of easing");
+                    near(a(first)[1]-a(full)[1],.05*baseRate()*early[1],1e-4,
+                        "Return motion did not integrate only the next phase increment");
+                    same(at(now).get("RealmSettling"),early,"Repeated eye timestamp advanced settling");
+                    var later=advance(40);
+                    for(int i=0;i<4;i++) check(later.get("RealmSettling")[i]<early[i],"Return gain failed to settle");
+                    float[] anchor=later.get("RealmOrigin").clone();
+                    ClientExperienceStore.state=state(136,.5,1,1234567);
+                    same(at(now).get("RealmSettling"),later.get("RealmSettling"),"Redose reset settling state");
+                    var resumed=advance(1);
+                    check(resumed.get("RealmSettling")[1]>later.get("RealmSettling")[1],"Redose did not ease out of return");
+                    check(a(resumed)[1]>a(later)[1],"Redose reset the integrated motion phase");
+                    near(resumed.get("RealmDynamics")[2]-later.get("RealmDynamics")[2],.05,1e-4,"Return redose reset real trip time");
+                    same(resumed.get("RealmOrigin"),anchor,"Return redose moved the realm anchor");
+                    TrippyClientConfig.dmtFractalIntensity=.5;
+                    same(at(now).get("RealmSettling"),resumed.get("RealmSettling"),"Nonzero intensity reset settling");
+                    ClientExperienceStore.state=state(136,.9,1,1234567);
+                    var afterglow=advance(250); float[] quiet=afterglow.get("RealmSettling");
+                    float[] residual={.15f,.15f,.10f,.35f};
+                    for(int i=0;i<4;i++) near(quiet[i],residual[i],.001,"Afterglow residual gain "+i);
+                    check(a(afterglow)[0]>0,"Afterglow discarded opacity instead of retaining its fade");
+                    TrippyClientConfig.motionIntensity=0;
+                    float fixed=a(afterglow)[1]; var frozen=advance(20);
+                    near(a(frozen)[1],fixed,0,"Return motion ignored motion zero");
+                    check(frozen.get("RealmDynamics")[2]>afterglow.get("RealmDynamics")[2],"Return motion zero froze real trip time");
+                    peak(); ClientExperienceStore.state=DmtEffectState.inactive();
+                    var ended=advance(200);
+                    for(int i=0;i<4;i++) near(ended.get("RealmSettling")[i],residual[i],.004,"Abrupt session end did not settle activity "+i);
+                    check(a(ended)[0]>0 && a(ended)[0]<1,"Abrupt end bypassed the retained fade");
+                    check(advance(1000)==null,"Settled session never released rendering");
+                    same(peak().get("RealmSettling"),new float[]{1,1,1,1},"New trip retained old return gains");
+                    ClientExperienceStore.state=state(4,.9,1,1234567);
+                    check(advance(1100)==null,"Late active afterglow did not finish its fade");
+                    MC.gameRenderer.camera.position=new Vec3(20,64,-5);
+                    check(advance(1)==null,"Walking during invisible afterglow resurrected rendering");
+                    ClientExperienceStore.state=state(136,.5,1,1234567);
+                    var lateRedose=advance(1000);
+                    near(lateRedose.get("RealmOrigin")[0],3.5,1e-6,"Invisible afterglow moved the same-trip redose anchor");
+                    check(lateRedose.get("RealmDynamics")[2]>150,"Late redose reset the real trip clock");
+                    System.out.println("PASS: return and abrupt end ease distortion/motion/ornament/light, preserve redose and setting continuity, and integrate future motion without phase resets");
                 }
                 private static void doseGrowth() {
                     double last=0;
@@ -639,7 +892,7 @@ public final class ValidateDmtFractalControls {
                     near(left.get("WorldAttractor")[1],.7,1e-6,"VR entity anchor used eye instead of shared head Y");
                     near(left.get("WorldAttractor")[2],-.7,1e-6,"VR entity anchor used eye instead of shared head Z");
                     MC.gameRenderer.camera.position=new Vec3(100.032,65,100); var right=at(now);
-                    for(String uniform:new String[]{"FractalA","FractalB","FractalC","RealmDynamics","WorldInfluenceA","WorldInfluenceB","WorldInfluenceC","WorldInfluenceD","WorldAttractor","RealmOrigin"})
+                    for(String uniform:new String[]{"FractalA","FractalB","FractalC","RealmDynamics","RealmSettling","WorldInfluenceA","WorldInfluenceB","WorldInfluenceC","WorldInfluenceD","WorldAttractor","RealmOrigin"})
                         same(right.get(uniform),left.get(uniform),"Stereo replay changed "+uniform);
                     VivecraftCompat.head=new Vec3(101,65,100);
                     var moved=advance(1);

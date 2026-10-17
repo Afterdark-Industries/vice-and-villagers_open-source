@@ -17,6 +17,7 @@ public final class DmtFractalWorldPass {
     private static double lastTicks = Double.NaN;
     private static double animationSeconds;
     private static double opacity;
+    private static boolean realmEntered;
     private static boolean fieldInitialized;
     private static double smoothDimensionalDepth;
     private static double smoothTemporalFlow;
@@ -27,6 +28,7 @@ public final class DmtFractalWorldPass {
     private static double smoothDoseEnergy;
     private static double smoothAbsoluteDoseLog;
     private static double cinematicIngress;
+    private static double realmSettling;
     private static final double[] worldInfluence = new double[16];
     private static final double[] worldAttractor = new double[4];
     private static boolean attractorInitialized;
@@ -76,6 +78,7 @@ public final class DmtFractalWorldPass {
         // it eases into the new amount without resetting the realm or its clock.
         opacity = Math.min(opacity, selectedIntensity);
         double target = 0.0D;
+        double settlingTarget = 1.0D;
         if (state.active()) {
             lastState = state;
             double doseEase = doseInitialized ? 1.0D - Math.exp(-delta / 45.0D) : 1.0D;
@@ -87,6 +90,7 @@ public final class DmtFractalWorldPass {
             double exit = 1.0D - DmtRealmDynamics.smootherstep(TrippyConfig.dmtReturnStartProgress,
                     Math.max(TrippyConfig.dmtReturnStartProgress + 0.01D,
                             TrippyConfig.dmtAfterglowStartProgress), state.progress());
+            settlingTarget = 1.0D - exit;
             double dose = smoothstep(TrippyConfig.dmtBreakthroughThresholdUnits * 0.85D,
                     TrippyConfig.dmtBreakthroughThresholdUnits * 1.10D, state.activeDoseUnits());
             double visual = smoothstep(0.01D, 0.40D, state.visualIntensity());
@@ -104,25 +108,33 @@ public final class DmtFractalWorldPass {
         }
         // Keep the empty entrance chamber at the player until the crossing
         // begins; walking during onset must not start the realm inside a wall.
-        if (target <= 0.0001D && opacity <= 0.0001D) {
+        if (!realmEntered && target <= 0.0001D && opacity <= 0.0001D) {
             tripAnchor = head;
         }
         opacity += (target - opacity) * (1.0D - Math.exp(-delta / (target > opacity ? 32.0D : 100.0D)));
         if (Math.abs(opacity - target) < 0.001D) {
             opacity = target;
         }
+        // Return settles the remaining visible realm as well as its opacity.
+        // Keep this state continuous through redoses and nonzero setting changes.
+        realmSettling += (settlingTarget - realmSettling) * (1.0D - Math.exp(-delta / 36.0D));
+        double distortionGain = DmtRealmDynamics.settlingGain(realmSettling, 0.15D);
+        double motionGain = DmtRealmDynamics.settlingGain(realmSettling, 0.15D);
+        double ornamentGain = DmtRealmDynamics.settlingGain(realmSettling, 0.10D);
+        double lightActivityGain = DmtRealmDynamics.settlingGain(realmSettling, 0.35D);
         double motion = Math.max(0.0D, Math.min(2.0D, TrippyClientConfig.motionIntensity))
                 * (TrippyClientConfig.motionReduction ? 0.15D : 1.0D)
                 * (TrippyConfig.dmtAccessibilityMode ? 0.25D : 1.0D);
         // Integrate the rate: changing settings or redosing never rescales elapsed time.
         animationSeconds += delta * 0.05D * motion
-                * DmtRealmDynamics.transformationRate(smoothDoseEnergy * selectedIntensity);
+                * DmtRealmDynamics.transformationRate(smoothDoseEnergy * selectedIntensity) * motionGain;
         if (opacity <= 0.0001D) {
             if (!state.active()) {
                 reset();
             }
             return;
         }
+        realmEntered = true;
 
         var signature = lastState.signature();
         var scaffold = lastState.fractalScaffold();
@@ -173,6 +185,8 @@ public final class DmtFractalWorldPass {
                         ((tripSeed >>> 43) & 4095L) / 4095.0F, signature.hyperspaceStyle()),
                 WorldWarpPostProcessor.uniform("RealmDynamics", (float) (smoothDoseEnergy * selectedIntensity),
                         (float) cinematicIngress, (float) elapsedTripSeconds, (float) smoothAbsoluteDoseLog),
+                WorldWarpPostProcessor.uniform("RealmSettling", (float) distortionGain, (float) motionGain,
+                        (float) ornamentGain, (float) lightActivityGain),
                 WorldWarpPostProcessor.uniform("WorldInfluenceA", (float) worldInfluence[0],
                         (float) worldInfluence[1], (float) worldInfluence[2], (float) worldInfluence[3]),
                 WorldWarpPostProcessor.uniform("WorldInfluenceB", (float) worldInfluence[4],
@@ -201,6 +215,7 @@ public final class DmtFractalWorldPass {
         lastTicks = Double.NaN;
         animationSeconds = 0.0D;
         opacity = 0.0D;
+        realmEntered = false;
         fieldInitialized = false;
         smoothDimensionalDepth = 0.0D;
         smoothTemporalFlow = 0.0D;
@@ -211,6 +226,7 @@ public final class DmtFractalWorldPass {
         smoothDoseEnergy = 0.0D;
         smoothAbsoluteDoseLog = 0.0D;
         cinematicIngress = 0.0D;
+        realmSettling = 0.0D;
         java.util.Arrays.fill(worldInfluence, 0.0D);
         java.util.Arrays.fill(worldAttractor, 0.0D);
         attractorInitialized = false;

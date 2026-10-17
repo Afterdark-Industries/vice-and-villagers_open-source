@@ -31,6 +31,13 @@ public final class DmtRealmDynamics {
         return 1.0D + Math.log1p(positiveDose(doseEnergy)) * 0.45D;
     }
 
+    /** Preserve a quiet residual while the remaining realm fades back to the world. */
+    public static double settlingGain(double settledAmount, double residual) {
+        double amount = Double.isFinite(settledAmount) ? Math.max(0.0D, Math.min(1.0D, settledAmount)) : 0.0D;
+        double floor = Double.isFinite(residual) ? Math.max(0.0D, Math.min(1.0D, residual)) : 0.0D;
+        return 1.0D - amount * (1.0D - floor);
+    }
+
     public static double smootherstep(double low, double high, double value) {
         double t = Double.isFinite(value) ? Math.max(0.0D, Math.min(1.0D,
                 (value - low) / Math.max(0.0001D, high - low))) : 0.0D;

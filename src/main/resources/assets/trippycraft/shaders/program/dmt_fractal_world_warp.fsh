@@ -13,6 +13,7 @@ uniform vec4 FractalA; // blend, integrated motion seconds, quality 0/1/2, photo
 uniform vec4 FractalB; // signature seeds A/B, dimensional depth, temporal flow
 uniform vec4 FractalC; // selected intensity, signature seeds C/D, session style 0..6
 uniform vec4 RealmDynamics; // uncapped log dose drive, cinematic ingress, trip seconds, log2(1+dose)
+uniform vec4 RealmSettling; // return distortion, integrated motion, ornament, light activity gains
 uniform vec4 WorldInfluenceA; // organic, constructed, cave/depth, water
 uniform vec4 WorldInfluenceB; // light, night/rain, entities, world motion
 uniform vec4 WorldInfluenceC; // sampled real-world RGB, solid/height relief
@@ -38,6 +39,11 @@ float chamberRadius;
 float signaturePhase;
 float ecologicalPhase;
 float morphClock;
+float surfaceClock;
+vec4 motifMemory;
+float settlingDistortion;
+float settlingOrnament;
+float settlingLight;
 float morphAmount;
 float detailEnergy;
 float styleIndex;
@@ -159,7 +165,7 @@ vec3 morphFlow(vec3 point) {
 vec2 morphSourceUv(vec2 uv, vec3 sourceRealmPoint, vec3 targetRealmPoint, float blend) {
     float morph = blend * (0.72 + 0.28 * blend);
     vec3 hybrid = mix(sourceRealmPoint, targetRealmPoint, morph);
-    vec3 flow = morphFlow(hybrid) * morph * (1.0 - morph) * (1.3 + detailEnergy * 1.4);
+    vec3 flow = morphFlow(hybrid) * morph * (1.0 - morph) * (1.3 + detailEnergy * 1.4) * settlingDistortion;
     // Limit once in the shared head/world domain. Per-eye UV compression would
     // bend two projections of the same point into different, invalid 3D rays.
     float sharedRadius = length(hybrid - RealmOrigin.xyz);
@@ -193,7 +199,7 @@ float boxDistance(vec3 p, vec3 size) {
     return length(max(d, vec3(0.0))) + min(max(d.x, max(d.y, d.z)), 0.0);
 }
 
-vec2 mandelbox(vec3 q) {
+vec2 mandelbox(vec3 q, bool materialOrbit) {
     vec3 z = q;
     float derivative = 1.0;
     float orbit = 100.0;
@@ -208,20 +214,21 @@ vec2 mandelbox(vec3 q) {
         z = foldRotation * z;
         z = z * boxScale + q;
         derivative = derivative * abs(boxScale) + 1.0;
-        orbit = min(orbit, dot(abs(z), vec3(0.31, 0.43, 0.26)));
-        vec2 current = vec2(length(z) / max(derivative, 0.000001) - 0.0045, clamp(orbit * 0.55, 0.0, 1.0));
+        if (materialOrbit) orbit = min(orbit, dot(abs(z), vec3(0.31, 0.43, 0.26)));
+        vec2 current = vec2(length(z) / max(derivative, 0.000001) - 0.0045,
+                materialOrbit ? clamp(orbit * 0.55, 0.0, 1.0) : 0.0);
         if (float(i + 1) > floor(foldDepth)) return mix(previous, current, quinticUnit(fract(foldDepth)));
         previous = current;
     }
     return previous;
 }
 
-vec2 mengerTemple(vec3 q) {
+vec2 mengerTemple(vec3 q, bool materialOrbit) {
     float distance = boxDistance(q, vec3(1.22));
     float scale = 1.0;
     float orbit = 1.0;
     float aperture = 0.82 + geometryLanesB.y * 0.23 + sin(morphClock * 0.87 + signaturePhase) * morphAmount * 0.10;
-    aperture += motionSecondary.x * 0.13;
+    aperture += motionSecondary.x * 0.13 + (motifMemory.y - 0.5) * 0.06;
     for (int i = 0; i < 5; i++) {
         if (i >= templeIterations) break;
         vec3 a = mod(q * scale, 2.0) - 1.0;
@@ -230,7 +237,7 @@ vec2 mengerTemple(vec3 q) {
         float cut = (min(max(r.x, r.y), min(max(r.y, r.z), max(r.z, r.x))) - aperture) / scale;
         float depthWeight = quinticUnit(templeDepth - float(i));
         distance = mix(distance, max(distance, cut), depthWeight);
-        orbit = mix(orbit, min(orbit, dot(r, vec3(0.24, 0.37, 0.39))), depthWeight);
+        if (materialOrbit) orbit = mix(orbit, min(orbit, dot(r, vec3(0.24, 0.37, 0.39))), depthWeight);
     }
     return vec2(distance, clamp(orbit, 0.0, 1.0));
 }
@@ -245,9 +252,11 @@ float realmEmptySpace(vec3 position, vec3 local) {
     float vault = mix(faceted, rounded, vaultRoundness);
     float vaultRibs = sin(local.x * 3.4 + sin(local.z * 1.5) + morphClock * 0.72 + ecologicalPhase)
             * sin(local.y * 3.1 - local.z * 1.2 - morphClock * 0.51);
-    float chamber = vault - chamberRadius + vaultRibs * (0.04 + motionLanes.x * 0.13 + worldRelief * 0.04);
+    float chamber = vault - chamberRadius + vaultRibs * (0.04 + motionLanes.x * 0.13 + worldRelief * 0.04) * settlingDistortion;
     float twistX = 0.34 * sin(position.x * 0.33 + signaturePhase) + sin(morphClock * 0.63 + position.x * 0.19) * morphAmount * 0.28;
     float twistZ = 0.31 * sin(position.z * 0.29 + signaturePhase * 1.3) - sin(morphClock * 0.57 + position.z * 0.23) * morphAmount * 0.30;
+    twistX *= settlingDistortion;
+    twistZ *= settlingDistortion;
     vec2 crossX = mat2(cos(twistX), sin(twistX), -sin(twistX), cos(twistX)) * local.yz;
     vec2 crossZ = mat2(cos(twistZ), sin(twistZ), -sin(twistZ), cos(twistZ)) * local.xy;
     crossX += vec2(sin(position.x * 0.43 + morphClock * 0.47), sin(position.x * 0.31 + signaturePhase)) * 0.18;
@@ -266,8 +275,8 @@ float realmEmptySpace(vec3 position, vec3 local) {
     float nested = min(nestedRoom, nestedDoor);
     float gallery = boxDistance(local, vec3(4.8, 2.05 + motionLanes.y * 0.85, 4.7));
     float layoutDistance = chamber * layoutLanes.x + nested * layoutLanes.y + gallery * layoutLanes.z + corridor * layoutLanes.w;
-    // The persistent trip-anchor cell has an empty core. Unlike a mandatory
-    // X/Z passage, this does not dictate the surrounding layout in every chapter.
+    // Each repeated cell has a small empty core, including the entrance at the
+    // trip anchor. Surrounding layouts remain independent of that safe core.
     return min(layoutDistance, length(local) - 1.38);
 }
 
@@ -292,7 +301,7 @@ float realmIndependentStructure(vec3 position, vec3 local) {
 // Distance and orbit material coordinate. Every frame combines independently
 // weighted folds, mirrors, inversion, architecture and organic lace. A trip
 // signature biases that evolving mixture; it never selects a fixed catalogue.
-vec2 realmField(vec3 position) {
+vec2 realmFieldCore(vec3 position, bool materialOrbit) {
     vec3 cell = floor((position + CELL_SIZE * 0.5) / CELL_SIZE);
     vec3 local = position - cell * CELL_SIZE;
     float cellSeed = hash31(cell + vec3(FractalB.x * 23.0, FractalB.y * 31.0, FractalC.y * 47.0));
@@ -313,21 +322,21 @@ vec2 realmField(vec3 position) {
     q.y += sin(q.x * 0.91 + q.z * 0.63 - morphClock * 0.53) * motionLanes.w * morphAmount * 0.32;
     q += sin(q.yzx * 0.64 + vec3(0.0, 2.1, 4.2) + morphClock * 0.61 + ecologicalPhase) * morphAmount * (0.05 + geometryLanesB.z * 0.10);
     vec3 mirrorOffset = vec3(0.34, 0.21, 0.42) + geometryLanesA.x * 0.12;
-    q = mix(q, abs(q + mirrorOffset) - mirrorOffset, geometryLanesA.y * (0.10 + motionLanes.y * 0.60));
+    q = mix(q, abs(q + mirrorOffset) - mirrorOffset, geometryLanesA.y * (0.10 + motionLanes.y * 0.60) * settlingDistortion);
     vec3 nestedFold = abs(foldRotation * q + vec3(0.43, 0.31, 0.27)) - vec3(0.43, 0.31, 0.27);
-    float recursiveEngagement = doseDrive / (3.5 + doseDrive);
+    float recursiveEngagement = doseDrive / (3.5 + doseDrive) * settlingDistortion;
     q = mix(q, nestedFold, recursiveEngagement * (0.10 + geometryLanesA.x * 0.26));
     float inverseRadius = 2.8 / (dot(q, q) + 2.2);
-    q *= mix(1.0, inverseRadius, geometryLanesA.w * 0.35);
+    q *= mix(1.0, inverseRadius, geometryLanesA.w * 0.35 * settlingDistortion);
     vec3 toAttractor = WorldAttractor.xyz - position;
     float attractorDistance = length(toAttractor);
     float attractorForce = worldStructure.y / (1.0 + attractorDistance * attractorDistance * 0.12);
-    q += toAttractor / max(attractorDistance, 0.15) * attractorForce * (0.12 + doseDetail * 0.025);
+    q += toAttractor / max(attractorDistance, 0.15) * attractorForce * (0.12 + doseDetail * 0.025) * settlingDistortion;
 
     float worldToFractal = (0.47 + FractalC.y * 0.075 + (cellSeed - 0.5) * 0.045) * (1.0 + doseDetail * 0.025);
     vec2 shape = vec2(0.0);
     if (familyWeights.x > 0.0) {
-        vec2 crystal = mandelbox(q * worldToFractal);
+        vec2 crystal = mandelbox(q * worldToFractal, materialOrbit);
         crystal.x /= worldToFractal;
         shape += crystal * familyWeights.x;
     }
@@ -335,7 +344,7 @@ vec2 realmField(vec3 position) {
     vec3 templeScale = mix(vec3(0.245), vec3(0.215, 0.285, 0.25), geometryLanesB.y) * architectureFrequency;
     vec3 templeOffset = vec3(0.19, -0.13, 0.27) * geometryLanesA.y;
     if (familyWeights.y > 0.0) {
-        vec2 temple = mengerTemple(q * templeScale + templeOffset);
+        vec2 temple = mengerTemple(q * templeScale + templeOffset, materialOrbit);
         temple.x /= max(templeScale.x, max(templeScale.y, templeScale.z));
         shape += temple * familyWeights.y;
     }
@@ -346,7 +355,7 @@ vec2 realmField(vec3 position) {
         float gyroid = dot(sin(g), cos(g.yzx));
         float thickness = 0.20 + geometryLanesB.x * 0.34 + WorldInfluenceA.w * 0.10;
         vec2 organic = vec2((abs(gyroid) - thickness) * 0.39 / organicFrequency,
-                0.5 + 0.5 * sin(g.x + g.y - g.z));
+                materialOrbit ? 0.5 + 0.5 * sin(g.x + g.y - g.z) : 0.0);
         shape += organic * familyWeights.z;
     }
 
@@ -356,16 +365,16 @@ vec2 realmField(vec3 position) {
     float solid = min(shape.x, outerSolid);
     // Surface-scale relief remains visible on the CSG cut faces themselves.
     float reliefFrequency = 5.2 + detailFrequency * 1.15;
-    float emboss = sin(position.x * reliefFrequency + sin(position.z * 3.1) + morphClock * 0.45 + worldRelief * 2.7)
-            * sin(position.y * reliefFrequency * 0.88 - position.z * 2.3 - morphClock * 0.36);
+    float emboss = sin(position.x * reliefFrequency + sin(position.z * 3.1) + surfaceClock * 0.45 + worldRelief * 2.7)
+            * sin(position.y * reliefFrequency * 0.88 - position.z * 2.3 - surfaceClock * 0.36);
     float reliefAmplitude = (0.010 + detailEnergy * 0.021 + worldRelief * 0.009) / (1.0 + doseDetail * 0.13);
-    reliefAmplitude *= 0.70 + motionSecondary.x * 0.60;
+    reliefAmplitude *= (0.70 + motionSecondary.x * 0.60) * settlingOrnament;
     // Actual nested sculptural relief, not just increasingly fine colour.
     // Counts stay within quality budgets; dose engages each layer smoothly,
     // while spacing and the coordinate fold continue beyond those thresholds.
     vec3 ornamentPoint = fieldRotation * position;
     float ornamentFrequency = 0.95 + doseDetail * 0.10;
-    float ornamentAmplitude = detailEnergy * 0.060;
+    float ornamentAmplitude = detailEnergy * 0.060 * settlingOrnament;
     float nestedRelief = 0.0;
     for (int level = 0; level < 4; level++) {
         if (level >= ornamentLayers || doseLayerWeights[level] <= 0.0) break;
@@ -378,13 +387,25 @@ vec2 realmField(vec3 position) {
     }
     float distance = max(solid, -emptySpace) + emboss * reliefAmplitude - nestedRelief;
     distance = min(distance, independentStructure);
-    return vec2(distance * fieldDistanceScale, clamp(shape.y * 0.86 + cellSeed * 0.14, 0.0, 1.0));
+    return vec2(distance * fieldDistanceScale,
+            materialOrbit ? clamp(shape.y * 0.86 + cellSeed * 0.14, 0.0, 1.0) : 0.0);
+}
+
+// Traces, normals and AO need distance and the negative carved-bound marker,
+// not a material coordinate. Literal flags let the compiler specialize away
+// all orbit tracking; the full coordinate is evaluated once at the final hit.
+vec2 realmDistanceField(vec3 position) {
+    return realmFieldCore(position, false);
+}
+
+vec2 realmField(vec3 position) {
+    return realmFieldCore(position, true);
 }
 
 vec3 realmNormal(vec3 point, float epsilon) {
     vec2 e = vec2(1.0, -1.0) * epsilon;
-    vec3 gradient = e.xyy * realmField(point + e.xyy).x + e.yyx * realmField(point + e.yyx).x
-            + e.yxy * realmField(point + e.yxy).x + e.xxx * realmField(point + e.xxx).x;
+    vec3 gradient = e.xyy * realmDistanceField(point + e.xyy).x + e.yyx * realmDistanceField(point + e.yyx).x
+            + e.yxy * realmDistanceField(point + e.yxy).x + e.xxx * realmDistanceField(point + e.xxx).x;
     return dot(gradient, gradient) > 0.0000000001 ? normalize(gradient) : vec3(0.0, 1.0, 0.0);
 }
 
@@ -392,7 +413,7 @@ float realmOcclusion(vec3 point, vec3 normal) {
     float occlusion = 0.0, weight = 0.48;
     for (int i = 0; i < 4; i++) {
         float distance = 0.075 + float(i) * 0.17;
-        float field = realmField(point + normal * distance).x * 0.52 / max(fieldDistanceScale, 0.001);
+        float field = realmDistanceField(point + normal * distance).x * 0.52 / max(fieldDistanceScale, 0.001);
         occlusion += max(0.0, distance - field) / distance * weight;
         weight *= 0.53;
     }
@@ -415,6 +436,23 @@ float hueTravel(float a, float b, float amount) {
     return a + (fract(b - a + 0.5) - 0.5) * amount;
 }
 
+float worldHueTint(float base, float tint, float amount) {
+    // World tints use weights below one half, so this chord never reaches the
+    // zero vector. Unlike shortest-arc interpolation, crossing the opposite hue
+    // cannot flip a whole surface abruptly to the other side of the palette.
+    vec2 baseDirection = vec2(cos(base * TAU), sin(base * TAU));
+    vec2 tintDirection = vec2(cos(tint * TAU), sin(tint * TAU));
+    vec2 direction = mix(baseDirection, tintDirection, amount);
+    return atan(direction.y, direction.x) / TAU;
+}
+
+float worldHueConfidence(vec3 color) {
+    // Neutral stone/snow and nearly black samples have no reliable hue. Fade
+    // their chromatic influence before hue extraction changes sector at grey.
+    float chroma = max(color.r, max(color.g, color.b)) - min(color.r, min(color.g, color.b));
+    return smoothstep(0.008, 0.10, chroma);
+}
+
 // x is broad tile colour; y/z are bounded line/filigree masks. Triplanar
 // mapping keeps the ornament in the 3D world, including carved vault faces.
 vec3 tilePattern(vec2 coordinate, float frequency, float aa, float family) {
@@ -426,7 +464,10 @@ vec3 tilePattern(vec2 coordinate, float frequency, float aa, float family) {
     float diamond = min(abs(abs(p.x) + abs(p.y) - 0.31), abs(max(abs(p.x) - 0.032, abs(p.y) - 0.28)));
     float circuit = min(abs(length(p - vec2(0.5, 0.5)) - 0.5), abs(length(p + vec2(0.5, 0.5)) - 0.5));
     float angle = atan(p.y, p.x);
-    float petal = abs(length(p) - 0.29 - sin(angle * (5.0 + geometryLanesA.y * 3.0) + tileSeed * TAU + morphClock * 0.41) * 0.055);
+    float motifArms = 3.0 + floor(FractalC.z * 4.0);
+    float unfolding = sin(angle * motifArms + motifMemory.x * TAU + surfaceClock * 0.23);
+    unfolding = mix(unfolding, sin(angle * (motifArms + 2.0) - motifMemory.z * TAU), motifMemory.y * 0.62);
+    float petal = abs(length(p) - 0.29 - unfolding * 0.055);
     vec2 diamondP = vec2(p.x + p.y, p.x - p.y) * 0.7071;
     float crystal = min(abs(max(abs(diamondP.x), abs(diamondP.y)) - 0.22), abs(length(p) - 0.12));
     float eye = min(abs(length(vec2(p.x, p.y * 1.9)) - 0.30), abs(length(p) - 0.075));
@@ -434,18 +475,20 @@ vec3 tilePattern(vec2 coordinate, float frequency, float aa, float family) {
     float weaveY = abs(sin(p.y * 12.566 - sin(p.x * 6.283) * 0.28));
     float weave = min(weaveX, weaveY) * 0.10;
     vec4 edges = vec4(min(diamond, circuit), eye, weave, min(petal, crystal));
+    float spatialMemory = sin(dot(coordinate, vec2(0.071, 0.053)) + motifMemory.w * TAU);
     vec4 weights = max(patternLanes, vec4(0.001));
+    weights *= 0.78 + 0.22 * cos(vec4(0.0, 1.3, 2.9, 4.7) + spatialMemory * 1.6 + motifMemory.x * 2.1);
     weights *= 0.72 + 0.28 * cos(vec4(0.0, 1.7, 3.3, 4.9) + family);
     weights /= max(dot(weights, vec4(1.0)), 0.0001);
     float line = dot(vec4(1.0) - smoothstep(vec4(0.018), vec4(0.018 + aa), edges), weights);
     float filigree = dot(vec4(1.0) - smoothstep(vec4(0.012), vec4(0.012 + aa), abs(edges - 0.065)), weights);
-    float broad = 0.5 + 0.5 * sin((p.x + p.y) * 4.6 + tileSeed * TAU + morphClock * 0.18);
+    float broad = 0.5 + 0.5 * sin((p.x + p.y) * 4.6 + tileSeed * TAU + surfaceClock * 0.18);
     return vec3(broad * 0.65 + tileSeed * 0.35, line, filigree);
 }
 
 vec3 surfacePattern(vec3 point, vec3 normal, float footprint) {
     vec3 p = fieldRotation * point;
-    p += sin(p.yzx * 1.17 + morphClock * 0.31 + signaturePhase) * morphAmount * (0.025 + motionSecondary.y * 0.18);
+    p += sin(p.yzx * 1.17 + surfaceClock * 0.31 + signaturePhase) * morphAmount * (0.025 + motionSecondary.y * 0.18);
     vec3 weights = pow(abs(fieldRotation * normal), vec3(5.0));
     weights /= max(weights.x + weights.y + weights.z, 0.0001);
     float family = signaturePhase * 0.31 + materialLanes.w * TAU;
@@ -456,6 +499,10 @@ vec3 surfacePattern(vec3 point, vec3 normal, float footprint) {
             + tilePattern(p.xy, frequency, aa, family) * weights.z;
     float primaryCoverage = 1.0 - smoothstep(0.24, 0.58, footprint * frequency);
     pattern.yz *= primaryCoverage * min(1.0, 0.05 / aa);
+    // Unresolved tile colours need filtering too: fading only the fine lines
+    // leaves random cell colours crawling underneath at grazing/far distances.
+    float broadCoverage = 1.0 - smoothstep(0.20, 0.75, footprint * frequency);
+    pattern.x = mix(0.5, pattern.x, broadCoverage);
     if (detailEnergy > 0.0) {
         float fineFrequency = frequency * (2.35 + FractalC.z * 1.1 + doseDetail * 0.11);
         float fineAA = max(footprint * fineFrequency * 0.95, 0.028);
@@ -468,25 +515,41 @@ vec3 surfacePattern(vec3 point, vec3 normal, float footprint) {
         pattern.x = mix(pattern.x, fine.x, fineCoverage * 0.10);
     }
     float veinFrequency = 1.8 + doseDetail * 0.28;
-    float veinField = sin(p.x * veinFrequency + sin(p.y * 1.7 + morphClock * 0.19)
-            + sin(p.z * 1.9 - morphClock * 0.23) * (0.5 + geometryLanesB.z));
+    float veinField = sin(p.x * veinFrequency + sin(p.y * 1.7 + surfaceClock * 0.19)
+            + sin(p.z * 1.9 - surfaceClock * 0.23) * (0.5 + geometryLanesB.z));
     float veinAA = max(0.025, footprint * veinFrequency);
     float veins = (1.0 - smoothstep(0.035, 0.035 + veinAA, abs(veinField)))
             * min(1.0, 0.07 / veinAA) * materialLanes.y;
     pattern.y = max(pattern.y, veins * (0.45 + WorldInfluenceA.x * 0.35));
-    pattern.x = mix(pattern.x, 0.5 + veinField * 0.5, materialLanes.z * 0.24);
-    float veil = pow(0.5 + 0.5 * sin(p.x * 1.9 + sin(p.y * 2.3 - morphClock * 0.29) + p.z * 1.1), 4.0);
+    pattern.x = mix(pattern.x, 0.5 + veinField * 0.5, materialLanes.z * 0.24
+            * (1.0 - smoothstep(0.20, 0.70, footprint * veinFrequency)));
+    float veil = pow(0.5 + 0.5 * sin(p.x * 1.9 + sin(p.y * 2.3 - surfaceClock * 0.29) + p.z * 1.1), 4.0);
     pattern.z = max(pattern.z, veil * patternVeil * 0.42);
+    pattern.yz *= settlingOrnament;
+    pattern.x = mix(0.5, pattern.x, 0.25 + settlingOrnament * 0.75);
     return pattern;
 }
 
 vec3 realmBackground(vec3 ray) {
     float clouds = sin(ray.x * 6.0 + sin(ray.y * 4.0) + morphClock * 0.22)
             * sin(ray.z * 5.0 - ray.y * 3.0 - morphClock * 0.17);
-    float hue = hueTravel(FractalC.y, colorHue(WorldInfluenceC.rgb + vec3(0.001)), 0.20)
+    float hue = worldHueTint(FractalC.y, colorHue(WorldInfluenceC.rgb + vec3(0.001)),
+                0.20 * worldHueConfidence(WorldInfluenceC.rgb))
             + ray.y * 0.11 + clouds * 0.13 + materialLanes.z * 0.16 + chromaticJourney;
     float light = 0.06 + WorldInfluenceB.x * 0.04 + pow(0.5 + clouds * 0.5, 3.0) * 0.17;
     return hueColor(hue) * light + vec3(0.012, 0.018, 0.035);
+}
+
+vec3 realmLightEnvironment(vec3 direction) {
+    vec3 key = normalize(vec3(0.64, 0.71, -0.43));
+    float keyFacing = max(0.0, dot(direction, key));
+    float sky = smoothstep(-0.35, 0.75, direction.y);
+    vec3 environment = realmBackground(direction) * (0.16 + sky * 0.70 + pow(keyFacing, 3.0) * 1.15);
+    // One broad softbox and a contained highlight give reflections the same
+    // directional light as the solid body, rather than an evenly bright wash.
+    vec3 lightColor = mix(vec3(0.80, 0.89, 1.0), hueColor(FractalC.y + 0.08), 0.16);
+    environment += lightColor * (pow(keyFacing, 12.0) * 0.28 + pow(keyFacing, 72.0) * 0.62);
+    return environment;
 }
 
 void main() {
@@ -499,6 +562,9 @@ void main() {
     float seedA = clamp(FractalB.x, 0.0, 1.0);
     float seedB = clamp(FractalB.y, 0.0, 1.0);
     detailEnergy = clamp(FractalC.x, 0.0, 1.0);
+    settlingDistortion = clamp(RealmSettling.x, 0.0, 1.0);
+    settlingOrnament = clamp(RealmSettling.z, 0.0, 1.0);
+    settlingLight = clamp(RealmSettling.w, 0.0, 1.0);
     doseDrive = max(RealmDynamics.x, 0.0);
     doseDetail = log2(1.0 + doseDrive);
     detailFrequency = detailEnergy * (1.0 + doseDetail * 0.60);
@@ -511,11 +577,15 @@ void main() {
     ecologicalPhase = dot(WorldInfluenceC.rgb, vec3(0.41, 0.73, 0.29)) * 0.55;
     // Only fixed signature values scale the integrated clock. Intensity and
     // snapshot changes alter amplitudes, never jump an accumulated time phase.
-    morphClock = seconds * (0.34 + FractalC.y * 0.18);
-    morphAmount = (0.32 + detailEnergy * 0.68) * (1.0 + doseDetail * 0.16) / (1.0 + doseDetail * 0.07) * mix(1.0, 0.38, reduced);
+    float integratedRate = 0.34 + FractalC.y * 0.18;
+    morphClock = seconds * integratedRate * 0.68;
+    surfaceClock = seconds * integratedRate * 1.12;
+    motifMemory = proceduralLanes(morphClock * 0.293, signaturePhase * 59.3 + 461.9);
+    morphAmount = (0.32 + detailEnergy * 0.68) * (1.0 + doseDetail * 0.16) / (1.0 + doseDetail * 0.07)
+            * mix(1.0, 0.38, reduced) * settlingDistortion;
     geometryLanesA = proceduralLanes(morphClock, seedA * 31.7 + FractalC.y * 71.3);
     geometryLanesB = proceduralLanes(morphClock * 0.619, seedB * 47.3 + FractalC.z * 89.1);
-    materialLanes = proceduralLanes(morphClock * 0.937, signaturePhase * 13.7 + 113.3);
+    materialLanes = proceduralLanes(surfaceClock * 0.937, signaturePhase * 13.7 + 113.3);
     geometryLanesA = clamp(vec4(0.10) + geometryLanesA * 0.78
             + vec4(WorldInfluenceA.z * 0.13 + WorldInfluenceB.y * 0.07,
                     WorldInfluenceA.y * 0.15 + WorldInfluenceB.z * 0.09,
@@ -546,15 +616,15 @@ void main() {
     chamberAspect = vec3(0.70 + geometryLanesA.y * 0.47,
             0.77 + geometryLanesB.y * 0.54, 0.71 + geometryLanesA.w * 0.49);
     vaultRoundness = clamp(familyWeights.z * 0.78 + geometryLanesB.z * 0.14, 0.0, 0.92);
-    vec4 colorChapters = proceduralLanes(morphClock * 0.71, signaturePhase * 17.3 + 223.7);
-    chromaticJourney = (colorChapters.w - 0.5) * 0.80 + (materialLanes.z - 0.5) * 0.50;
+    vec4 colorChapters = proceduralLanes(surfaceClock * 0.71, signaturePhase * 17.3 + 223.7);
+    chromaticJourney = ((colorChapters.w - 0.5) * 0.80 + (materialLanes.z - 0.5) * 0.50) * settlingLight;
     fieldRotation = rotateY(seedA * 3.9 + FractalC.z * 2.1) * rotateZ(seedB * 2.6 + 0.21) * rotateX(seedA * 1.2 + FractalC.y * 1.8);
     foldRotation = rotateZ((FractalC.y - 0.5) * 0.18 + (geometryLanesA.y - 0.5) * 0.15 + sin(morphClock * 0.71) * morphAmount * 0.025)
             * rotateY((FractalC.z - 0.5) * 0.16 + (geometryLanesA.w - 0.5) * 0.14);
     boxScale = -1.67 - seedA * 0.36 + (geometryLanesA.x - 0.5) * 0.24 + sin(morphClock * 0.91 + seedB * 6.0) * morphAmount * 0.09;
     minimumRadiusSquared = 0.25 + geometryLanesA.x * 0.26 + sin(morphClock * 0.73 + seedA * 5.0) * morphAmount * 0.035;
     chamberRadius = 2.72 + FractalB.z * 0.12 - WorldInfluenceA.z * 0.18 + WorldInfluenceA.w * 0.08 + worldRelief * 0.10
-            + sin(morphClock * 0.77 + signaturePhase) * morphAmount * 0.13;
+            + sin(morphClock * 0.77 + signaturePhase) * morphAmount * 0.13 + (motifMemory.y - 0.5) * 0.06;
     int quality = int(clamp(floor(FractalA.z + 0.5), 0.0, 2.0));
     float recursionEngagement = doseDrive / (1.7 + doseDrive);
     float maxFoldDepth = quality == 0 ? 6.0 : (quality == 1 ? 8.0 : 10.0);
@@ -577,10 +647,10 @@ void main() {
     float motionInteraction = doseDrive / (5.0 + doseDrive) * 0.75;
     motionLanes = mix(sparseGroup(motionSignal, 9.0), broadMotion, motionInteraction);
     motionLanes *= (0.80 + doseDrive / (1.0 + doseDrive) * 0.20) * mix(1.0, 0.38, reduced);
-    motionSecondary = proceduralLanes(morphClock * 0.817, signaturePhase * 29.3 + 317.1).xy
+    motionSecondary = proceduralLanes(surfaceClock * 0.817, signaturePhase * 29.3 + 317.1).xy
             * vec2(doseLayerWeights.y, 0.15 + doseLayerWeights.z * 0.85);
-    vec4 materialSignalA = proceduralLanes(morphClock * 1.117, signaturePhase * 31.9 + 337.3);
-    vec2 materialSignalB = proceduralLanes(morphClock * 0.733, signaturePhase * 37.1 + 359.9).zw;
+    vec4 materialSignalA = proceduralLanes(surfaceClock * 1.117, signaturePhase * 31.9 + 337.3);
+    vec2 materialSignalB = proceduralLanes(surfaceClock * 0.733, signaturePhase * 37.1 + 359.9).zw;
     surfaceMaterialsA = exp((materialSignalA - 0.5) * 8.5);
     surfaceMaterialsB = exp((materialSignalB - 0.5) * 8.5);
     float materialSum = dot(surfaceMaterialsA, vec4(1.0)) + dot(surfaceMaterialsB, vec2(1.0));
@@ -593,20 +663,22 @@ void main() {
     materialSum = dot(surfaceMaterialsA, vec4(1.0)) + dot(surfaceMaterialsB, vec2(1.0));
     surfaceMaterialsA /= max(materialSum, 0.000001);
     surfaceMaterialsB /= max(materialSum, 0.000001);
-    vec4 patternSignal = proceduralLanes(morphClock * 0.889, signaturePhase * 41.3 + 379.7);
+    vec4 patternSignal = proceduralLanes(surfaceClock * 0.889, signaturePhase * 41.3 + 379.7);
     patternSignal += vec4(WorldInfluenceA.y * 0.10, WorldInfluenceB.z * 0.12, WorldInfluenceA.x * 0.08, WorldInfluenceA.z * 0.08);
     vec4 broadPattern = exp(patternSignal * 2.0);
     broadPattern /= dot(broadPattern, vec4(1.0));
     patternLanes = mix(sparseGroup(patternSignal, 7.0), broadPattern, doseDrive / (4.0 + doseDrive) * 0.70);
-    patternVeil = proceduralLanes(morphClock * 0.497, signaturePhase * 43.7 + 401.9).z
+    patternVeil = proceduralLanes(surfaceClock * 0.497, signaturePhase * 43.7 + 401.9).z
             * doseLayerWeights.y * (0.25 + WorldInfluenceA.w * 0.75);
     lightingLanes = sparseGroup(proceduralLanes(morphClock * 0.577, signaturePhase * 47.3 + 419.3), 7.0);
+    lightingLanes = mix(vec4(1.0, 0.0, 0.0, 0.0), lightingLanes, settlingLight);
     atmosphereLanes = proceduralLanes(morphClock * 0.377, signaturePhase * 53.1 + 443.9).xy;
+    atmosphereLanes *= settlingLight;
     worldStructure = clamp(vec4(WorldInfluenceD.w, WorldAttractor.w, WorldInfluenceA.w, WorldInfluenceA.x), vec4(0.0), vec4(1.0));
     worldDoseGain = 1.0 + doseDrive / (2.0 + doseDrive) * 0.38 + doseDetail * 0.09;
     fieldDistanceScale = 0.52 / (1.0 + motionLanes.z * 0.40 + motionLanes.w * 0.20 + motionLanes.y * 0.15
             + worldStructure.x * worldDoseGain * 0.12 + worldStructure.y * (0.40 + doseDetail * 0.025));
-    chamberRadius += sin(morphClock * 1.30 + signaturePhase) * motionLanes.x * 0.31;
+    chamberRadius += sin(morphClock * 1.30 + signaturePhase) * motionLanes.x * 0.31 * settlingDistortion;
     allowEmptyShortcut = true;
 
     vec3 origin = realmEyeOrigin();
@@ -646,14 +718,14 @@ void main() {
     int recoverySteps = 0;
     for (int i = 0; i < MAX_STEPS; i++) {
         if (i >= stepLimit || distance >= FAR_DISTANCE) break;
-        hitField = realmField(origin + ray * distance);
+        hitField = realmDistanceField(origin + ray * distance);
         hitTolerance = 0.0018 + distance * pixelTolerance;
         // At large distances a conservative empty-space stepping bound can
         // fall below the pixel footprint. Verify the real solid before calling
         // it a hit, then use the complete field for normals and lighting.
         if (hitField.x < hitTolerance && hitField.y < 0.0) {
             allowEmptyShortcut = false;
-            hitField = realmField(origin + ray * distance);
+            hitField = realmDistanceField(origin + ray * distance);
             allowEmptyShortcut = true;
         }
         if (hitField.x < hitTolerance) { hit = true; break; }
@@ -666,7 +738,7 @@ void main() {
         // Each sign bracket is local to adjacent samples: bisection over a whole
         // room could silently choose its back wall instead of a foreground solid.
         // Only a proven carved-void bound permits a larger empty-space advance.
-        vec2 startField = realmField(origin + ray * distance);
+        vec2 startField = realmDistanceField(origin + ray * distance);
         hitTolerance = 0.0018 + distance * pixelTolerance;
         if (startField.x < hitTolerance) {
             hitField = startField;
@@ -686,7 +758,7 @@ void main() {
                 lowerDistance = searchDistance;
                 searchDistance += min(advance, 1.65);
                 if (searchDistance >= FAR_DISTANCE) break;
-                searchField = realmField(origin + ray * searchDistance);
+                searchField = realmDistanceField(origin + ray * searchDistance);
                 recoverySteps++;
                 hitTolerance = 0.0018 + searchDistance * pixelTolerance;
                 if (searchField.x <= 0.0) {
@@ -707,11 +779,11 @@ void main() {
                 for (int refinement = 0; refinement < 12; refinement++) {
                     if (refinement >= refinements) break;
                     float middle = (lowerDistance + upperDistance) * 0.5;
-                    if (realmField(origin + ray * middle).x > 0.0) lowerDistance = middle;
+                    if (realmDistanceField(origin + ray * middle).x > 0.0) lowerDistance = middle;
                     else upperDistance = middle;
                 }
                 distance = upperDistance;
-                hitField = realmField(origin + ray * distance);
+                hitField = realmDistanceField(origin + ray * distance);
                 if (hitField.x <= 0.0) {
                     hit = true;
                     recoveredSurface = true;
@@ -721,6 +793,7 @@ void main() {
         }
     }
 
+    if (hit) hitField = realmField(origin + ray * distance);
     vec3 background = realmBackground(ray);
     vec3 color = background;
     vec3 targetPoint = origin + ray * min(distance, FAR_DISTANCE);
@@ -742,14 +815,18 @@ void main() {
         float hueB = colorHue(PaletteB.rgb);
         float baseChroma = max(PaletteA.r, max(PaletteA.g, PaletteA.b)) - min(PaletteA.r, min(PaletteA.g, PaletteA.b));
         hueA = hueTravel(FractalC.y + seedA * 0.31, hueA, smoothstep(0.08, 0.45, baseChroma) * 0.75);
-        float hue = hueTravel(hueA, hueB, ornament.x * 0.68) + hitField.y * 0.20
-                + iridescence * (0.07 + materialLanes.z * 0.20)
-                + sin(morphClock * 0.31 + dot(point, vec3(0.23, 0.17, 0.19))) * 0.045 + chromaticJourney;
-        float ecologicalHue = hueTravel(colorHue(WorldInfluenceC.rgb + vec3(0.001)),
-                colorHue(hiddenSceneColor + vec3(0.001)), 0.28 + sourceSurface * 0.12);
+        float hue = hueTravel(hueA, hueB, 0.18 + motifMemory.z * 0.12)
+                + (ornament.x - 0.5) * 0.12 + hitField.y * 0.08
+                + iridescence * (0.025 + materialLanes.z * 0.08)
+                + sin(surfaceClock * 0.31 + dot(point, vec3(0.23, 0.17, 0.19))) * 0.025 * settlingLight + chromaticJourney;
+        float worldTintConfidence = worldHueConfidence(WorldInfluenceC.rgb);
+        float ecologicalHue = worldHueTint(colorHue(WorldInfluenceC.rgb + vec3(0.001)),
+                colorHue(hiddenSceneColor + vec3(0.001)),
+                (0.10 + sourceSurface * 0.06) * worldHueConfidence(hiddenSceneColor));
         float hiddenRelief = sourceSurface * (0.25 + 0.75 * abs(dot(sourceNormal, targetNormal)))
                 / (1.0 + sourcePhysicalDistance * 0.02);
-        hue = hueTravel(hue, ecologicalHue, 0.10 + WorldInfluenceA.x * 0.07 + WorldInfluenceA.w * 0.04);
+        hue = worldHueTint(hue, ecologicalHue,
+                (0.10 + WorldInfluenceA.x * 0.07 + WorldInfluenceA.w * 0.04) * worldTintConfidence);
         hue += sin(log2(1.0 + sourcePhysicalDistance) * 1.1 + signaturePhase) * sourceSurface * 0.025;
         material = hueColor(hue);
         float accentHue = hueTravel(hue + 0.29 + FractalC.z * 0.22, colorHue(PaletteC.rgb) + chromaticJourney * 0.80, 0.30);
@@ -758,6 +835,7 @@ void main() {
         vec3 fillLight = normalize(vec3(-0.53, 0.28, 0.79));
         float diffuse = max(0.0, dot(normal, keyLight));
         float fill = max(0.0, dot(normal, fillLight));
+        float skyFacing = clamp(normal.y * 0.5 + 0.5, 0.0, 1.0);
         float ambient = 0.10 + lightingLanes.x * 0.27 + lightingLanes.y * 0.12 + lightingLanes.w * 0.10;
         float keyStrength = 0.10 + lightingLanes.x * 0.55 + lightingLanes.y * 0.40 + lightingLanes.w * 0.21;
         float illumination = ambient + diffuse * keyStrength + fill * (0.12 + lightingLanes.x * 0.20)
@@ -771,6 +849,7 @@ void main() {
                 * (0.76 + materialLanes.w * 0.56 + WorldInfluenceB.y * 0.15)
                 * (1.0 + doseDetail * 0.08) * (0.94 + hiddenRelief * 0.12);
         lineEnergy *= 0.60 + lightingLanes.y * 0.80 + lightingLanes.w * 1.20 + lightingLanes.z * 0.45;
+        lineEnergy /= 1.0 + lineEnergy * 0.65;
         color *= 1.0 - ornament.y * 0.40;
         color += lineColor * lineEnergy * mix(1.0, 0.36, reduced);
         color += hueColor(hue + 0.10) * iridescence * (0.14 + detailEnergy * 0.18);
@@ -778,33 +857,53 @@ void main() {
         color += hueColor(hue + 0.08) * specular * mix(1.0, 0.35, reduced);
         vec3 engravedShell = color;
         float fresnel = pow(1.0 - viewFacing, 4.0);
-        vec3 reflection = realmBackground(reflect(ray, normal));
-        vec3 refraction = realmBackground(refract(ray, normal, 0.69));
+        vec3 reflection = realmLightEnvironment(reflect(ray, normal));
+        vec3 refraction = realmLightEnvironment(refract(ray, normal, 0.69));
+        // Reflection-only materials used to bypass almost all geometric light
+        // and cavity shading. Retain their distinct optical response while
+        // allowing folds, close ridges and occluded recesses to read as solids.
+        float cavityShade = mix(0.20, 1.0, occlusion);
+        float formShade = 0.15 + diffuse * 1.10 + fill * 0.16 + skyFacing * 0.18;
+        float gloss = pow(max(0.0, dot(reflect(ray, normal), keyLight)), 58.0);
         vec3 glass = reflection * (0.65 + fresnel * 3.1) + refraction * (1.0 - fresnel) * 0.85
                 + material * 0.07 + lineColor * ornament.y * 0.22;
-        float thinFilm = sin(viewFacing * 10.0 + ornament.x * 4.0 + morphClock * 0.21);
+        glass *= cavityShade * formShade;
+        glass += hueColor(hue + 0.06) * gloss * 0.65 * mix(1.0, 0.35, reduced);
+        glass += material * (0.025 + diffuse * 0.065) * cavityShade;
+        float thinFilm = sin(viewFacing * 10.0 + ornament.x * 4.0 + surfaceClock * 0.21) * settlingLight;
         vec3 membrane = hueColor(hue + thinFilm * 0.18) * (0.18 + viewFacing * 0.43 + fill * 0.17)
                 + reflection * 0.35 + lineColor * (fresnel * 0.42 + ornament.z * 0.20);
+        membrane *= cavityShade * (0.24 + diffuse * 0.94 + fill * 0.14 + skyFacing * 0.14);
         float subsurface = pow(max(0.0, dot(-normal, keyLight)), 2.0);
-        vec3 tissue = material * (0.30 + diffuse * 0.40 + fill * 0.24) * mix(0.55, 1.0, occlusion)
-                + hueColor(hue - 0.08) * subsurface * 0.26 + lineColor * ornament.y * 0.18;
-        float metalRipple = sin(dot(point, vec3(1.7, 2.1, 1.3)) + morphClock * 0.37);
+        vec3 tissue = material * (0.12 + diffuse * 0.96 + fill * 0.17 + skyFacing * 0.18) * cavityShade
+                + hueColor(hue - 0.08) * subsurface * 0.30 + lineColor * ornament.y * 0.14;
+        float metalRipple = sin(dot(point, vec3(1.7, 2.1, 1.3)) + surfaceClock * 0.37) * settlingOrnament;
         vec3 metal = reflection * (2.2 + fresnel * 2.0) * (0.82 + metalRipple * 0.18)
                 + material * illumination * 0.12 + hueColor(hue + 0.06) * specular * 3.4;
-        vec3 glyph = material * 0.045 + lineColor * (lineEnergy * 1.35 + ornament.z * 0.22);
+        metal *= cavityShade * (0.22 + diffuse * 1.05 + fill * 0.16 + skyFacing * 0.14);
+        metal += hueColor(hue + 0.035) * gloss * 0.55 * mix(1.0, 0.35, reduced);
+        vec3 glyph = material * illumination * cavityShade * 0.07 + lineColor * (lineEnergy * 0.88 + ornament.z * 0.15);
         float facetHue = dot(normal, normalize(vec3(1.0, 2.0, 3.0))) * 0.25;
         vec3 kaleidoShell = engravedShell * 0.42 + hueColor(hue + facetHue) * illumination * 0.60
                 + lineColor * ornament.y * 0.30;
         color = glass * surfaceMaterialsA.x + membrane * surfaceMaterialsA.y
                 + tissue * surfaceMaterialsA.z + metal * surfaceMaterialsA.w
                 + glyph * surfaceMaterialsB.x + kaleidoShell * surfaceMaterialsB.y;
-        float shimmer = pow(0.5 + 0.5 * sin(dot(point, vec3(0.71, 0.93, 0.57)) + morphClock * 0.31 + viewFacing * 4.0), 6.0);
+        float depthDistance = length(point - origin);
+        float distanceAbsorption = exp(-max(0.0, depthDistance - 0.75) * (0.035 + atmosphereLanes.x * 0.015));
+        color *= distanceAbsorption;
+        float fineAccents = ornament.y * (0.08 + detailEnergy * 0.18)
+                * (0.65 + lightingLanes.y * 0.40 + lightingLanes.w * 0.50);
+        color += lineColor * fineAccents * distanceAbsorption * mix(1.0, 0.38, reduced);
+        float shimmer = pow(0.5 + 0.5 * sin(dot(point, vec3(0.71, 0.93, 0.57)) + surfaceClock * 0.31 + viewFacing * 4.0), 6.0);
         color += hueColor(hue + 0.14) * shimmer * atmosphereLanes.y * 0.12 * mix(1.0, 0.25, reduced);
         float entityGlow = worldStructure.y / (1.0 + dot(point - WorldAttractor.xyz, point - WorldAttractor.xyz));
-        color += hueColor(ecologicalHue + 0.18) * entityGlow * 0.19;
+        vec3 entityColor = mix(hueColor(FractalC.y + 0.18), hueColor(ecologicalHue + 0.18), worldTintConfidence);
+        color += entityColor * entityGlow * 0.19;
         float fogDensity = 0.007 + atmosphereLanes.x * 0.035 + WorldInfluenceA.z * 0.008;
-        float fog = 1.0 - exp(-length(point - origin) * fogDensity);
-        color = mix(color, background + hueColor(FractalC.z + 0.14) * 0.05, fog);
+        float fog = 1.0 - exp(-depthDistance * fogDensity);
+        vec3 fogColor = mix(background, vec3(luma(background)), 0.50) + hueColor(FractalC.z + 0.14) * 0.018;
+        color = mix(color, fogColor, fog);
     }
 
     // Per-channel exponential mapping preserves luminous saturated lines;
