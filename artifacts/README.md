@@ -20,7 +20,9 @@ The smoking update passed nine focused server GameTests and a fresh native Minec
 
 **Market Broker coverage:** products from all sixteen substance families can be sold, including DMT Powder, MDMA capsules, bulk crystals/powders, AL-LAD concentrate, ethanol and all twelve loaded smoking devices. Sales and contracts require full, unused stock; partly used containers remain yours, and equivalent older item IDs count toward the current product. Selling a loaded Bong or Ancient Pipe transfers the whole vessel. Empty tools and custom blend capsules are excluded. Existing full-stock prices, demand/reputation rules and deferred payouts on market close are preserved.
 
-The broker update passed seven focused server GameTests, covering all 111 product rows, all Dealer products, fourteen legacy item variants, full/partial inventory handling, emerald payouts, contracts and saved market data.
+The four broker contracts belong to each player and **never expire** with time or a new Minecraft day. They survive market close/reopen, logout and save/load. Completing one replaces it in place; the other three keep their IDs, requirements and rewards. Demand still changes daily, without repricing posted orders.
+
+The broker update passed ten focused server GameTests, covering all 111 product rows, all Dealer products, fourteen legacy item variants, full/partial inventory handling, emerald payouts and saved market data. Contract checks include long elapsed time, save/load, older partial boards, replacement in each of the four slots, fixed posted rewards, replay protection and separate player boards.
 
 Open **Mods → Vice and Villagers → Config** from Minecraft's title screen or in-game Mods menu. The settings screen offers the DMT realm toggle, intensity **0/25/50/75/100%**, and **Low/Balanced/High** quality. Changes apply immediately and save for future launches; existing custom intensity values are preserved when the menu opens. **Key Binds...** opens shortcut assignment, and **Open Trip Scrubber...** is available during supported active trips. The settings screen is organized into sections for future additions.
 

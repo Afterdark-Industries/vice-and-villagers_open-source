@@ -357,6 +357,7 @@
   "message.trippycraft.market.contract_missing": "This contract needs %s units.",
   "message.trippycraft.market.no_product": "You do not have any full, unused units of that product to sell.",
   "trippycraft.market.full_stock": "Full, unused stock only.",
+  "trippycraft.market.contracts_until_completed": "Until completed",
   "message.trippycraft.market.no_emeralds": "You need %s emeralds.",
   "message.trippycraft.market.locked": "Your market reputation is not high enough yet.",
   "message.trippycraft.market.too_far": "Stay near a market villager to trade.",

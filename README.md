@@ -14,6 +14,8 @@ This build also adds **DMT Powder** and the reusable **Ancient Pipe**. Grind DMT
 
 Market Brokers now buy products from **all 16 substance families**, including the new powder, capsules, bulk formats and loaded smoking devices. Sales and contracts accept **full, unused stock only**; partly used items stay in your inventory, and equivalent older item IDs are recognized. Selling a loaded Bong or Ancient Pipe transfers the whole device. Empty tools and custom blend capsules are excluded. Emerald payouts still settle when the market closes.
 
+Your four broker contracts **never expire** and survive closing the market, logout and save/load. Completing one replaces only that order; the other three keep their requirements and rewards. Daily demand changes do not reprice posted contracts.
+
 ## What the mod contains
 
 The substance systems cover **cannabis, psilocybin, LSD, 2C-B, 4-HO-MET, AL-LAD, 2C-E, mescaline, DMT, salvia, cocaine, heroin, ketamine, MDMA, alcohol and nitrous oxide**. Koka and crack are routes within the cocaine system; different drinks share the alcohol system. Sessions can stack and interact, with tolerance, dependence, recovery, visual, audio and movement effects.

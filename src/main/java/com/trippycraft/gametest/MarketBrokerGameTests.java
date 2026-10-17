@@ -6,6 +6,7 @@ import com.trippycraft.economy.EmeraldPayoutLedger;
 import com.trippycraft.economy.EmeraldWallet;
 import com.trippycraft.economy.MarketContract;
 import com.trippycraft.economy.MarketDataStore;
+import com.trippycraft.economy.MarketMath;
 import com.trippycraft.economy.MarketPlayerData;
 import com.trippycraft.economy.MarketRegistries;
 import com.trippycraft.economy.MarketService;
@@ -18,6 +19,7 @@ import com.trippycraft.item.StackableDoseItemSupport;
 import com.trippycraft.item.TwoCbCrystalItem;
 import com.trippycraft.item.TwoCeCrystalItem;
 import com.trippycraft.network.MarketActionPacket;
+import com.trippycraft.network.MarketSnapshotPacket;
 import com.trippycraft.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -31,12 +33,14 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -276,6 +280,152 @@ public final class MarketBrokerGameTests {
                     "An existing market state did not gain new product demand or lost its saved order");
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void freshFourOrderBoardsSurviveDemandDaysOpenActionsAndSnapshots(GameTestHelper helper) {
+        ServerLevelData clock = (ServerLevelData) helper.getLevel().getLevelData();
+        long originalTime = helper.getLevel().getGameTime();
+        try {
+            clock.setGameTime(1_000_000L);
+            try (Fixture fixture = fixture(helper)) {
+                fixture.player.getRandom().setSeed(0x4d41524b4554L);
+                fixture.data.activeContracts().clear();
+                fixture.data.setLastContractRefreshGameTime(0L);
+                MarketService.openMarket(fixture.player);
+                List<MarketContract> board = List.copyOf(fixture.data.activeContracts());
+                helper.assertTrue(board.size() == 4 && board.stream().map(MarketContract::id).distinct().count() == 4,
+                        "A fresh player did not receive four distinct orders");
+                assertBoard(helper, fixture.player, fixture.data, board, "fresh board");
+                for (int day : new int[]{1, 3, 12}) {
+                    var previousDemand = new HashMap<>(fixture.data.demandMultipliers());
+                    long now = 1_000_000L + day * 24_000L;
+                    clock.setGameTime(now);
+                    MarketService.openMarket(fixture.player);
+                    fixture.sell("missing-product", 1);
+                    assertBoard(helper, fixture.player, fixture.data, board, "after " + day + " demand days");
+                    helper.assertTrue(fixture.data.lastDemandRefreshGameTime() == now
+                                    && !fixture.data.demandMultipliers().equals(previousDemand),
+                            "Persistent orders stopped the independent daily demand updates");
+                    helper.assertTrue(fixture.data.totalUnitsSold() == 0 && fixture.data.completedContracts() == 0
+                                    && EmeraldWallet.value(fixture.player) == 0,
+                            "Opening an old board or rejecting an action paid or completed an order");
+                }
+            }
+        } finally {
+            // These probes are synchronous: restore the shared clock before another test/tick runs.
+            clock.setGameTime(originalTime);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void savedThreeOrderLegacyBoardTopsUpWithoutChangingItsRecordsOrOrder(GameTestHelper helper) {
+        ServerLevelData clock = (ServerLevelData) helper.getLevel().getLevelData();
+        long originalTime = helper.getLevel().getGameTime();
+        try {
+            clock.setGameTime(2_000_000L);
+            try (Fixture fixture = fixture(helper)) {
+                List<MarketContract> savedOrders = List.of(
+                        new MarketContract("contract_1", "cannabis_joint", "Zeta Saved", 8, 37, 9, 135),
+                        new MarketContract("contract_2", "dmt_powder", "Alpha Saved", 16, 211, 51, 165),
+                        new MarketContract("contract_3", "four_ho_met_100mg", "Middle Saved", 8, 147, 35, 145));
+                fixture.data.activeContracts().clear();
+                fixture.data.activeContracts().addAll(savedOrders);
+                fixture.data.setLastContractRefreshGameTime(100L);
+                MarketPlayerData restored = MarketPlayerData.load(fixture.data.save());
+                helper.assertTrue(restored.lastContractRefreshGameTime() == 100L && restored.activeContracts().equals(savedOrders),
+                        "Loading legacy market data lost its timestamp or exact saved order records");
+                MarketDataStore.set(fixture.player.getUUID(), restored);
+                MarketService.openMarket(fixture.player);
+                List<MarketContract> toppedUp = List.copyOf(restored.activeContracts());
+                helper.assertTrue(toppedUp.size() == 4 && toppedUp.subList(0, 3).equals(savedOrders)
+                                && toppedUp.stream().map(MarketContract::id).distinct().count() == 4,
+                        "Filling a legacy board replaced, reordered or duplicated an existing order");
+                assertBoard(helper, fixture.player, restored, toppedUp, "loaded and topped-up board");
+                MarketPlayerData reloaded = MarketPlayerData.load(restored.save());
+                MarketDataStore.set(fixture.player.getUUID(), reloaded);
+                clock.setGameTime(20_000_000L);
+                MarketService.openMarket(fixture.player);
+                fixture.sell("missing-product", 1);
+                assertBoard(helper, fixture.player, reloaded, toppedUp, "saved full board after a long absence");
+                reloaded.setLastContractRefreshGameTime(Long.MAX_VALUE / 4L);
+                assertBoard(helper, fixture.player, reloaded, toppedUp, "legacy future timestamp");
+            }
+        } finally {
+            clock.setGameTime(originalTime);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void completingEachOldOrderReplacesOnlyItsSlotPaysFrozenRewardAndKeepsOtherPlayersBoard(GameTestHelper helper) {
+        ServerLevelData clock = (ServerLevelData) helper.getLevel().getLevelData();
+        long originalTime = helper.getLevel().getGameTime();
+        try {
+            for (int completedSlot = 0; completedSlot < 4; completedSlot++) {
+                clock.setGameTime(3_000_000L);
+                try (Fixture fixture = fixture(helper); Fixture other = fixture(helper)) {
+                    fixture.data.activeContracts().clear();
+                    other.data.activeContracts().clear();
+                    MarketService.openMarket(fixture.player);
+                    MarketService.openMarket(other.player);
+                    List<MarketContract> board = List.copyOf(fixture.data.activeContracts());
+                    List<MarketContract> otherBoard = List.copyOf(other.data.activeContracts());
+                    helper.assertTrue(board.size() == 4 && otherBoard.size() == 4 && fixture.data != other.data,
+                            "Players did not receive independent four-order boards");
+                    MarketContract chosen = board.get(completedSlot);
+                    clock.setGameTime(3_000_000L + 24_000L * 30L);
+                    MarketService.openMarket(fixture.player);
+                    assertBoard(helper, fixture.player, fixture.data, board, "old order before completion");
+                    fixture.data.setDemandMultiplier(chosen.productId(), MarketMath.MAX_DEMAND);
+                    fixture.data.setLastDemandRefreshGameTime(helper.getLevel().getGameTime());
+                    Item stock = product(chosen.productId()).item().get();
+                    fixture.player.getInventory().setItem(0, new ItemStack(stock, chosen.quantity() + 1));
+                    fixture.complete(chosen.id());
+                    List<MarketContract> replaced = List.copyOf(fixture.data.activeContracts());
+                    helper.assertTrue(replaced.size() == 4 && !replaced.get(completedSlot).id().equals(chosen.id())
+                                    && replaced.stream().map(MarketContract::id).distinct().count() == 4,
+                            "Completing an old order did not put a distinct replacement in its own slot");
+                    for (int retainedSlot = 0; retainedSlot < 4; retainedSlot++) {
+                        if (retainedSlot != completedSlot) helper.assertTrue(replaced.get(retainedSlot).equals(board.get(retainedSlot)),
+                                "Completing slot " + completedSlot + " changed the saved record/order in slot " + retainedSlot);
+                    }
+                    helper.assertTrue(MarketService.countItem(fixture.player, stock) == 1
+                                    && fixture.data.totalUnitsSold() == chosen.quantity() && fixture.data.completedContracts() == 1
+                                    && fixture.data.reputation() == chosen.reputationReward() && EmeraldWallet.value(fixture.player) == 0,
+                            "Old-order completion changed its frozen quantity, reputation or deferred-payment behavior");
+                    fixture.settle();
+                    helper.assertTrue(EmeraldWallet.value(fixture.player) == chosen.rewardEmeralds(),
+                            "An old order was repriced using today's demand instead of its saved reward");
+                    fixture.player.getInventory().setItem(0, new ItemStack(stock, chosen.quantity() + 3));
+                    fixture.complete(chosen.id());
+                    fixture.settle();
+                    helper.assertTrue(MarketService.countItem(fixture.player, stock) == chosen.quantity() + 3
+                                    && fixture.data.totalUnitsSold() == chosen.quantity() && fixture.data.completedContracts() == 1
+                                    && fixture.data.reputation() == chosen.reputationReward()
+                                    && EmeraldWallet.value(fixture.player) == chosen.rewardEmeralds(),
+                            "Replaying an old order consumed fresh stock or repeated its payout/progression");
+                    assertBoard(helper, fixture.player, fixture.data, replaced, "completed order replay");
+                    assertBoard(helper, other.player, other.data, otherBoard, "another player's untouched board");
+                    helper.assertTrue(other.data.totalUnitsSold() == 0 && other.data.completedContracts() == 0
+                                    && other.data.reputation() == 0 && EmeraldWallet.value(other.player) == 0,
+                            "Completing one player's order paid or progressed another player");
+                }
+            }
+        } finally {
+            clock.setGameTime(originalTime);
+        }
+        helper.succeed();
+    }
+
+    private static void assertBoard(GameTestHelper helper, ServerPlayer player, MarketPlayerData data, List<MarketContract> expected, String context) {
+        MarketSnapshotPacket snapshot = MarketService.createSnapshot(player, data, false);
+        List<MarketSnapshotPacket.ContractInfo> expectedWire = expected.stream().map(contract -> new MarketSnapshotPacket.ContractInfo(
+                contract.id(), contract.productId(), contract.type(), contract.quantity(), contract.rewardEmeralds(), contract.reputationReward(), contract.bonusMultiplier())).toList();
+        helper.assertTrue(data.activeContracts().equals(expected) && snapshot.contracts().equals(expectedWire)
+                        && snapshot.ticksUntilContractRefresh() == 0L,
+                "Persistent contract records/order or the no-expiry wire timer changed: " + context);
     }
 
     private static ItemStack partial(Item item, Consumer<ItemStack> consume) { ItemStack result = new ItemStack(item); consume.accept(result); return result; }

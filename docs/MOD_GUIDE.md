@@ -224,7 +224,7 @@ The [`economy/`](../src/main/java/com/trippycraft/economy/) services own catalog
 | Role/system | Entry points | Behavior to preserve or deliberately review |
 |---|---|---|
 | Dealer | `DealerVillageEvents`, `DealerService`, `DealerRegistries`, `DealerProduct` | Village assignment, catalog categories, products/legacy aliases and purchase validation |
-| Market Broker | `MarketService`, `MarketRegistries`, `MarketStock`, `MarketMath`, `MarketPlayerData`, `MarketContract` | Buying/selling, full-stock and legacy-item matching, demand, reputation, levels, daily contracts and saved progression |
+| Market Broker | `MarketService`, `MarketRegistries`, `MarketStock`, `MarketMath`, `MarketPlayerData`, `MarketContract` | Buying/selling, full-stock and legacy-item matching, daily demand, reputation, levels, persistent player contracts and saved progression |
 | Customer | `CustomerService`, `CustomerSampleEvents`, `CustomerAddictionProfile`, `CustomerOffer` | Daily cached requests, sampling, habits and offer completion |
 | Currency/payouts | `EmeraldWallet`, `EmeraldPayoutLedger` | Inventory accounting, change, deferred payouts and transaction completion |
 | Bartender | `BartenderService`, `ModVillagers` | Native merchant offers, drink stock, job-site identity and tavern anchoring |
@@ -232,6 +232,8 @@ The [`economy/`](../src/main/java/com/trippycraft/economy/) services own catalog
 Loaded-village role assignment excludes bartenders and temporary nightlife guests. Trading validates server-side context, proximity, inventory, quantities and catalog state. Some payouts are retained until a suitable completion/close path. MDMA social state can affect discounts. Changing these systems can change balance even when a GUI looks identical.
 
 The broker catalog covers all sixteen substance families and every Dealer product, with individual finished formats, DMT powder, MDMA capsules, bulk crystals/powders, AL-LAD concentrate, ethanol and all twelve loaded smoking devices. Sales and contracts accept only full, unused stock. `MarketStock.matches(ItemStack, Item)` supplies the shared client/server eligibility rule, including fourteen saved-ID aliases; partial cannabis formats, ethanol and reservoirs remain in inventory rather than selling for a fresh item's price. Existing full-stock prices are preserved.
+
+Each player keeps four personal broker contracts with no time limit. Time passing, a new Minecraft day, market close/reopen, logout and save/load leave posted orders intact. Completing an order replaces only its slot; the other three retain their IDs, products, quantities and rewards. Initial or incomplete older boards fill only missing slots. Daily demand remains separate and does not reprice an existing contract.
 
 A loaded Bong or Ancient Pipe is sold as a whole item, including the vessel; trading does not return an empty device. Empty tools, variable-content blend capsules and other unlisted production ingredients are outside this catalog. The new reservoir crystals, concentrate, loaded devices and ethanol are direct-sale products rather than contract targets. Demand still ranges from 0.80x to 1.50x, reputation still drives business levels and prices, and queued broker payouts still settle when the market closes (or next opens).
 
@@ -300,7 +302,7 @@ Authored track lengths, world-time playlist position, saved offsets, distance fa
 | Saved state | Source owners | Compatibility concerns |
 |---|---|---|
 | Player experience | `SubstanceEvents`, `SubstancePersistence`, `PsychoactiveExperience` | Dedicated sessions, physical/effect amounts, signatures, clocks, tolerance and recovery |
-| Player economy | `MarketEvents`, `MarketDataStore`, `MarketPersistence` | Reputation and trade/contract counters, demand/contracts and refresh times; level is derived |
+| Player economy | `MarketEvents`, `MarketDataStore`, `MarketPersistence` | Reputation and trade/contract counters, demand refresh time and persistent personal contracts; level is derived |
 | Book discovery | `CursedRecipeCodex` | Chapter IDs, legacy keys and synchronization |
 | World systems | `VillageBarData`, `ErgotInfectionData`, `TavernPlaybackData` | Placement/revisions, infection timers and playlist offsets |
 | Blocks/items/villagers | Their NBT/data-component and block-entity paths | Reservoir content, selection/progress, tapped crops, role/station links and customer habits/daily offers |
@@ -308,6 +310,8 @@ Authored track lengths, world-time playlist position, saved offsets, distance fa
 Player sidecars retain the `trippycraft` and `trippycraft_market` names alongside vanilla player data. `NbtCompat` and saved aliases support existing worlds. For example, old koka/cocaine identifiers, the legacy MDMA tablet, dealer products and book chapter keys cannot be removed just because they are hidden from current menus.
 
 Pending payouts in `EmeraldPayoutLedger` are transient server state, rather than persisted market data. Review their open/close/logout flushing and server-stop cleanup separately from a sidecar save. Customer state belongs to villager persistent NBT, not the player's market sidecar.
+
+The saved `lastContractRefreshGameTime` field remains for compatibility, but no longer schedules contract expiry or replacement. Preserve posted order IDs and terms across migrations; only demand uses its daily refresh clock.
 
 Login, clone, death/respawn, dimension change, logout and server stop have different hooks. Trace them rather than assuming a save/load round trip covers every lifecycle. Use a private copy of an existing world for changes to persistence, aliases, roles or structures.
 
