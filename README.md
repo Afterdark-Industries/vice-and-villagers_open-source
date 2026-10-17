@@ -6,7 +6,7 @@ All substance quantities, effects and production chains are fictional gameplay v
 
 ## DMT fractal branch download
 
-This branch includes an optional generated 3D DMT fractal realm. The [built mod JAR](artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar) is in this repository's `artifacts/` folder, beside its [installation instructions, settings and checksum](artifacts/README.md). Existing DMT effects remain the default; enable the fractal realm in client settings or assign its toggle key.
+This branch includes an optional generated 3D DMT fractal realm. The [built mod JAR](artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar) is in this repository's `artifacts/` folder, beside its [installation instructions, settings and checksum](artifacts/README.md). Open **Mods → Vice and Villagers → Config** to select the realm mode, intensity and quality. Existing DMT effects remain the default; the original shortcut bindings remain available.
 
 ## What the mod contains
 

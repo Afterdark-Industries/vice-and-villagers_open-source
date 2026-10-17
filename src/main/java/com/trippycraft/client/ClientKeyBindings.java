@@ -81,11 +81,15 @@ public final class ClientKeyBindings {
                     Component.translatable(qualityKey)), true);
         }
         while (OPEN_TRIP_SCRUB.consumeClick()) {
-            if (ClientExperienceStore.psilocybin().active() || ClientExperienceStore.hoMet().active()
-                    || ClientExperienceStore.alLad().active() || ClientExperienceStore.twoCe().active()
-                    || ClientExperienceStore.nitrous().active()) {
+            if (canOpenTripScrub()) {
                 mc.setScreen(new TripScrubScreen());
             }
         }
+    }
+
+    static boolean canOpenTripScrub() {
+        return Minecraft.getInstance().player != null && (ClientExperienceStore.psilocybin().active()
+                || ClientExperienceStore.hoMet().active() || ClientExperienceStore.alLad().active()
+                || ClientExperienceStore.twoCe().active() || ClientExperienceStore.nitrous().active());
     }
 }

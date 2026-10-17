@@ -127,7 +127,8 @@ Use a fresh smoke directory for each run. These harnesses protect existing world
 | `runLsdSmoke` | LSD presentation, palette and camera/FOV regression scenes |
 | `runTwoCeSmoke` | 2C-E presentation and HUD regression scenes |
 | `runAlLadSmoke` | AL-LAD presentation regression scenes |
-| `runGuiSmoke` | All mod screens plus bartender vanilla trading, fitting/scissors/tooltips, displayed controls and inventory dragging |
+| `runGuiSmoke` | Utility, trading and Findings screens plus bartender vanilla trading, fitting/scissors/tooltips, displayed controls and inventory dragging |
+| `runConfigSmoke` | Actual Mods Config entry, saved DMT settings, custom/zero values, small GUI, parent navigation and shortcut/menu synchronization |
 
 ```powershell
 .\scripts\build.ps1 runHoMetSmoke -PhometSmokeDir=build/qa-homet-fresh -PalLadCraftingSmoke=true -PtwoCbCraftingSmoke=true -PtwoCeCraftingSmoke=true
@@ -138,9 +139,18 @@ Use a fresh smoke directory for each run. These harnesses protect existing world
 .\scripts\build.ps1 runTwoCeSmoke -PtwoCeSmokeDir=build/qa-twoce-fresh
 .\scripts\build.ps1 runAlLadSmoke -PalLadSmokeDir=build/qa-allad-fresh
 .\scripts\build.ps1 runGuiSmoke -PguiSmokeDir=build/qa-gui-fresh
+.\scripts\build.ps1 runConfigSmoke -PconfigSmokeDir=build/qa-config-fresh
 ```
 
 `-PlsdSmokePaletteOnly=true` selects the focused LSD palette run. Combined HoMet crafting flags do not turn its renderer scenes into complete visual tests for AL-LAD, 2C-B or 2C-E. GUI smoke tests drawing/input correspondence on a native client; physical Vivecraft controller aiming and binocular comfort remain manual.
+
+### Extending the player settings menu
+
+`ClientBootstrap` registers NeoForge's `IConfigScreenFactory` only on the client. `ModSettingsScreen` extends vanilla `OptionsSubScreen`, so scrolling, focus, resizing, Done and Escape use the native options interface. Its `addSection` helper groups standard `OptionInstance` controls; add new sections/options there with translated captions/tooltips.
+
+Keep persisted values and setters in `TrippyClientConfig`, update its `onLoad` cache for new settings, and have both menu callbacks and any shortcut use the same setter. Vanilla `Options.save()` does not save mod configuration; the existing mod setters update the spec/cache and call `SPEC.save()`. Preserve user values when constructing/reopening controls. Actions that open another screen must retain the settings screen as their return parent; Trip Scrubber eligibility is shared with its key binding.
+
+`runConfigSmoke` uses a fresh disposable client directory and world. It selects the real mod entry, clicks Config and native option widgets, verifies the TOML/cache and reopened values, checks small-GUI navigation, and dispatches temporary key mappings in-world before restoring them. It waits for screen renders before clicking list rows. Its task requires a passing `config-smoke-result.txt`; visually review its four screenshots as well.
 
 ## Manual acceptance for the whole mod
 

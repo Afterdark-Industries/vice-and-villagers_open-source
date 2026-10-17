@@ -84,6 +84,13 @@ neoForge {
             programArguments.addAll '--width', '1280', '--height', '720'
         }
 
+        configSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('configSmokeDir').getOrElse('build/config-client-smoke'))
+            systemProperty 'trippycraft.configSmokeTest', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
         data {
             data()
             gameDirectory = project.file('build/data-run')
@@ -226,6 +233,16 @@ tasks.matching { it.name == 'runGuiSmoke' }.configureEach {
         def result = project.file("${smokeDirectory}/gui-smoke-result.txt")
         if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Native GUI smoke')) {
             throw new GradleException("GUI renderer/input smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runConfigSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('configSmokeDir').getOrElse('build/config-client-smoke')
+        def result = project.file("${smokeDirectory}/config-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Config client smoke')) {
+            throw new GradleException("Config screen/input/persistence smoke failed; inspect ${result}")
         }
     }
 }

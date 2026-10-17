@@ -4,7 +4,11 @@ The ready-to-install [mod JAR](ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.j
 
 Place the JAR in your instance's `mods` folder, replacing the previous Vice and Villagers JAR, then restart Minecraft. Keep one version of the mod installed.
 
-The original DMT effects remain the default. To enable the optional 3D fractal realm, set these values in your instance's `config/trippycraft-client.toml`:
+Open **Mods → Vice and Villagers → Config** from Minecraft's title screen or in-game Mods menu. The settings screen offers the DMT realm toggle, intensity **0/25/50/75/100%**, and **Low/Balanced/High** quality. Changes apply immediately and save for future launches; existing custom intensity values are preserved when the menu opens. **Key Binds...** opens shortcut assignment, and **Open Trip Scrubber...** is available during supported active trips. The settings screen is organized into sections for future additions.
+
+The config-menu build passed native Minecraft tests for Mods entry navigation, saved values, custom/zero intensity, a 320×240 GUI, parent-screen return and synchronization with the original key bindings. The JAR and checksum below include this menu.
+
+The original DMT effects remain the default. You can also enable the optional 3D fractal realm through your instance's `config/trippycraft-client.toml`:
 
 ```toml
 dmtFractalWorld = true

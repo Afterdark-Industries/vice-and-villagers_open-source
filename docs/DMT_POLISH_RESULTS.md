@@ -1,6 +1,6 @@
 # DMT realm polish — implementation scorecard
 
-Local branch: `codex/v2.2.0-dmt-rendering-review`. Baseline: `3451bc1`, shader `2A83A4A861C239954386F66C915CA273CC32AA93ECAE01352D8C90DEF442636E`. The [approved plan](DMT_POLISH_PLAN.md) contains the original live desktop observations and constraints. No push is performed.
+Local branch: `codex/v2.2.0-dmt-rendering-review`. Baseline: `3451bc1`, shader `2A83A4A861C239954386F66C915CA273CC32AA93ECAE01352D8C90DEF442636E`. This scorecard records the polish milestone `f15d793`; later menu builds refresh the packaged JAR, whose current checksum is in [SHA256SUMS](../artifacts/SHA256SUMS). The [approved plan](DMT_POLISH_PLAN.md) contains the original live desktop observations and constraints. No push is performed.
 
 ## Instrumentation and preserved behavior
 
@@ -99,6 +99,6 @@ During 175 game seconds, the observed GC delta was 31 collections / 131 ms. Samp
 
 Evidence: `build/dmt-client-smoke-20261017-polish/dmt-smoke-result.txt`, its `screenshots/` folder, and `build/dmt-polish-live-smoke.log`. The development client exited normally after the test.
 
-The final Java 21 build passes. The tracked `artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar` is refreshed and byte-identical to `build/libs/`. ZIP CRC and duplicate-entry checks pass; all 565 compiled classes and all four changed shader resources match the build/source. Both packaged fractal shaders match the exact tested hash above, both JSON settling defaults are verified, the legacy shaders are unchanged after newline normalization, and English translations match source.
+The polish milestone's Java 21 build passed. Its tracked `artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar` was refreshed and byte-identical to `build/libs/`. ZIP CRC and duplicate-entry checks passed; all 565 compiled classes and all four changed shader resources matched the build/source. Both packaged fractal shaders matched the exact tested hash above, both JSON settling defaults were verified, the legacy shaders were unchanged after newline normalization, and English translations matched source.
 
-JAR size: **76,451,648 bytes**. SHA256: `3c9880607232f78077a330f7fe44865ef614ca315fc0d6ceb3cf70c6a93bd638` (also recorded in `artifacts/SHA256SUMS`). Work remains local; no push is performed.
+Polish milestone JAR size: **76,451,648 bytes**. Its SHA256 was `3c9880607232f78077a330f7fe44865ef614ca315fc0d6ceb3cf70c6a93bd638`. For the latest packaged build, use `artifacts/SHA256SUMS`. Work remains local; no push is performed.
