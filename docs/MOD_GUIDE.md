@@ -69,7 +69,7 @@ The session's calibrated effect amount and physical content remain separate. `Al
 
 ### Cannabis
 
-Wild plants and seeds lead through buds, drying and press processing to joints, dab pens, gummies, chocolate and loaded bongs. The registered dose formats use `CannabisDoseItem`; it and `BongItem` feed [`substance/cannabis/`](../src/main/java/com/trippycraft/substance/cannabis/). `CannabisPressBlockEntity` owns processing.
+Wild plants and seeds lead through buds, drying and press processing to joints, dab pens, gummies, chocolate and loaded Bongs/Ancient Pipes. One dried bud loads one 200mg THC serving into either reusable device. The registered dose formats use `CannabisDoseItem`; it and `BongItem`/`AncientPipeItem` feed [`substance/cannabis/`](../src/main/java/com/trippycraft/substance/cannabis/). `CannabisPressBlockEntity` owns processing.
 
 Warmth, green tint, breathing, temporal drag, focus and audio response use the shared graph and rendering paths. `ClientCannabisMovementEvents` supplies a separate movement hook; there is no dedicated cannabis world-warp class. Current formats feed the same session dose path. Verify per-use content, partial-use handling, mixtures, edible packaging, reusable vessels and movement/accessibility behavior.
 
@@ -81,9 +81,41 @@ Koka cultivation supports leaf use and drying/grinding/paste processing into pow
 
 ### DMT
 
-Acacia bark/leaves and brewing support extracts and crystal variants. `AcaciaHarvestEvents`, `BrewCauldronBlockEntity` and `DmtItem` connect acquisition to [`substance/dmt/`](../src/main/java/com/trippycraft/substance/dmt/).
+Acacia bark/leaves and brewing support extracts and crystal variants. Their acquisition recipes and existing item IDs remain unchanged. Crystals are now processing ingredients: use the Mortar and Pestle to turn one DMT Crystal 1x into one **DMT Powder**, or one 5x crystal into five powders. Crystals have no direct-use effect and cannot be loaded into new blend capsules.
+
+Each powder supplies **1.0 DMT gameplay unit**, matching the former 1x crystal. Right-click powder to use it directly, or craft it with one empty Bong/Ancient Pipe to load a single serving. Smoking retains the same empty device, including in Creative. Powder is also the supported DMT ingredient for new blend capsules; existing saved DMT capsule contents still work. `AcaciaHarvestEvents`, `BrewCauldronBlockEntity`, `MortarAndPestleBlockEntity`, `DmtItem`, `DmtPowderItem` and the smoking-device items connect acquisition to [`substance/dmt/`](../src/main/java/com/trippycraft/substance/dmt/). This preparation change preserves the session's dose model, redosing and visual settings.
 
 The package includes stages, transitions, encounters, themes, signatures and a fractal scaffold, beyond a single generic effect curve. `DmtVisualRenderer`, `DmtWorldGeometryRenderer` and `DmtWorldWarpPass` compose symbols, encounters, architecture and breakthrough/world-replacement presentation. Review stage continuity, geometry lifecycle, ordinary-world visibility and stereo anchoring together.
+
+The experimental **DMT Fractal World** renders a 3D fractal realm during an active DMT experience. It starts **off by default**, preserving the existing DMT visuals; enabling it may affect performance. Open **Mods → Vice and Villagers → Config** to select its mode, intensity and quality; changes apply immediately and save to `config/trippycraft-client.toml`. You can also assign **Toggle DMT Fractal World** under **Options → Controls → Key Binds → Vice and Villagers**. The binding starts unassigned; pressing your assigned key in game toggles the realm, displays its on/off state above the hotbar, and saves the setting for future launches. The menu and shortcuts share the same preferences. These settings affect only your client.
+
+Intensity defaults to **75%**, recommended for the best experience. Try **50%** on mid-range PCs or **25%** on low-end PCs. Existing saved mode, intensity and quality settings are preserved.
+
+During the breakthrough crossing, visible Minecraft surfaces bend and acquire patterns as they morph into the realm. A dose-dependent cinematic ingress unfolds over approximately 26–32 seconds after crossing starts, with additional easing rather than an instant jump when the synchronized stage changes. Source geometry and materials continue transitioning through the final quarter. The return settles distortion, motion, ornament and lighting activity along with visibility. Looking and moving change the actual perspective; desktop and VR eyes share the same anchored geometry. Motion/photosensitivity reduction still apply, and turning the realm off immediately restores the existing presentation.
+
+The realm is a continuous effect mixer, not a catalogue of scripted trips. Geometry/layout, materials, motion, pattern overlays and lighting/atmosphere evolve on independent seeded timelines, with real-world interpretation feeding the mixture. Recursive crystal folds, architectural structures and organic lace can become dominant rather than holding one hybrid style throughout a trip. Architecture evolves more slowly than surface activity, with a shared evolving motif linking openings, petals and ornament. Reflective materials use directional light, cavity shading and distance absorption to retain spatial depth. Fine lines and unresolved tile colors use footprint filtering to reduce shimmer while retaining native-resolution shading. Layouts, surface responses, motion behaviors, motifs and atmospheric treatment combine and change within a single trip as well as between seeds.
+
+Visual complexity uses the actual active gameplay dose through stable logarithmic scaling, independently of the legacy `dmtMaxVisualIntensity` ceiling. Higher doses engage additional layers, recursion and interacting patterns, increase detail density and world-reactive distortion, and accelerate transformations. Speed is integrated continuously, so redosing never jumps an elapsed animation phase. Spacing, folding and nested detail continue changing beyond the former peak. Opaque coverage stays within 0–100%, while dose-driven intricacy continues increasing. Quality bounds ray-march/fold work for finite rendering cost; it is not a maximum gameplay dose or a dose-intensity plateau. This optional renderer does not change server-side substance balance, damage or dose handling.
+
+The real world continues influencing the fully opaque realm. Organic/constructed surroundings, caves, water, light, weather/night, entity activity and movement shape the mixer. A cached sampler reads colors, relief and structural direction from supporting terrain, nearby walls and overhead canopy/ceilings once per second without requesting new chunks. Nearby living entities provide a spatial attractor anchored to their world position, shared between VR eyes; target identity remains stable through small distance changes and its influence fades when entities leave. These signals ease into persistent world influence; the hidden scene's color, depth and normals also leave material/relief cues at full immersion, with the persistent sampled world palette carrying more weight than view-dependent pixel tint. The generated realm remains a visual effect, with Minecraft's existing world and collision rules.
+
+Assign **Cycle DMT Fractal Intensity** in the same Key Binds category to select **25%, 50%, 75% or 100%**, then wrap back to 25%. The binding starts unassigned. Each press shows the selected percentage above the hotbar and saves it as `dmtFractalIntensity` in `config/trippycraft-client.toml` (default `0.75`, range `0.0` to `1.0`). This is the player's multiplier: 100% exposes the full dose response, rather than capping dose complexity at a fixed peak. Lower values retain more of the existing view. Quality controls the rendering budget; intensity is not a proportional frame-rate control. Adjustments preserve the trip's seed, position and clocks, and do not switch the realm on or alter other substances' intensity. A value of `0.0` in the config disables the fractal pass.
+
+The realm evolves while the player stands still. Its animation clock advances independently of synchronized gameplay snapshots; changing snapshot depth/flow values ease into the field. Setting `motionIntensity` to zero freezes autonomous animation, and motion reduction slows it. Dose changes, world influence and the cinematic crossing can still progress. Pausing a singleplayer game pauses its visual clock as well.
+
+Set `dmtFractalQuality` in the same file to choose the rendering budget:
+
+| Value | Quality | Primary fractal ray-march budget |
+|---|---|---|
+| `0` | Low: lowest GPU cost | 72 |
+| `1` | Balanced: default | 112 |
+| `2` | High: more detail, greater GPU cost | 192 |
+
+Assign **Cycle DMT Fractal Quality** under **Options → Controls → Key Binds → Vice and Villagers** to cycle **Low → Balanced → High → Low**. The binding starts unassigned; the default is Balanced, so the first press selects High. Each press applies the quality immediately, shows its name above the hotbar, and saves `dmtFractalQuality` in the client config.
+
+Unresolved rays can use up to 160/192/224 forward recovery samples followed by 8/10/12 local exact-field refinements, respectively. Proven empty regions permit cheaper advances. This recovers solid surfaces at lower quality without lowering image resolution; higher quality resolves more of the recursive geometry directly.
+
+The fractal realm is a visual effect only. It does not generate blocks, change world generation, or add collision; movement and interaction still use the Minecraft world.
 
 ### Heroin and opioid intermediates
 
@@ -135,9 +167,9 @@ Strange mushrooms connect drying, mortar powder and capsule production to `Psilo
 
 ### Salvia
 
-Jungle cultivation and seeds lead to leaves, drying and extract strengths. `SalviaDivinorumPlantBlock`, `SalviaPatchFeature`, `SalviaLeafItem` and `BongItem` connect those formats to [`substance/salvia/`](../src/main/java/com/trippycraft/substance/salvia/).
+Jungle cultivation and seeds lead to leaves, drying and extract strengths. `SalviaDivinorumPlantBlock`, `SalviaPatchFeature`, `SalviaLeafItem`, `BongItem` and `AncientPipeItem` connect those formats to [`substance/salvia/`](../src/main/java/com/trippycraft/substance/salvia/).
 
-The active route is the one-hit loaded bong. Loose leaves/extracts and legacy capsule entries do not provide a working direct salvia effect route. `SalviaVisualRenderer` and `SalviaWorldWarpPass` handle scene replacement, loop seams, observer cutouts, flattening/objecthood and re-entry. Preserve vessel returns, strength selection, route exclusions and phase transitions together.
+The active route is a one-hit loaded Bong or Ancient Pipe. Both support 1x/10x/25x/50x extracts with the existing calibrated strengths (1/5/10/15 gameplay units). Loose leaves/extracts and legacy capsule entries do not provide a working direct salvia effect route. `SalviaVisualRenderer` and `SalviaWorldWarpPass` handle scene replacement, loop seams, observer cutouts, flattening/objecthood and re-entry. Preserve vessel returns, strength selection, route exclusions and phase transitions together.
 
 ### 2C-B
 
@@ -167,7 +199,7 @@ Normal crafting/heating lives in `data/trippycraft/recipe/`, with custom seriali
 
 | Utility | Main responsibility | Contributor checks |
 |---|---|---|
-| Mortar and Pestle | Dried mushroom/koka processing and supported 4-HO-MET/2C-B/2C-E crystal-to-powder conversion | Remaining content, output counts, allowed inputs and tool/container behavior |
+| Mortar and Pestle | Dried mushroom/koka processing and supported DMT/4-HO-MET/2C-B/2C-E crystal-to-powder conversion | Remaining content, output counts, allowed inputs and tool/container behavior; DMT 1x/5x yields 1/5 powders without overflowing a blocked output |
 | Cannabis Press | Bud/extract processing and the retained MDMA tablet route | Fuel/progress, branch inputs, packaging and full output slots |
 | Brew Cauldron | Plant, lysergic, medicinal, empathogen and synthetic precursor steps | Ingredient matching, returned vessels, counts, progress and saved state |
 | Chemistry Table | Refinement, solvent/heroin/ketamine steps and selectable aromatic/phenethylamine branches | Branch selection, progress reset, server agreement and shared intermediates |
@@ -177,9 +209,13 @@ Each utility spans a block, block entity, menu and client screen. The server own
 
 `StackableDoseItemSupport`, `ContainerReturnItemSupport` and substance-specific reservoir items preserve partially used content. Stack count, available content, label and engine dose are different values. Partial-stack identities prevent incompatible reservoirs from merging. Full inventories, Creative/Survival and both hands affect return paths and need direct checks.
 
-Loading recipes accept one dried cannabis bud or a supported salvia strength. `BongItem` consumes the loaded hit and returns the reusable empty vessel. Fresh buds, extra ingredients, mixed bowls and already loaded vessels are not interchangeable inputs. Preserve the loading recipe and item-use rules together.
+The **Ancient Pipe** uses one iron ingot, two planks from `minecraft:planks` (mixed types allowed) and one Acacia Bark at a crafting table. With the top row empty, place iron at middle-left and planks/bark/planks across the bottom. Standard vanilla shaped-recipe translation and mirroring apply.
 
-`CapsuleBlendRecipe` requires one empty capsule and supported ingredient slots. `CapsuleBlend.entryFromDoseItem` is the allowed-format boundary; not every item or substance belongs in a blend. Entries preserve route/content/effect amounts. Salvia loose items and bongs are excluded, and a readable legacy salvia-kind entry does not establish a functional capsule route.
+The new pipe craft and seven new loading recipes have inventory-based recipe-book discoveries under `data/trippycraft/advancement/recipes/misc/`. Collecting their required ingredient types reveals the recipe; Minecraft still checks the full quantities and shape before crafting.
+
+Shapeless loading recipes accept one empty Bong or Ancient Pipe plus one **DMT Powder**, **dried cannabis bud**, or supported **salvia extract** in either crafting grid. `BongItem` implements the shared single-serving behavior; `AncientPipeItem` supplies the pipe's empty item and cooldown family. Smoking returns exactly the same type of empty vessel in either hand and in Survival/Creative. Loading has no vessel remainder, avoiding a duplicate empty item. Fresh buds, unground DMT crystals, extra ingredients, mixed bowls and already loaded vessels are not interchangeable inputs. Loaded pipe variants reuse the supplied empty-pipe artwork and have distinct names/tooltips. Cursed Findings exposes construction and loading in its always-open Smoking Devices chapter and substance-specific pages.
+
+`CapsuleBlendRecipe` requires one empty capsule and supported ingredient slots. `CapsuleBlend.entryFromDoseItem` is the allowed-format boundary; not every item or substance belongs in a blend. Entries preserve route/content/effect amounts. DMT powder contributes one unit; DMT crystals and all smoking devices are excluded. Previously stored DMT entries retain their amount and consumption behavior. Salvia loose items and smoking devices are excluded, and a readable legacy salvia-kind entry does not establish a functional capsule route.
 
 ## Villagers, trading and progression
 
@@ -188,12 +224,18 @@ The [`economy/`](../src/main/java/com/trippycraft/economy/) services own catalog
 | Role/system | Entry points | Behavior to preserve or deliberately review |
 |---|---|---|
 | Dealer | `DealerVillageEvents`, `DealerService`, `DealerRegistries`, `DealerProduct` | Village assignment, catalog categories, products/legacy aliases and purchase validation |
-| Market Broker | `MarketService`, `MarketRegistries`, `MarketMath`, `MarketPlayerData`, `MarketContract` | Buying/selling, demand, reputation, levels, daily contracts and saved progression |
+| Market Broker | `MarketService`, `MarketRegistries`, `MarketStock`, `MarketMath`, `MarketPlayerData`, `MarketContract` | Buying/selling, full-stock and legacy-item matching, daily demand, reputation, levels, persistent player contracts and saved progression |
 | Customer | `CustomerService`, `CustomerSampleEvents`, `CustomerAddictionProfile`, `CustomerOffer` | Daily cached requests, sampling, habits and offer completion |
 | Currency/payouts | `EmeraldWallet`, `EmeraldPayoutLedger` | Inventory accounting, change, deferred payouts and transaction completion |
 | Bartender | `BartenderService`, `ModVillagers` | Native merchant offers, drink stock, job-site identity and tavern anchoring |
 
 Loaded-village role assignment excludes bartenders and temporary nightlife guests. Trading validates server-side context, proximity, inventory, quantities and catalog state. Some payouts are retained until a suitable completion/close path. MDMA social state can affect discounts. Changing these systems can change balance even when a GUI looks identical.
+
+The broker catalog covers all sixteen substance families and every Dealer product, with individual finished formats, DMT powder, MDMA capsules, bulk crystals/powders, AL-LAD concentrate, ethanol and all twelve loaded smoking devices. Sales and contracts accept only full, unused stock. `MarketStock.matches(ItemStack, Item)` supplies the shared client/server eligibility rule, including fourteen saved-ID aliases; partial cannabis formats, ethanol and reservoirs remain in inventory rather than selling for a fresh item's price. Existing full-stock prices are preserved.
+
+Each player keeps four personal broker contracts with no time limit. Time passing, a new Minecraft day, market close/reopen, logout and save/load leave posted orders intact. Completing an order replaces only its slot; the other three retain their IDs, products, quantities and rewards. Initial or incomplete older boards fill only missing slots. Daily demand remains separate and does not reprice an existing contract.
+
+A loaded Bong or Ancient Pipe is sold as a whole item, including the vessel; trading does not return an empty device. Empty tools, variable-content blend capsules and other unlisted production ingredients are outside this catalog. The new reservoir crystals, concentrate, loaded devices and ethanol are direct-sale products rather than contract targets. Demand still ranges from 0.80x to 1.50x, reputation still drives business levels and prices, and queued broker payouts still settle when the market closes (or next opens).
 
 Known gameplay exploits are not silently corrected by documentation or asset maintenance; see [Security](../SECURITY.md). Tests must distinguish existing behavior from an intentionally proposed gameplay fix.
 
@@ -255,10 +297,12 @@ Authored track lengths, world-time playlist position, saved offsets, distance fa
 
 [`config/TrippyConfig.java`](../src/main/java/com/trippycraft/config/TrippyConfig.java) defines common gameplay controls such as timing, risk and recovery. [`config/TrippyClientConfig.java`](../src/main/java/com/trippycraft/config/TrippyClientConfig.java) defines visual/audio intensity, motion, photosensitivity and debug controls. Defaults are behavior, not cosmetic build settings. `/viceandvillagers status` and `sync` inspect development state; permission-level-2 `reset` clears it. `/trippycraft` remains the compatibility alias.
 
+**Mods → Vice and Villagers → Config** opens the player settings screen from either the title screen or a running world. It currently exposes the DMT realm mode, intensity (including 0% to hide it) and quality, with links to Key Binds and the Trip Scrubber. Custom intensity values from the config file remain intact until changed. The scrubber action is enabled only for an active supported psilocybin/4-HO-MET/AL-LAD/2C-E/nitrous trip; DMT has no scrub timeline. Done/Escape returns to the previous menu, including when returning from Key Binds or the scrubber. Additional client options can be grouped into new sections without changing input/scroll handling.
+
 | Saved state | Source owners | Compatibility concerns |
 |---|---|---|
 | Player experience | `SubstanceEvents`, `SubstancePersistence`, `PsychoactiveExperience` | Dedicated sessions, physical/effect amounts, signatures, clocks, tolerance and recovery |
-| Player economy | `MarketEvents`, `MarketDataStore`, `MarketPersistence` | Reputation and trade/contract counters, demand/contracts and refresh times; level is derived |
+| Player economy | `MarketEvents`, `MarketDataStore`, `MarketPersistence` | Reputation and trade/contract counters, demand refresh time and persistent personal contracts; level is derived |
 | Book discovery | `CursedRecipeCodex` | Chapter IDs, legacy keys and synchronization |
 | World systems | `VillageBarData`, `ErgotInfectionData`, `TavernPlaybackData` | Placement/revisions, infection timers and playlist offsets |
 | Blocks/items/villagers | Their NBT/data-component and block-entity paths | Reservoir content, selection/progress, tapped crops, role/station links and customer habits/daily offers |
@@ -266,6 +310,8 @@ Authored track lengths, world-time playlist position, saved offsets, distance fa
 Player sidecars retain the `trippycraft` and `trippycraft_market` names alongside vanilla player data. `NbtCompat` and saved aliases support existing worlds. For example, old koka/cocaine identifiers, the legacy MDMA tablet, dealer products and book chapter keys cannot be removed just because they are hidden from current menus.
 
 Pending payouts in `EmeraldPayoutLedger` are transient server state, rather than persisted market data. Review their open/close/logout flushing and server-stop cleanup separately from a sidecar save. Customer state belongs to villager persistent NBT, not the player's market sidecar.
+
+The saved `lastContractRefreshGameTime` field remains for compatibility, but no longer schedules contract expiry or replacement. Preserve posted order IDs and terms across migrations; only demand uses its daily refresh clock.
 
 Login, clone, death/respawn, dimension change, logout and server stop have different hooks. Trace them rather than assuming a save/load round trip covers every lifecycle. Use a private copy of an existing world for changes to persistence, aliases, roles or structures.
 

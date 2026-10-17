@@ -34,6 +34,7 @@ neoForge {
             gameDirectory = project.file(providers.gradleProperty('devRunDir').getOrElse('run'))
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            systemProperty 'trippycraft.profileDmtGpu', providers.gradleProperty('profileDmtGpu').getOrElse('false')
         }
 
         server {
@@ -46,14 +47,30 @@ neoForge {
         gameTestServer {
             type = 'gameTestServer'
             gameDirectory = project.file('build/gametest-server')
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},trippycraft_smoking,trippycraft_market"
         }
 
         hoMetGameTestServer {
             type = 'gameTestServer'
             gameDirectory = project.file('build/homet-gametest-run')
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', "${project.mod_id},trippycraft_smoking,trippycraft_market"
             programArguments.addAll '--universe', project.file('build/homet-gametest').absolutePath, '--world', 'homet-tests', '--nogui'
+        }
+
+        smokingGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file(providers.gradleProperty('smokingGameTestDir').getOrElse('build/smoking-gametest-run'))
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'trippycraft_smoking'
+            programArguments.addAll '--universe', project.file(providers.gradleProperty('smokingGameTestWorldDir').getOrElse('build/smoking-gametest')).absolutePath,
+                    '--world', 'smoking-tools-tests', '--nogui'
+        }
+
+        marketGameTestServer {
+            type = 'gameTestServer'
+            gameDirectory = project.file(providers.gradleProperty('marketGameTestDir').getOrElse('build/market-gametest-run'))
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'trippycraft_market'
+            programArguments.addAll '--universe', project.file(providers.gradleProperty('marketGameTestWorldDir').getOrElse('build/market-gametest')).absolutePath,
+                    '--world', 'market-broker-tests', '--nogui'
         }
 
         hoMetSmoke {
@@ -67,10 +84,33 @@ neoForge {
             programArguments.addAll '--width', '1280', '--height', '720'
         }
 
+        dmtSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('dmtSmokeDir').getOrElse('build/dmt-client-smoke'))
+            systemProperty 'trippycraft.validateWorldWarpShaders', 'true'
+            systemProperty 'trippycraft.dmtSmokeTest', 'true'
+            systemProperty 'trippycraft.profileDmtGpu', 'true'
+            programArguments.addAll '--width', '1920', '--height', '1080'
+        }
+
         guiSmoke {
             client()
             gameDirectory = project.file(providers.gradleProperty('guiSmokeDir').getOrElse('build/gui-client-smoke'))
             systemProperty 'trippycraft.guiSmokeTest', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        configSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('configSmokeDir').getOrElse('build/config-client-smoke'))
+            systemProperty 'trippycraft.configSmokeTest', 'true'
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
+        smokingSmoke {
+            client()
+            gameDirectory = project.file(providers.gradleProperty('smokingSmokeDir').getOrElse('build/smoking-client-smoke'))
+            systemProperty 'trippycraft.smokingSmokeTest', 'true'
             programArguments.addAll '--width', '1280', '--height', '720'
         }
 
@@ -216,6 +256,26 @@ tasks.matching { it.name == 'runGuiSmoke' }.configureEach {
         def result = project.file("${smokeDirectory}/gui-smoke-result.txt")
         if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Native GUI smoke')) {
             throw new GradleException("GUI renderer/input smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runConfigSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('configSmokeDir').getOrElse('build/config-client-smoke')
+        def result = project.file("${smokeDirectory}/config-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Config client smoke')) {
+            throw new GradleException("Config screen/input/persistence smoke failed; inspect ${result}")
+        }
+    }
+}
+
+tasks.matching { it.name == 'runSmokingSmoke' }.configureEach {
+    doLast {
+        def smokeDirectory = project.providers.gradleProperty('smokingSmokeDir').getOrElse('build/smoking-client-smoke')
+        def result = project.file("${smokeDirectory}/smoking-smoke-result.txt")
+        if (!result.isFile() || !result.getText('UTF-8').contains('PASS: Smoking tools client smoke; screenshots=9')) {
+            throw new GradleException("Smoking tools assets/journal smoke failed; inspect ${result}")
         }
     }
 }

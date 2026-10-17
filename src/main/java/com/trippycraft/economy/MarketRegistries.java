@@ -86,6 +86,8 @@ public final class MarketRegistries {
         product("cannabis_dab_pen", ModItems.CANNABIS_DAB_PEN::get, CATEGORY_CANNABIS, 28, true, 55, 2);
         product("cannabis_gummies", ModItems.CANNABIS_GUMMIES::get, CATEGORY_CANNABIS, 22, true, 60, 1);
         product("cannabis_chocolate_bar", ModItems.CANNABIS_CHOCOLATE_BAR::get, CATEGORY_CANNABIS, 18, true, 60, 1);
+        product("bong_cannabis", ModItems.BONG_CANNABIS::get, CATEGORY_CANNABIS, 4, false, 55, 0);
+        product("ancient_pipe_cannabis", ModItems.ANCIENT_PIPE_CANNABIS::get, CATEGORY_CANNABIS, 4, false, 55, 0);
 
         product("dried_strange_mushroom", ModItems.DRIED_STRANGE_MUSHROOM::get, CATEGORY_PSILOCYBIN, 2, true, 90, 0);
         product("psilocybin_powder", ModItems.PSILOCYBIN_POWDER::get, CATEGORY_PSILOCYBIN, 4, true, 80, 0);
@@ -126,6 +128,9 @@ public final class MarketRegistries {
         product("bundled_plant_extract", ModItems.BUNDLED_PLANT_EXTRACT::get, CATEGORY_DMT, 24, true, 60, 1);
         product("dmt_crystal", ModItems.DMT::get, CATEGORY_DMT, 18, true, 70, 1);
         product("dmt_crystal_5x", ModItems.DMT_5X::get, CATEGORY_DMT, 48, true, 45, 3);
+        product("dmt_powder", ModItems.DMT_POWDER::get, CATEGORY_DMT, 9, true, 70, 1);
+        product("bong_dmt", ModItems.BONG_DMT::get, CATEGORY_DMT, 11, false, 50, 1);
+        product("ancient_pipe_dmt", ModItems.ANCIENT_PIPE_DMT::get, CATEGORY_DMT, 11, false, 50, 1);
 
         product("medicinal_reagent", ModItems.MEDICINAL_REAGENT::get, CATEGORY_KETAMINE, 7, true, 75, 0);
         product("ketamine_precursor", ModItems.KETAMINE_PRECURSOR::get, CATEGORY_KETAMINE, 12, true, 70, 1);
@@ -139,11 +144,56 @@ public final class MarketRegistries {
         product("mdma_100mg", ModItems.MDMA_100MG::get, CATEGORY_MDMA, 13, true, 72, 1);
         product("mdma_250mg", ModItems.MDMA_250MG::get, CATEGORY_MDMA, 24, true, 58, 2);
         product("mdma_500mg", ModItems.MDMA_500MG::get, CATEGORY_MDMA, 38, true, 46, 3);
+        product("mdma_caps_25mg", ModItems.MDMA_CAPS_25MG::get, CATEGORY_MDMA, 6, true, 78, 0);
+        product("mdma_caps_100mg", ModItems.MDMA_CAPS_100MG::get, CATEGORY_MDMA, 13, true, 72, 1);
+        product("mdma_caps_250mg", ModItems.MDMA_CAPS_250MG::get, CATEGORY_MDMA, 24, true, 58, 2);
+        product("mdma_caps_500mg", ModItems.MDMA_CAPS_500MG::get, CATEGORY_MDMA, 38, true, 46, 3);
+        product("mdma_crystal", ModItems.MDMA_CRYSTAL::get, CATEGORY_MDMA, 300, false, 30, 3);
+
+        product("two_cb_25mg", ModItems.TWO_CB_25MG::get, CATEGORY_TWO_CB, 7, true, 78, 0);
+        product("two_cb_100mg", ModItems.TWO_CB_100MG::get, CATEGORY_TWO_CB, 15, true, 72, 1);
+        product("two_cb_250mg", ModItems.TWO_CB_250MG::get, CATEGORY_TWO_CB, 27, true, 58, 2);
+        product("two_cb_500mg", ModItems.TWO_CB_500MG::get, CATEGORY_TWO_CB, 43, true, 46, 3);
+        product("two_cb_powder", ModItems.TWO_CB_POWDER::get, CATEGORY_TWO_CB, 12, true, 65, 1);
+        product("two_cb_crystal", ModItems.TWO_CB_CRYSTAL::get, CATEGORY_TWO_CB, 300, false, 30, 3);
+
+        product("four_ho_met_25mg", ModItems.HO_MET_25MG::get, CATEGORY_HO_MET, 7, true, 78, 0);
+        product("four_ho_met_100mg", ModItems.HO_MET_100MG::get, CATEGORY_HO_MET, 13, true, 72, 1);
+        product("four_ho_met_250mg", ModItems.HO_MET_250MG::get, CATEGORY_HO_MET, 24, true, 58, 2);
+        product("four_ho_met_500mg", ModItems.HO_MET_500MG::get, CATEGORY_HO_MET, 39, true, 46, 3);
+        product("four_ho_met_powder", ModItems.HO_MET_POWDER::get, CATEGORY_HO_MET, 10, true, 65, 1);
+        product("four_ho_met_crystal", ModItems.HO_MET_CRYSTAL::get, CATEGORY_HO_MET, 250, false, 30, 3);
+
+        product("al_lad_25mg", ModItems.AL_LAD_25MG::get, CATEGORY_AL_LAD, 8, true, 78, 0);
+        product("al_lad_100mg", ModItems.AL_LAD_100MG::get, CATEGORY_AL_LAD, 15, true, 72, 1);
+        product("al_lad_250mg", ModItems.AL_LAD_250MG::get, CATEGORY_AL_LAD, 27, true, 58, 2);
+        product("al_lad_500mg", ModItems.AL_LAD_500MG::get, CATEGORY_AL_LAD, 41, true, 46, 3);
+        product("al_lad_concentrate", ModItems.AL_LAD_CONCENTRATE::get, CATEGORY_AL_LAD, 280, false, 30, 3);
+
+        product("two_ce_25mg", ModItems.TWO_CE_25MG::get, CATEGORY_TWO_CE, 8, true, 78, 0);
+        product("two_ce_100mg", ModItems.TWO_CE_100MG::get, CATEGORY_TWO_CE, 16, true, 72, 1);
+        product("two_ce_250mg", ModItems.TWO_CE_250MG::get, CATEGORY_TWO_CE, 29, true, 58, 2);
+        product("two_ce_500mg", ModItems.TWO_CE_500MG::get, CATEGORY_TWO_CE, 44, true, 46, 3);
+        product("two_ce_powder", ModItems.TWO_CE_POWDER::get, CATEGORY_TWO_CE, 13, true, 65, 1);
+        product("two_ce_crystal", ModItems.TWO_CE_CRYSTAL::get, CATEGORY_TWO_CE, 300, false, 30, 3);
+
+        product("mescaline_25mg", ModItems.MESCALINE_25MG::get, CATEGORY_MESCALINE, 7, true, 78, 0);
+        product("mescaline_100mg", ModItems.MESCALINE_100MG::get, CATEGORY_MESCALINE, 14, true, 72, 1);
+        product("mescaline_250mg", ModItems.MESCALINE_250MG::get, CATEGORY_MESCALINE, 25, true, 58, 2);
+        product("mescaline_500mg", ModItems.MESCALINE_500MG::get, CATEGORY_MESCALINE, 40, true, 46, 3);
 
         product("salvia_leaf", ModItems.SALVIA_1X::get, CATEGORY_SALVIA, 4, true, 85, 0);
         product("salvia_leaf_10x", ModItems.SALVIA_10X::get, CATEGORY_SALVIA, 12, true, 70, 1);
         product("salvia_leaf_25x", ModItems.SALVIA_25X::get, CATEGORY_SALVIA, 24, true, 55, 2);
         product("salvia_leaf_50x", ModItems.SALVIA_50X::get, CATEGORY_SALVIA, 40, true, 40, 3);
+        product("bong_salvia_1x", ModItems.BONG_SALVIA_1X::get, CATEGORY_SALVIA, 6, false, 60, 0);
+        product("bong_salvia_10x", ModItems.BONG_SALVIA_10X::get, CATEGORY_SALVIA, 14, false, 50, 1);
+        product("bong_salvia_25x", ModItems.BONG_SALVIA_25X::get, CATEGORY_SALVIA, 26, false, 40, 2);
+        product("bong_salvia_50x", ModItems.BONG_SALVIA_50X::get, CATEGORY_SALVIA, 42, false, 30, 3);
+        product("ancient_pipe_salvia_1x", ModItems.ANCIENT_PIPE_SALVIA_1X::get, CATEGORY_SALVIA, 6, false, 60, 0);
+        product("ancient_pipe_salvia_10x", ModItems.ANCIENT_PIPE_SALVIA_10X::get, CATEGORY_SALVIA, 14, false, 50, 1);
+        product("ancient_pipe_salvia_25x", ModItems.ANCIENT_PIPE_SALVIA_25X::get, CATEGORY_SALVIA, 26, false, 40, 2);
+        product("ancient_pipe_salvia_50x", ModItems.ANCIENT_PIPE_SALVIA_50X::get, CATEGORY_SALVIA, 42, false, 30, 3);
 
         product("nitrous_canister", ModItems.NITROUS::get, CATEGORY_NITROUS, 8, true, 80, 0);
 
@@ -153,6 +203,7 @@ public final class MarketRegistries {
         product("whiskey_glass", ModItems.WHISKEY_GLASS::get, CATEGORY_ALCOHOL, 9, false, 45, 1);
         product("rum_glass", ModItems.RUM_GLASS::get, CATEGORY_ALCOHOL, 9, false, 45, 1);
         product("vodka_glass", ModItems.VODKA_GLASS::get, CATEGORY_ALCOHOL, 9, false, 45, 1);
+        product("ethanol", ModItems.ETHANOL::get, CATEGORY_ALCOHOL, 12, false, 40, 2);
     }
 
     private static void registerMaterials() {

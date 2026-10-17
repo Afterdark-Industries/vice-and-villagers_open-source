@@ -16,6 +16,7 @@ public final class MarketPlayerData {
     private int completedContracts;
     private int nextContractSerial;
     private long lastDemandRefreshGameTime;
+    // Retained for old save compatibility only; contracts no longer expire or refresh on a timer.
     private long lastContractRefreshGameTime;
     private final Map<String, Integer> demandMultipliers = new LinkedHashMap<>();
     private final List<MarketContract> activeContracts = new ArrayList<>();

@@ -47,7 +47,7 @@ public final class StackableDoseItemSupport {
         }
     }
 
-    static int remainingUses(ItemStack stack, int totalUses) {
+    public static int remainingUses(ItemStack stack, int totalUses) {
         if (stack.isEmpty() || totalUses <= 1) {
             return Math.max(0, totalUses);
         }

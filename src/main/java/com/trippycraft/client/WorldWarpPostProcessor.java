@@ -58,6 +58,7 @@ public final class WorldWarpPostProcessor {
             new EffectDefinition("al_lad_world_warp", true),
             new EffectDefinition("two_ce_world_warp", true),
             new EffectDefinition("dmt_world_warp", true),
+            new EffectDefinition("dmt_fractal_world_warp", true),
             new EffectDefinition("salvia_world_warp", true),
             new EffectDefinition("mdma_world_warp", false),
             new EffectDefinition("nitrous_world_warp", false)
@@ -179,6 +180,7 @@ public final class WorldWarpPostProcessor {
         AlLadWorldWarpPass.render(partialTick);
         TwoCeWorldWarpPass.render(partialTick);
         DmtWorldWarpPass.render(partialTick);
+        DmtFractalWorldPass.render(partialTick);
         SalviaWorldWarpPass.render(partialTick);
         MdmaWorldWarpPass.render(partialTick);
         NitrousWorldWarpPass.render(partialTick);
@@ -287,7 +289,18 @@ public final class WorldWarpPostProcessor {
         return new UniformValue(name, values);
     }
 
+    static boolean hasFailedDmtEffects() {
+        return FAILED_EFFECTS.stream().anyMatch(id -> id.startsWith("dmt_"));
+    }
+
+    static long dmtFractalDrawCount() {
+        return PASSES.entrySet().stream().filter(entry -> entry.getKey().endsWith(":dmt_fractal_world_warp")
+                || entry.getKey().endsWith(":dmt_fractal_world_warp_vr"))
+                .mapToLong(entry -> entry.getValue().completedDraws).sum();
+    }
+
     private static void reset() {
+        DmtFractalWorldPass.reset();
         PASSES.values().forEach(WorldWarpPostProcessor::close);
         PASSES.clear();
         FAILED_EFFECTS.clear();
@@ -375,6 +388,8 @@ public final class WorldWarpPostProcessor {
         private final RenderTarget mainTarget;
         private final TextureTarget scratchTarget;
         private final PostPass postPass;
+        private final DmtGpuTimings gpuTimings;
+        private long completedDraws;
 
         private EffectPass(String effectId, boolean usesDepth, Minecraft minecraft, RenderTarget mainTarget) throws IOException {
             this.mainTarget = mainTarget;
@@ -413,6 +428,7 @@ public final class WorldWarpPostProcessor {
                         mainTarget.width, mainTarget.height);
             }
             updateProjection();
+            this.gpuTimings = DmtGpuTimings.create(effectId);
         }
 
         private void process(float partialTick, UniformValue[] uniforms) {
@@ -472,13 +488,18 @@ public final class WorldWarpPostProcessor {
             try {
                 if (stencil) GL11.glDisable(GL11.GL_STENCIL_TEST);
                 mainTarget.setFilterMode(GL_LINEAR);
+                if (gpuTimings != null) gpuTimings.begin(stereoView == null ? "VANILLA" : VivecraftCompat.currentPassName(), mainTarget.width, mainTarget.height);
                 postPass.process(partialTick);
+                if (gpuTimings != null) gpuTimings.endShader();
                 mainTarget.setFilterMode(mainFilter);
 
                 scratchTarget.setFilterMode(GL_LINEAR);
                 mainTarget.bindWrite(false);
+                if (gpuTimings != null) gpuTimings.beginCopy();
                 scratchTarget.blitToScreen(mainTarget.viewWidth, mainTarget.viewHeight, true);
+                if (gpuTimings != null) gpuTimings.end();
             } finally {
+                if (gpuTimings != null) gpuTimings.cancel();
                 if (stencil) GL11.glEnable(GL11.GL_STENCIL_TEST);
                 mainTarget.setFilterMode(mainFilter < 0 ? GL_NEAREST : mainFilter);
                 scratchTarget.setFilterMode(scratchFilter < 0 ? GL_NEAREST : scratchFilter);
@@ -491,6 +512,7 @@ public final class WorldWarpPostProcessor {
                 // GameRenderer renders the first-person hand immediately after AFTER_LEVEL.
                 mainTarget.bindWrite(false);
             }
+            completedDraws++;
         }
 
         private void applyUniform(UniformValue value) {
@@ -525,6 +547,7 @@ public final class WorldWarpPostProcessor {
 
         @Override
         public void close() {
+            if (gpuTimings != null) gpuTimings.close();
             postPass.close();
             scratchTarget.destroyBuffers();
         }

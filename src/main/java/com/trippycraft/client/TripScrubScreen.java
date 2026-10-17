@@ -19,9 +19,20 @@ public final class TripScrubScreen extends Screen {
     private static final int BAR_HEIGHT = 14;
 
     private TripSlider slider;
+    private final Screen parent;
 
     public TripScrubScreen() {
+        this(null);
+    }
+
+    public TripScrubScreen(Screen parent) {
         super(Component.translatable("trippycraft.trip.scrub.title"));
+        this.parent = parent;
+    }
+
+    @Override
+    public void onClose() {
+        this.minecraft.setScreen(parent);
     }
 
     @Override

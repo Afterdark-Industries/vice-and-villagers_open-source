@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DIRECTORY = ROOT / "src/main/resources/assets/trippycraft/shaders/program"
 HELPER = ROOT / "scripts/shaders/vr-common.glsl"
 EFFECTS = ("alcohol", "cocaine", "ketamine", "psilocybin", "two_cb", "mescaline", "dmt", "salvia", "mdma", "nitrous")
-NATIVE_EFFECTS = ("homet", "al_lad", "two_ce", "lsd")
+NATIVE_EFFECTS = ("homet", "al_lad", "two_ce", "lsd", "dmt_fractal")
 IDENTITY = [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
 BEGIN = "// BEGIN UNATTENUATED AUTHORED SHADER\n"
 END = "// END UNATTENUATED AUTHORED SHADER\n"
@@ -131,7 +131,7 @@ def main() -> None:
             else:
                 path.write_text(content, encoding="utf-8", newline="\n")
         print(f"PASS {effect}: identical native world-space program for desktop and stereo")
-    print(f"PASS: {len(EFFECTS)} faithful VR shader variants {'verified' if args.check else 'generated'}")
+    print(f"PASS: {len(EFFECTS) + len(NATIVE_EFFECTS)} VR shader variants {'verified' if args.check else 'generated'}")
 
 
 if __name__ == "__main__":

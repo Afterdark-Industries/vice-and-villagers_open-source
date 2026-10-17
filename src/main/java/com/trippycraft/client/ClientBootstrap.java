@@ -7,6 +7,8 @@ import com.trippycraft.registry.ModMenuTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
@@ -32,7 +34,9 @@ public final class ClientBootstrap {
     private ClientBootstrap() {
     }
 
-    public static void register(IEventBus modEventBus) {
+    public static void register(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class,
+                (container, parent) -> new ModSettingsScreen(parent));
         modEventBus.addListener(ClientBootstrap::addGuiLayers);
         modEventBus.addListener(ClientBootstrap::registerMenuScreens);
         modEventBus.addListener(ClientKeyBindings::onRegister);
@@ -82,7 +86,13 @@ public final class ClientBootstrap {
         gameEventBus.addListener(ClientWorldHallucinations::onClientTick);
         gameEventBus.addListener(HoMetTrailRenderer::onClientTick);
         gameEventBus.addListener(HoMetClientSmokeTest::onClientTick);
+        gameEventBus.addListener(DmtClientSmokeTest::onClientTick);
+        gameEventBus.addListener(EventPriority.LOWEST, DmtClientSmokeTest::onRenderLevelStage);
         gameEventBus.addListener(GuiSmokeCheck::onClientTick);
+        gameEventBus.addListener(ConfigClientSmokeTest::onClientTick);
+        gameEventBus.addListener(ConfigClientSmokeTest::onScreenRender);
+        gameEventBus.addListener(SmokingClientSmokeTest::onClientTick);
+        gameEventBus.addListener(SmokingClientSmokeTest::onScreenRender);
         gameEventBus.addListener(TwoCeClientSmokeTest::onClientTick);
         gameEventBus.addListener(AlLadClientSmokeTest::onClientTick);
         gameEventBus.addListener(SalviaClientSmokeTest::onClientTick);

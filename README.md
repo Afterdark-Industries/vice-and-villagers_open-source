@@ -4,6 +4,18 @@ Vice and Villagers **2.2.0**, by **Afterdark Industries**, is a Minecraft **1.21
 
 All substance quantities, effects and production chains are fictional gameplay values. They are not real-world dosing, preparation or medical instructions.
 
+## DMT fractal branch download
+
+This branch includes an experimental generated 3D DMT fractal realm. **DMT Fractal World is off by default**, and enabling it may affect performance. The [built mod JAR](artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar) is in this repository's `artifacts/` folder, beside its [installation instructions, settings and checksum](artifacts/README.md). Open **Mods → Vice and Villagers → Config** to select the realm mode, intensity and quality. Existing DMT effects remain the default; the original shortcut bindings remain available.
+
+Intensity defaults to **75%**, recommended for the best experience. Try **50%** on mid-range PCs or **25%** on low-end PCs. Existing saved settings are preserved.
+
+This build also adds **DMT Powder** and the reusable **Ancient Pipe**. Grind DMT crystals in the Mortar and Pestle (1x → 1 powder; 5x → 5 powders) before use. Craft either empty smoking device with one powder, dried cannabis bud or salvia extract, then right-click the loaded device to smoke and keep the empty vessel. Cursed Findings includes the new recipes and instructions.
+
+Market Brokers now buy products from **all 16 substance families**, including the new powder, capsules, bulk formats and loaded smoking devices. Sales and contracts accept **full, unused stock only**; partly used items stay in your inventory, and equivalent older item IDs are recognized. Selling a loaded Bong or Ancient Pipe transfers the whole device. Empty tools and custom blend capsules are excluded. Emerald payouts still settle when the market closes.
+
+Your four broker contracts **never expire** and survive closing the market, logout and save/load. Completing one replaces only that order; the other three keep their requirements and rewards. Daily demand changes do not reprice posted contracts.
+
 ## What the mod contains
 
 The substance systems cover **cannabis, psilocybin, LSD, 2C-B, 4-HO-MET, AL-LAD, 2C-E, mescaline, DMT, salvia, cocaine, heroin, ketamine, MDMA, alcohol and nitrous oxide**. Koka and crack are routes within the cocaine system; different drinks share the alcohol system. Sessions can stack and interact, with tolerance, dependence, recovery, visual, audio and movement effects.

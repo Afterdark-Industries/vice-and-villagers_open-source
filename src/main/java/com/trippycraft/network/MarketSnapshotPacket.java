@@ -24,6 +24,7 @@ public final class MarketSnapshotPacket implements CustomPacketPayload {
     private final int level;
     private final int totalUnitsSold;
     private final int completedContracts;
+    // Legacy wire field retained for compatibility; the server sends zero for persistent contracts.
     private final long ticksUntilContractRefresh;
     private final List<DemandInfo> demand;
     private final List<ContractInfo> contracts;

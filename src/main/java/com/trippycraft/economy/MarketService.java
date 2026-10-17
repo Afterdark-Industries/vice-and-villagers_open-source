@@ -28,7 +28,6 @@ public final class MarketService {
     private static final String BROKER_KEY = "market_broker";
     private static final String AUTO_BROKER_KEY = "auto_market_broker";
     private static final long DEMAND_REFRESH_TICKS = 24_000L;
-    private static final long CONTRACT_REFRESH_TICKS = 24_000L;
     private static final int CONTRACT_TARGET_COUNT = 4;
     private static final double MARKET_USE_DISTANCE = 8.0D;
 
@@ -157,15 +156,13 @@ public final class MarketService {
                         contract.bonusMultiplier()
                 ))
                 .toList();
-        long now = player.level().getGameTime();
-        long nextRefresh = Math.max(0L, CONTRACT_REFRESH_TICKS - (now - data.lastContractRefreshGameTime()));
         return new MarketSnapshotPacket(
                 openScreen,
                 data.reputation(),
                 data.level(),
                 data.totalUnitsSold(),
                 data.completedContracts(),
-                nextRefresh,
+                0L, // Retain the legacy packet field; contracts no longer have a refresh timer.
                 demand,
                 contracts
         );
@@ -176,7 +173,7 @@ public final class MarketService {
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (!stack.isEmpty() && stack.is(item)) {
+            if (MarketStock.matches(stack, item)) {
                 count += stack.getCount();
             }
         }
@@ -203,7 +200,7 @@ public final class MarketService {
     private static void prepareMarket(ServerPlayer player, MarketPlayerData data) {
         long now = player.level().getGameTime();
         ensureDemand(player.getRandom(), data, now);
-        ensureContracts(player.getRandom(), data, now);
+        ensureContracts(player.getRandom(), data);
     }
 
     private static void ensureDemand(RandomSource random, MarketPlayerData data, long now) {
@@ -230,16 +227,13 @@ public final class MarketService {
         data.setLastDemandRefreshGameTime(now);
     }
 
-    private static void ensureContracts(RandomSource random, MarketPlayerData data, long now) {
-        if (!data.activeContracts().isEmpty() && now - data.lastContractRefreshGameTime() < CONTRACT_REFRESH_TICKS) {
-            return;
+    private static void ensureContracts(RandomSource random, MarketPlayerData data) {
+        // Populate a new or incomplete board without changing any posted order.
+        while (data.activeContracts().size() < CONTRACT_TARGET_COUNT) {
+            Optional<MarketContract> contract = generateContract(random, data);
+            if (contract.isEmpty()) return;
+            data.activeContracts().add(contract.get());
         }
-
-        data.activeContracts().clear();
-        for (int i = 0; i < CONTRACT_TARGET_COUNT; i++) {
-            generateContract(random, data).ifPresent(data.activeContracts()::add);
-        }
-        data.setLastContractRefreshGameTime(now);
     }
 
     private static Optional<MarketContract> generateContract(RandomSource random, MarketPlayerData data) {
@@ -255,7 +249,7 @@ public final class MarketService {
         int reward = Math.max(1, baseReward * template.multiplier() / 100);
         int reputationReward = Math.max(template.reputationReward(), reward / 2);
         return Optional.of(new MarketContract(
-                data.nextContractId(),
+                nextContractId(data),
                 product.id(),
                 template.name(),
                 template.quantity(),
@@ -263,6 +257,14 @@ public final class MarketService {
                 reputationReward,
                 template.multiplier()
         ));
+    }
+
+    private static String nextContractId(MarketPlayerData data) {
+        // Older saves may have a serial behind their posted IDs. Never reuse a live order's ID.
+        while (true) {
+            String id = data.nextContractId();
+            if (data.activeContracts().stream().noneMatch(contract -> contract.id().equals(id))) return id;
+        }
     }
 
     private static SellableMarketProduct chooseWeighted(RandomSource random, List<SellableMarketProduct> products) {
@@ -374,9 +376,13 @@ public final class MarketService {
         data.addCompletedContract();
         data.addReputation(contract.reputationReward());
         nudgeDemandAfterSale(data, product.id(), removed);
-        data.activeContracts().remove(contract);
-        generateContract(player.getRandom(), data).ifPresent(data.activeContracts()::add);
-        data.activeContracts().sort(Comparator.comparing(MarketContract::type).thenComparing(MarketContract::id));
+        int completedSlot = data.activeContracts().indexOf(contract);
+        Optional<MarketContract> replacement = generateContract(player.getRandom(), data);
+        if (replacement.isPresent()) {
+            data.activeContracts().set(completedSlot, replacement.get());
+        } else {
+            data.activeContracts().remove(completedSlot);
+        }
         player.displayClientMessage(Component.translatable("message.trippycraft.market.contract_complete", contract.rewardEmeralds()), true);
     }
 
@@ -385,7 +391,7 @@ public final class MarketService {
         Inventory inventory = player.getInventory();
         for (int slot = 0; slot < inventory.getContainerSize() && remaining > 0; slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (stack.isEmpty() || !stack.is(item)) {
+            if (!MarketStock.matches(stack, item)) {
                 continue;
             }
             int removed = Math.min(remaining, stack.getCount());

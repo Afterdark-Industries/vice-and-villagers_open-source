@@ -86,7 +86,7 @@ public final class TrippyCraft {
         ModSounds.SOUND_EVENTS.register(modEventBus);
         ModNetwork.register(modEventBus);
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientBootstrap.register(modEventBus);
+            ClientBootstrap.register(modEventBus, modContainer);
         }
 
         IEventBus gameEventBus = NeoForge.EVENT_BUS;

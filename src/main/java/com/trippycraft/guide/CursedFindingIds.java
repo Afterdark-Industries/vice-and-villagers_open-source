@@ -19,6 +19,7 @@ public final class CursedFindingIds {
     public static final String NITROUS = "nitrous";
     public static final String DEPENDENCE_TOLERANCE = "dependence_tolerance";
     public static final String ECONOMY_DEALING = "economy_dealing";
+    public static final String SMOKING_DEVICES = "smoking_devices";
 
     private CursedFindingIds() {
     }

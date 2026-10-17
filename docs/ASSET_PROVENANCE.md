@@ -15,6 +15,17 @@ Public project attribution is **Afterdark Industries**. Contributors retain auth
 
 Generated content should be described honestly as generated. Historical production provenance is not a guarantee of exclusivity or rights in outside reference material. Submit only material you have the necessary rights to share, and retain required attribution for adaptations.
 
+## DMT Powder and Ancient Pipe icons
+
+The maintainer supplied the two runtime icons below for this feature. Their original artist, generation method and any outside source license were not separately specified; this record does not assert additional authorship or licensing rights.
+
+| Runtime asset | Supplied artwork and processing |
+|---|---|
+| `assets/trippycraft/textures/item/dmt_powder.png` | The first supplied image: iridescent DMT powder. Original 1254×1254 pixel data and transparency retained; embedded content-credential metadata omitted. |
+| `assets/trippycraft/textures/item/ancient_pipe.png` | The second supplied image: empty Ancient Pipe. Original 1254×1254 pixel data and transparency retained; embedded content-credential metadata omitted. All loaded pipe models reuse this texture and identify their contents through item names/tooltips. |
+
+The third supplied image was explicitly excluded and is not included in runtime assets. The DMT-loaded Bong reuses the existing `bong_loaded.png` texture. No replacement or additional loaded-pipe artwork was generated.
+
 ## Record a contribution
 
 For each new or replacement asset or book contribution, record:

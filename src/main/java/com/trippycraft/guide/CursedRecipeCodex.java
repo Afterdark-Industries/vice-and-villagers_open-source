@@ -20,7 +20,8 @@ public final class CursedRecipeCodex {
     private static final String LEGACY_CHAPTER_OPIUM_KEY = "chapter_opium";
     private static final Set<String> ALWAYS_UNLOCKED_FINDINGS = Set.of(
             CursedFindingIds.DEPENDENCE_TOLERANCE,
-            CursedFindingIds.ECONOMY_DEALING
+            CursedFindingIds.ECONOMY_DEALING,
+            CursedFindingIds.SMOKING_DEVICES
     );
 
     private CursedRecipeCodex() {

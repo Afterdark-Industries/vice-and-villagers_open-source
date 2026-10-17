@@ -67,9 +67,15 @@ A successful build proves compilation and packaging, not a running world or comp
 ```powershell
 .\scripts\build.ps1 build
 .\scripts\build.ps1 runHoMetGameTestServer
+.\scripts\build.ps1 runSmokingGameTestServer
+.\scripts\build.ps1 runMarketGameTestServer
 ```
 
 Despite its historical name, `runHoMetGameTestServer` runs the retained whole-mod GameTest suite, including substance/session, crafting/content, plants, exploration loot, commands and village/bartender contracts. Its test world and logs are under ignored `build/` directories. Check the actual failed-test summary and process exit; assembly alone does not execute GameTests.
+
+`runSmokingGameTestServer` runs the focused `trippycraft_smoking` namespace using its small empty structure fixture. It covers Ancient Pipe crafting with any planks, all twelve device loads in both crafting grids, actual ingredient/remainder handling, rejected loads, mortar yields/capacity/save/shift-click behavior, processing-only crystals, powder and capsule compatibility, correct substance amounts, cooldowns, findings, recipe-book discovery and empty-device returns in both hands and game modes. The whole-mod run includes this namespace too. Change `-PsmokingGameTestDir` and `-PsmokingGameTestWorldDir` to isolate a run's logs and test world.
+
+`runMarketGameTestServer` runs the focused `trippycraft_market` namespace and is also included in the whole-mod suite. Its contracts exercise every broker catalog entry, all sixteen families and Dealer products, fourteen saved item aliases, full/partial stock, exact inventory removal and deferred emerald settlement, reputation/demand, contract replay, unavailable/distant requests and saved market data. `MarketStock.matches` is shared by the client counts and server transactions. Use `-PmarketGameTestDir` and `-PmarketGameTestWorldDir` to isolate logs and the disposable test world.
 
 Coverage is uneven. There are dedicated LSD and psilocybin contracts, cannabis-bong and bartender tests, and extensive tests for several later substance systems. Cannabis, cocaine, heroin, alcohol, MDMA and ketamine lack dedicated full-session GameTest classes, and DMT's complete session/stage behavior also needs direct manual checks. Focused item/crafting tests do not replace that coverage. Passing the suite does not prove every substance, saved world or modpack.
 
@@ -82,6 +88,8 @@ Shader generation requires Python 3. GPU scripts require Windows OpenGL and the 
 ```powershell
 python scripts/generate-vr-shaders.py --check
 .\scripts\validate-vr-shaders.ps1
+.\scripts\validate-dmt-fractal-shaders.ps1
+.\scripts\validate-dmt-fractal-controls.ps1
 .\scripts\validate-psilocybin-shaders.ps1
 .\scripts\validate-lsd-shaders.ps1
 .\scripts\validate-substance-audio.ps1
@@ -89,7 +97,17 @@ python scripts/generate-vr-shaders.py --check
 
 The generator's `--check` mode verifies checked-in desktop/stereo parity and reproducibility without rewriting resources. When deliberately editing a desktop shader or the shared VR helper, regenerate without `--check`, inspect the runtime resource diff, then repeat the GPU and relevant native/manual checks.
 
-The VR validator compiles program shaders and checks the fourteen world-warp effects, asymmetric eye optics, depth/sky behavior, composition and finite mathematical output. Cannabis and heroin have additional shared/overlay paths; this does not provide complete scene coverage for them. These isolated GPU checks do not launch a headset or establish comfort, live compatibility or whole-game performance.
+The DMT fractal GPU harness checks all quality levels, exact disabled output, opaque immersion with intentional hidden-world influence, depth-driven cinematic transitions, movement/rotation, seeded effect combinations, uncapped dose scaling, accessibility and shared coordinates between asymmetric stereo eyes. It exercises independent variation layers, actual distance-field/recursion changes, directional terrain and entity attractors, stationary animation and neighboring-frame continuity, including eased world-input changes. It writes rendered contact sheets, dose/environment/within-trip comparisons, transition previews and isolated GPU timings under `build/`. Retest the player toggle, breakthrough/return transitions, resource reload and performance in Minecraft; offscreen checks do not establish live headset behavior.
+
+The DMT fractal controls harness compiles and executes the production pass, dose/cinematic helper, blend resolver and world sampler against isolated dependency substitutes. It checks intensity presets, mode/renderer gates, uncapped dose response, cinematic entry/settling, redose and afterglow-anchor continuity, environment memory, signed terrain/entity vectors, animation controls, lifecycle resets and VR head anchoring. Loaded-world sampler fixtures check read budgets/cache invalidation, unloaded boundaries, wall/ceiling/canopy evidence and entity-identity hysteresis. These tests execute production Java against doubles, without proving actual terrain integration, key events or config-file persistence.
+
+The fractal GPU harness also accepts `--recovery-performance` when invoked directly through its Java classpath. It measures historical and current demanding chapters; the full suite includes these measurements. In the polished revision, standard-scene High costs about 15–18 ms and a sampled demanding chapter costs about 40–41 ms at 1080p/100% on an RX 6800 XT. These are single-pass synthetic measurements, excluding Minecraft and another VR eye. Report demanding cases alongside standard ones, and distinguish art/clock changes from same-generator optimization ratios. The [polish scorecard](DMT_POLISH_RESULTS.md) records the full matrix, matched optimization experiment and actual development-client observations.
+
+The VR validator compiles program shaders and checks the fifteen world-warp effects, asymmetric eye optics, depth/sky behavior, composition and finite mathematical output. Cannabis and heroin have additional shared/overlay paths; this does not provide complete scene coverage for them. These isolated GPU checks do not launch a headset or establish comfort, live compatibility or whole-game performance.
+
+For asynchronous in-game DMT shader/copy timing, run `scripts/build.ps1 runClient -PprofileDmtGpu=true`, or add `-Dtrippycraft.profileDmtGpu=true` to an instance's Java VM arguments. This diagnostic is off by default. It capability-checks timestamp queries, delays reads until available and drops samples when its bounded queue is full. Logs distinguish effect, view and target resolution; they measure the GPU command timeline for those passes, not total game FPS.
+
+`scripts/build.ps1 runDmtSmoke -PdmtSmokeDir=build/dmt-client-smoke-fresh` launches a separate 1920×1080 development client, creates a fresh flat world, and observes a natural six-unit trip through expiry with slow scripted turns, supported forward movement across realm cells, wall/canopy evidence, a moving entity and live quality/intensity changes. It refuses to open an existing smoke save. Use a new ignored build directory for each run. It writes screenshots and `dmt-smoke-result.txt`, reports per-pass GPU timing and render-stage intervals, then exits. It asserts sustained successful fractal draws, movement distance and natural expiry; review its captures separately. This is integration coverage, not a headset/comfort test or a matched benchmark against a different camera, generator or seed. See [the polish scorecard](DMT_POLISH_RESULTS.md) for actual results and remaining limits.
 
 The audio validator exercises all sixteen dedicated substance states across world, ambient, music, record and tavern routing. It checks toggles, sober reset, sound identity and synthetic PCM processing. It does not play the real tracks or establish subjective audio quality.
 
@@ -110,25 +128,37 @@ Use a fresh smoke directory for each run. These harnesses protect existing world
 |---|---|
 | `runHoMetSmoke` | 4-HO-MET renderer scenes; optional AL-LAD/2C-B/2C-E crafting flags consume formats and resolve models |
 | `runSalviaSmoke` | Salvia plant-stage and item-model assets; does not consume a dose or test active effects |
+| `runSmokingSmoke` | DMT Powder and all smoking-device models/translations, first-person devices, recipe-book synchronization and native Smoking Devices/DMT Findings pages; gameplay dosing is covered by the server contracts |
 | `runMescalineSmoke` | Cactus/item-model and Findings UI assets; does not consume a dose or test active effects |
 | `runPsilocybinSmoke` | Psilocybin surface-flow, phase and camera/FOV regression scenes |
 | `runLsdSmoke` | LSD presentation, palette and camera/FOV regression scenes |
 | `runTwoCeSmoke` | 2C-E presentation and HUD regression scenes |
 | `runAlLadSmoke` | AL-LAD presentation regression scenes |
-| `runGuiSmoke` | All mod screens plus bartender vanilla trading, fitting/scissors/tooltips, displayed controls and inventory dragging |
+| `runGuiSmoke` | Utility, trading and Findings screens plus bartender vanilla trading, fitting/scissors/tooltips, displayed controls and inventory dragging |
+| `runConfigSmoke` | Actual Mods Config entry, saved DMT settings, custom/zero values, small GUI, parent navigation and shortcut/menu synchronization |
 
 ```powershell
 .\scripts\build.ps1 runHoMetSmoke -PhometSmokeDir=build/qa-homet-fresh -PalLadCraftingSmoke=true -PtwoCbCraftingSmoke=true -PtwoCeCraftingSmoke=true
 .\scripts\build.ps1 runSalviaSmoke -PsalviaSmokeDir=build/qa-salvia-fresh
+.\scripts\build.ps1 runSmokingSmoke -PsmokingSmokeDir=build/qa-smoking-fresh
 .\scripts\build.ps1 runMescalineSmoke -PmescalineSmokeDir=build/qa-mescaline-fresh
 .\scripts\build.ps1 runPsilocybinSmoke -PpsilocybinSmokeDir=build/qa-psilocybin-fresh
 .\scripts\build.ps1 runLsdSmoke -PlsdSmokeDir=build/qa-lsd-fresh
 .\scripts\build.ps1 runTwoCeSmoke -PtwoCeSmokeDir=build/qa-twoce-fresh
 .\scripts\build.ps1 runAlLadSmoke -PalLadSmokeDir=build/qa-allad-fresh
 .\scripts\build.ps1 runGuiSmoke -PguiSmokeDir=build/qa-gui-fresh
+.\scripts\build.ps1 runConfigSmoke -PconfigSmokeDir=build/qa-config-fresh
 ```
 
 `-PlsdSmokePaletteOnly=true` selects the focused LSD palette run. Combined HoMet crafting flags do not turn its renderer scenes into complete visual tests for AL-LAD, 2C-B or 2C-E. GUI smoke tests drawing/input correspondence on a native client; physical Vivecraft controller aiming and binocular comfort remain manual.
+
+### Extending the player settings menu
+
+`ClientBootstrap` registers NeoForge's `IConfigScreenFactory` only on the client. `ModSettingsScreen` extends vanilla `OptionsSubScreen`, so scrolling, focus, resizing, Done and Escape use the native options interface. Its `addSection` helper groups standard `OptionInstance` controls; add new sections/options there with translated captions/tooltips.
+
+Keep persisted values and setters in `TrippyClientConfig`, update its `onLoad` cache for new settings, and have both menu callbacks and any shortcut use the same setter. Vanilla `Options.save()` does not save mod configuration; the existing mod setters update the spec/cache and call `SPEC.save()`. Preserve user values when constructing/reopening controls. Actions that open another screen must retain the settings screen as their return parent; Trip Scrubber eligibility is shared with its key binding.
+
+`runConfigSmoke` uses a fresh disposable client directory and world. It selects the real mod entry, clicks Config and native option widgets, verifies the TOML/cache and reopened values, checks small-GUI navigation, and dispatches temporary key mappings in-world before restoring them. It waits for screen renders before clicking list rows. Its task requires a passing `config-smoke-result.txt`; visually review its four screenshots as well.
 
 ## Manual acceptance for the whole mod
 
@@ -156,6 +186,8 @@ Use `/viceandvillagers status` and `sync` for inspection, and the permission-lev
 - Exercise Mortar and Pestle, Cannabis Press, Chemistry Table, Advanced Chemistry Table and Brew Cauldron: input/output counts, fuel, progress, blocking, shift-click and saved branch/dose choices.
 - Test supported partial-content processing, legacy formats and reusable vessels in both hands/modes; reject unsupported ingredients and loaded/mixed vessel combinations.
 - Open Dealer, Market Broker and Customer menus; check categories/search/scroll, stock, offers, transaction counts and saved market state with two clients.
+- For brokers, check all sixteen substance categories and Dealer-product coverage, full versus partial stock, equivalent older item IDs and mixed inventories. Sales and contracts must count and remove the same eligible stacks; partial containers must remain untouched. Selling a loaded device transfers the vessel too. Verify empty tools/blend capsules are excluded and payouts settle on close without changing demand, reputation or saved progression.
+- Keep the same four personal contracts through elapsed time, day changes, market close/reopen, logout and save/load. Completing one must replace only its slot, preserving the other three IDs, requirements and rewards. Test initial/incomplete older boards fill missing slots without rerolling retained orders, and daily demand changes leave posted rewards fixed.
 - Visit all regional village bars on flat, steep and shoreline terrain; check entrance/foundation/path, schedules, bartender anchoring, revisits/restarts and player-edited/broken stations.
 - Check bartender stock and vanilla trading UI. Role assignment must keep bartenders distinct from dealer, broker and customer systems.
 - Open Cursed Findings, verify discovery gates, tabs, recipe references and text, then scroll through the final entry. Hidden/clipped rows must not react to clicks.

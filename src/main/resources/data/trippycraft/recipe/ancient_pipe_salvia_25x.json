@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "trippycraft:ancient_pipe" },
+    { "item": "trippycraft:salvia_leaf_25x" }
+  ],
+  "result": { "id": "trippycraft:ancient_pipe_salvia_25x", "count": 1 }
+}

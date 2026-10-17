@@ -8,7 +8,8 @@ public enum CursedFindingCategory {
     DISSOCIATIVES("dissociatives", "Dissociatives"),
     ALCOHOL("alcohol", "Alcohol"),
     DEPENDENCE_RECOVERY("dependence_recovery", "Dependence & Recovery"),
-    ECONOMY_DEALING("economy_dealing", "Economy / Dealing");
+    ECONOMY_DEALING("economy_dealing", "Economy / Dealing"),
+    UTILITIES("utilities", "Utilities");
 
     private final String id;
     private final String displayName;

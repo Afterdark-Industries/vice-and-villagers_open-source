@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "trippycraft:ancient_pipe" },
+    { "item": "trippycraft:dmt_powder" }
+  ],
+  "result": { "id": "trippycraft:ancient_pipe_dmt", "count": 1 }
+}

@@ -88,7 +88,7 @@ public final class ValidateVrShaders {
                 nitrousVisibility(programs);
                 return;
             }
-            if (programs.size() != 29) throw new AssertionError("Expected 14 original + 14 VR + 1 composite programs, found " + programs.size());
+            if (programs.size() != 31) throw new AssertionError("Expected 15 original + 15 VR + 1 composite programs, found " + programs.size());
             System.out.println("PASS: compiled and linked all " + programs.size() + " production program fragment shaders");
             validateAll(programs);
             nativeSpatial(sources.get("homet_world_warp"), programs.get("homet_world_warp"));
@@ -197,7 +197,7 @@ public final class ValidateVrShaders {
         return output;
     }
 
-    private static final String[] ART = {"WarpA", "WarpB", "WarpC", "WarpD", "WarpE", "PaletteA", "PaletteB", "PaletteC", "Profile", "Env", "EnvA", "EnvB", "EnvDetail", "Dose", "DoseA", "DoseDetail", "LayersC", "MusicA", "MusicB", "MixA", "MixB", "MotionA", "MotionB", "Focus", "Intensity", "ExtraDose", "HighDose"};
+    private static final String[] ART = {"WarpA", "WarpB", "WarpC", "WarpD", "WarpE", "PaletteA", "PaletteB", "PaletteC", "Profile", "Env", "EnvA", "EnvB", "EnvDetail", "Dose", "DoseA", "DoseDetail", "LayersC", "MusicA", "MusicB", "MixA", "MixB", "MotionA", "MotionB", "Focus", "Intensity", "ExtraDose", "HighDose", "FractalA", "FractalB", "FractalC", "RealmOrigin", "RealmDynamics", "WorldInfluenceA", "WorldInfluenceB", "WorldInfluenceC", "WorldInfluenceD", "WorldAttractor"};
 
     private static void art(int p, String effect, boolean active, boolean strong, boolean accessibility, float time) {
         for (String uniform : ART) vec(p, uniform, 0, 0, 0, 0);
@@ -252,6 +252,19 @@ public final class ValidateVrShaders {
             case "dmt" -> {
                 vec(p, "Dose", strong ? 2.5f : 1.3f, 2.5f, 0.9f, access);
                 vec(p, "LayersC", 0.21f, 0.61f, strong ? 2.5f : 1.3f, 45);
+            }
+            case "dmt_fractal" -> {
+                vec(p, "RealmSettling", 1, 1, 1, 1);
+                vec(p, "FractalA", strong ? 1 : 0.5f, time, 1, access);
+                vec(p, "FractalB", 0.317f, 0.631f, 0.78f, 0.65f);
+                vec(p, "FractalC", strong ? 1 : 0.5f, 0.19f, 0.83f, 3);
+                vec(p,"RealmDynamics",strong?3.5f:1.5f,1,time,3.2f);
+                vec(p,"WorldInfluenceA",.55f,.2f,.1f,.05f);
+                vec(p,"WorldInfluenceB",.8f,.1f,.1f,.15f);
+                vec(p,"WorldInfluenceC",.28f,.52f,.24f,.35f);
+                vec(p,"WorldInfluenceD",.35f,-.1f,-.25f,.6f);
+                vec(p,"WorldAttractor",1.4f,.3f,-2,.4f);
+                vec(p, "RealmOrigin", 0.18f, -0.12f, 0.37f, 0.35f);
             }
             case "psilocybin" -> {
                 vec(p, "WarpB", 0.317f, 0.631f, strong ? 12 : 3, strong ? 1 : 0.4f);
@@ -410,14 +423,14 @@ public final class ValidateVrShaders {
                     frames += 2;
                 }
             }
-            boolean hasAuthoredNeutralGate = List.of("alcohol", "cocaine", "ketamine", "two_cb", "mescaline", "mdma", "homet").contains(name);
+            boolean hasAuthoredNeutralGate = List.of("alcohol", "cocaine", "ketamine", "two_cb", "mescaline", "mdma", "homet", "dmt_fractal").contains(name);
             if (hasAuthoredNeutralGate && neutralError > 0.00002f) failures.add(name + " authored neutral gate changes the eye image: " + neutralError);
             if (minimumChange < 0.00001) failures.add(name + " active effect does not change the image");
             if (maximumParityError > 0.003) failures.add(name + " centre-eye artwork parity mean error: " + maximumParityError);
             System.out.printf("CHECK: %-10s all scenes/cameras/doses; %s max %.8f, active minimum mean %.6f, centre artwork maximum mean error %.6f%n", name, hasAuthoredNeutralGate ? "neutral" : "authored inactive residual", neutralError, minimumChange, maximumParityError);
         }
         if (!failures.isEmpty()) throw new AssertionError(String.join("\n", failures));
-        System.out.println("PASS: " + frames + " finite GPU frames; 14 effects, asymmetric/canted eye optics, head roll, surface/sky/depth edge, regular/high doses and accessibility states");
+        System.out.println("PASS: " + frames + " finite GPU frames; 15 effects, asymmetric/canted eye optics, head roll, surface/sky/depth edge, regular/high doses and accessibility states");
     }
 
     private static void nativeSpatial(String source, int authored) {
