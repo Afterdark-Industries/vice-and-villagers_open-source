@@ -15,9 +15,9 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-/** A reusable bong; a loaded bowl carries one salvia serving or one dried cannabis bud. */
-public final class BongItem extends Item {
-    public enum Contents { EMPTY, SALVIA, CANNABIS }
+/** Reusable smoking bowl; subclasses supply their own vessel and cooldown family. */
+public class BongItem extends Item {
+    public enum Contents { EMPTY, SALVIA, CANNABIS, DMT }
 
     public static final int CANNABIS_THC_MILLIGRAMS = 200;
 
@@ -40,19 +40,15 @@ public final class BongItem extends Item {
             return InteractionResultHolder.pass(player.getItemInHand(hand));
         }
         if (player instanceof ServerPlayer serverPlayer) {
-            if (contents == Contents.CANNABIS) {
-                SubstanceEngine.addCannabisDose(serverPlayer, doseUnits);
-            } else {
-                SubstanceEngine.addSalviaDose(serverPlayer, doseUnits);
+            switch (contents) {
+                case CANNABIS -> SubstanceEngine.addCannabisDose(serverPlayer, doseUnits);
+                case DMT -> SubstanceEngine.addDmtDose(serverPlayer, doseUnits);
+                case SALVIA -> SubstanceEngine.addSalviaDose(serverPlayer, doseUnits);
+                case EMPTY -> { }
             }
-            // Always empty the bowl, including in creative mode. The glass bong is retained.
-            player.setItemInHand(hand, new ItemStack(ModItems.BONG.get()));
-            serverPlayer.getCooldowns().addCooldown(ModItems.BONG.get(), 15);
-            serverPlayer.getCooldowns().addCooldown(ModItems.BONG_SALVIA_1X.get(), 15);
-            serverPlayer.getCooldowns().addCooldown(ModItems.BONG_SALVIA_10X.get(), 15);
-            serverPlayer.getCooldowns().addCooldown(ModItems.BONG_SALVIA_25X.get(), 15);
-            serverPlayer.getCooldowns().addCooldown(ModItems.BONG_SALVIA_50X.get(), 15);
-            serverPlayer.getCooldowns().addCooldown(ModItems.BONG_CANNABIS.get(), 15);
+            // Empty the loaded vessel even in creative; crafting has no vessel remainder.
+            player.setItemInHand(hand, new ItemStack(emptyDevice()));
+            for (Item item : cooldownItems()) serverPlayer.getCooldowns().addCooldown(item, 15);
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
     }
@@ -60,16 +56,21 @@ public final class BongItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (contents == Contents.EMPTY || doseUnits <= 0.0D) {
-            tooltip.add(Component.translatable("tooltip.trippycraft.bong_empty"));
+            tooltip.add(Component.translatable(emptyTooltipKey()));
         } else if (contents == Contents.CANNABIS) {
             tooltip.add(Component.translatable("tooltip.trippycraft.abstract_dose"));
             tooltip.add(Component.translatable("tooltip.trippycraft.cannabis_total_mg", CANNABIS_THC_MILLIGRAMS));
             tooltip.add(Component.translatable("tooltip.trippycraft.cannabis_hit_mg", CANNABIS_THC_MILLIGRAMS));
-            tooltip.add(Component.translatable("tooltip.trippycraft.bong_loaded"));
+            tooltip.add(Component.translatable(loadedTooltipKey()));
             tooltip.add(Component.translatable("tooltip.trippycraft.cannabis_bong_stacks"));
+        } else if (contents == Contents.DMT) {
+            tooltip.add(Component.translatable("tooltip.trippycraft.abstract_dose"));
+            tooltip.add(Component.translatable("tooltip.trippycraft.dmt_gameplay_units", "1.0x"));
+            tooltip.add(Component.translatable(loadedTooltipKey()));
+            tooltip.add(Component.translatable("tooltip.trippycraft.dmt_stacks"));
         } else {
             tooltip.add(Component.translatable("tooltip.trippycraft.salvia_gameplay_units", SalviaDoseCurve.formatPotencyLabel(doseUnits)));
-            tooltip.add(Component.translatable("tooltip.trippycraft.bong_loaded"));
+            tooltip.add(Component.translatable(loadedTooltipKey()));
             tooltip.add(Component.translatable("tooltip.trippycraft.salvia_stacks"));
         }
     }
@@ -80,5 +81,23 @@ public final class BongItem extends Item {
 
     public Contents contents() {
         return contents;
+    }
+
+    protected Item emptyDevice() {
+        return ModItems.BONG.get();
+    }
+
+    protected List<Item> cooldownItems() {
+        return List.of(ModItems.BONG.get(), ModItems.BONG_SALVIA_1X.get(), ModItems.BONG_SALVIA_10X.get(),
+                ModItems.BONG_SALVIA_25X.get(), ModItems.BONG_SALVIA_50X.get(), ModItems.BONG_CANNABIS.get(),
+                ModItems.BONG_DMT.get());
+    }
+
+    protected String emptyTooltipKey() {
+        return "tooltip.trippycraft.bong_empty";
+    }
+
+    protected String loadedTooltipKey() {
+        return "tooltip.trippycraft.bong_loaded";
     }
 }

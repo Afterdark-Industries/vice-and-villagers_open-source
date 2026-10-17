@@ -69,7 +69,7 @@ public final class CapsuleBlend {
         if (item instanceof LsdSolutionItem solution) {
             return entry(KIND_LSD_MICROGRAMS, solution.doseMicrograms());
         }
-        if (item instanceof DmtItem dmt) {
+        if (item instanceof DmtPowderItem dmt) {
             return entry(KIND_DMT_UNITS, dmt.doseUnits());
         }
         if (item instanceof CannabisDoseItem cannabis) {
@@ -303,7 +303,7 @@ public final class CapsuleBlend {
                 case KIND_CRACK_COCAINE_GRAMS -> SubstanceEngine.addCocaineDose(player, CocaineRoute.CRACK, amount);
                 case KIND_HEROIN_MILLIGRAMS -> SubstanceEngine.addHeroinDose(player, amount);
                 case KIND_KETAMINE_MILLIGRAMS -> SubstanceEngine.addKetamineDose(player, amount);
-                // Legacy capsules must not bypass the bong-only salvia route.
+                // Legacy capsules must not bypass the smoking-device-only salvia route.
                 case KIND_SALVIA_UNITS -> {
                     return false;
                 }

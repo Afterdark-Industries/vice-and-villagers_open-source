@@ -92,7 +92,9 @@ public final class MortarAndPestleBlockEntity extends BlockEntity implements Con
                 || stack.is(ModItems.DRIED_KOKA_LEAVES.get())
                 || stack.is(ModItems.HO_MET_CRYSTAL.get())
                 || stack.is(ModItems.TWO_CB_CRYSTAL.get())
-                || stack.is(ModItems.TWO_CE_CRYSTAL.get());
+                || stack.is(ModItems.TWO_CE_CRYSTAL.get())
+                || stack.is(ModItems.DMT.get())
+                || stack.is(ModItems.DMT_5X.get());
     }
 
     private boolean canGrind() {
@@ -108,7 +110,7 @@ public final class MortarAndPestleBlockEntity extends BlockEntity implements Con
 
         ItemStack output = items.get(OUTPUT_SLOT);
         if (output.isEmpty()) {
-            return true;
+            return result.getCount() <= Math.min(result.getMaxStackSize(), getMaxStackSize());
         }
 
         if (!ItemStack.isSameItemSameComponents(output, result)) {
@@ -124,6 +126,12 @@ public final class MortarAndPestleBlockEntity extends BlockEntity implements Con
         }
         if (input.is(ModItems.DRIED_KOKA_LEAVES.get())) {
             return new ItemStack(ModItems.GROUND_KOKA_LEAVES.get());
+        }
+        if (input.is(ModItems.DMT.get())) {
+            return new ItemStack(ModItems.DMT_POWDER.get());
+        }
+        if (input.is(ModItems.DMT_5X.get())) {
+            return new ItemStack(ModItems.DMT_POWDER.get(), 5);
         }
         if (input.is(ModItems.HO_MET_CRYSTAL.get())) {
             int remaining = HoMetCrystalItem.remainingMilligrams(input);

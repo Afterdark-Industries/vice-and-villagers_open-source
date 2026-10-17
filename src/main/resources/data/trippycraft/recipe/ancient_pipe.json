@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["   ", "I  ", "WAW"],
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "W": { "tag": "minecraft:planks" },
+    "A": { "item": "trippycraft:acacia_bark" }
+  },
+  "result": { "id": "trippycraft:ancient_pipe", "count": 1 }
+}

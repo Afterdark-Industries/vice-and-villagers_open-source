@@ -8,6 +8,8 @@ import com.trippycraft.item.CannabisDoseItem;
 import com.trippycraft.item.CocaineItem;
 import com.trippycraft.item.CursedRecipeCodexItem;
 import com.trippycraft.item.DmtItem;
+import com.trippycraft.item.DmtPowderItem;
+import com.trippycraft.item.AncientPipeItem;
 import com.trippycraft.item.EthanolItem;
 import com.trippycraft.item.FlavorBlockItem;
 import com.trippycraft.item.FlavorItem;
@@ -171,6 +173,7 @@ public final class ModItems {
     public static final Supplier<Item> TWO_CE_80MG = registerTwoCeDose("two_ce_80mg", 500, 80.0D, false, false);
     public static final Supplier<Item> DMT = registerDmt("dmt_crystal", 1.0D);
     public static final Supplier<Item> DMT_5X = registerDmt("dmt_crystal_5x", 5.0D);
+    public static final Supplier<Item> DMT_POWDER = registerDmtPowder();
     public static final Supplier<Item> CANNABIS_JOINT = registerCannabisDoseItem("cannabis_joint", 200, 50, true);
     public static final Supplier<Item> CANNABIS_DAB_PEN = registerCannabisDoseItem("cannabis_dab_pen", 1000, 50, false);
     public static final Supplier<Item> CANNABIS_GUMMIES = registerCannabisDoseItem(
@@ -235,6 +238,14 @@ public final class ModItems {
     public static final Supplier<Item> BONG_SALVIA_25X = registerBong("bong_salvia_25x", 10.0D);
     public static final Supplier<Item> BONG_SALVIA_50X = registerBong("bong_salvia_50x", 15.0D);
     public static final Supplier<Item> BONG_CANNABIS = registerCannabisBong();
+    public static final Supplier<Item> BONG_DMT = registerLoadedBong("bong_dmt", BongItem.Contents.DMT, DmtPowderItem.DOSE_UNITS);
+    public static final Supplier<Item> ANCIENT_PIPE = registerAncientPipe("ancient_pipe", BongItem.Contents.EMPTY, 0.0D);
+    public static final Supplier<Item> ANCIENT_PIPE_SALVIA_1X = registerAncientPipe("ancient_pipe_salvia_1x", BongItem.Contents.SALVIA, 1.0D);
+    public static final Supplier<Item> ANCIENT_PIPE_SALVIA_10X = registerAncientPipe("ancient_pipe_salvia_10x", BongItem.Contents.SALVIA, 5.0D);
+    public static final Supplier<Item> ANCIENT_PIPE_SALVIA_25X = registerAncientPipe("ancient_pipe_salvia_25x", BongItem.Contents.SALVIA, 10.0D);
+    public static final Supplier<Item> ANCIENT_PIPE_SALVIA_50X = registerAncientPipe("ancient_pipe_salvia_50x", BongItem.Contents.SALVIA, 15.0D);
+    public static final Supplier<Item> ANCIENT_PIPE_CANNABIS = registerAncientPipe("ancient_pipe_cannabis", BongItem.Contents.CANNABIS, BongItem.CANNABIS_THC_MILLIGRAMS);
+    public static final Supplier<Item> ANCIENT_PIPE_DMT = registerAncientPipe("ancient_pipe_dmt", BongItem.Contents.DMT, DmtPowderItem.DOSE_UNITS);
     public static final Supplier<Item> NITROUS = registerNitrousDose("nitrous_canister", 1.0D);
     public static final Supplier<Item> BEER_BOTTLE = registerAlcohol("beer_bottle", 12.0D, 0.05D, true, Items.GLASS_BOTTLE);
     public static final Supplier<Item> WINE_GLASS_5OZ = registerAlcohol("wine_glass_5oz", 5.0D, 0.14D, false);
@@ -667,6 +678,12 @@ public final class ModItems {
         return item;
     }
 
+    private static Supplier<Item> registerDmtPowder() {
+        Supplier<Item> item = ITEMS.register("dmt_powder", () -> new DmtPowderItem(new Item.Properties().stacksTo(64)));
+        CREATIVE_ITEMS.add(item);
+        return item;
+    }
+
     private static Supplier<Item> registerBong(String itemId, double doseUnits) {
         Supplier<Item> item = ITEMS.register(itemId,
                 () -> new BongItem(doseUnits, new Item.Properties().stacksTo(1)));
@@ -678,6 +695,20 @@ public final class ModItems {
         Supplier<Item> item = ITEMS.register("bong_cannabis",
                 () -> new BongItem(BongItem.Contents.CANNABIS, BongItem.CANNABIS_THC_MILLIGRAMS,
                         new Item.Properties().stacksTo(1)));
+        CREATIVE_ITEMS.add(item);
+        return item;
+    }
+
+    private static Supplier<Item> registerLoadedBong(String itemId, BongItem.Contents contents, double doseUnits) {
+        Supplier<Item> item = ITEMS.register(itemId,
+                () -> new BongItem(contents, doseUnits, new Item.Properties().stacksTo(1)));
+        CREATIVE_ITEMS.add(item);
+        return item;
+    }
+
+    private static Supplier<Item> registerAncientPipe(String itemId, BongItem.Contents contents, double doseUnits) {
+        Supplier<Item> item = ITEMS.register(itemId,
+                () -> new AncientPipeItem(contents, doseUnits, new Item.Properties().stacksTo(1)));
         CREATIVE_ITEMS.add(item);
         return item;
     }

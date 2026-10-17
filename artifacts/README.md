@@ -4,6 +4,20 @@ The ready-to-install [mod JAR](ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.j
 
 Place the JAR in your instance's `mods` folder, replacing the previous Vice and Villagers JAR, then restart Minecraft. Keep one version of the mod installed.
 
+**DMT Powder and Ancient Pipe:** DMT crystals now require grinding in the Mortar and Pestle: one 1x crystal produces one powder, and one 5x crystal produces five. Each powder provides one gameplay unit, directly or through a loaded Bong/Ancient Pipe. Crystals cannot be consumed directly or loaded into new capsules. Previously saved DMT capsules remain usable.
+
+Craft the Ancient Pipe at a crafting table with this layout (`I` = iron ingot, `W` = any wooden planks, `A` = Acacia Bark):
+
+```text
+· · ·
+I · ·
+W A W
+```
+
+Craft one empty Bong or Ancient Pipe with one **DMT Powder**, **Dried Cannabis Bud**, or **salvia extract** (1x/10x/25x/50x) in either crafting grid. Right-click the loaded device to consume one serving and retain that device empty. Loaded bowls cannot be combined or topped up. DMT retains its existing dose response and visuals. Cursed Findings has a new Smoking Devices chapter and updated substance pages.
+
+The smoking update passed nine focused server GameTests and a fresh native Minecraft check: all seventeen related item models/names, all six paired device appearances, the updated journal pages and real inventory-based recipe discovery synchronized to the client. The first two supplied icons are included; the accidental third image is excluded.
+
 Open **Mods → Vice and Villagers → Config** from Minecraft's title screen or in-game Mods menu. The settings screen offers the DMT realm toggle, intensity **0/25/50/75/100%**, and **Low/Balanced/High** quality. Changes apply immediately and save for future launches; existing custom intensity values are preserved when the menu opens. **Key Binds...** opens shortcut assignment, and **Open Trip Scrubber...** is available during supported active trips. The settings screen is organized into sections for future additions.
 
 The config-menu build passed native Minecraft tests for Mods entry navigation, saved values, custom/zero intensity, a 320×240 GUI, parent-screen return and synchronization with the original key bindings. The JAR and checksum below include this menu.

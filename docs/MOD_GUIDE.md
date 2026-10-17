@@ -69,7 +69,7 @@ The session's calibrated effect amount and physical content remain separate. `Al
 
 ### Cannabis
 
-Wild plants and seeds lead through buds, drying and press processing to joints, dab pens, gummies, chocolate and loaded bongs. The registered dose formats use `CannabisDoseItem`; it and `BongItem` feed [`substance/cannabis/`](../src/main/java/com/trippycraft/substance/cannabis/). `CannabisPressBlockEntity` owns processing.
+Wild plants and seeds lead through buds, drying and press processing to joints, dab pens, gummies, chocolate and loaded Bongs/Ancient Pipes. One dried bud loads one 200mg THC serving into either reusable device. The registered dose formats use `CannabisDoseItem`; it and `BongItem`/`AncientPipeItem` feed [`substance/cannabis/`](../src/main/java/com/trippycraft/substance/cannabis/). `CannabisPressBlockEntity` owns processing.
 
 Warmth, green tint, breathing, temporal drag, focus and audio response use the shared graph and rendering paths. `ClientCannabisMovementEvents` supplies a separate movement hook; there is no dedicated cannabis world-warp class. Current formats feed the same session dose path. Verify per-use content, partial-use handling, mixtures, edible packaging, reusable vessels and movement/accessibility behavior.
 
@@ -81,7 +81,9 @@ Koka cultivation supports leaf use and drying/grinding/paste processing into pow
 
 ### DMT
 
-Acacia bark/leaves and brewing support extracts and crystal variants. `AcaciaHarvestEvents`, `BrewCauldronBlockEntity` and `DmtItem` connect acquisition to [`substance/dmt/`](../src/main/java/com/trippycraft/substance/dmt/).
+Acacia bark/leaves and brewing support extracts and crystal variants. Their acquisition recipes and existing item IDs remain unchanged. Crystals are now processing ingredients: use the Mortar and Pestle to turn one DMT Crystal 1x into one **DMT Powder**, or one 5x crystal into five powders. Crystals have no direct-use effect and cannot be loaded into new blend capsules.
+
+Each powder supplies **1.0 DMT gameplay unit**, matching the former 1x crystal. Right-click powder to use it directly, or craft it with one empty Bong/Ancient Pipe to load a single serving. Smoking retains the same empty device, including in Creative. Powder is also the supported DMT ingredient for new blend capsules; existing saved DMT capsule contents still work. `AcaciaHarvestEvents`, `BrewCauldronBlockEntity`, `MortarAndPestleBlockEntity`, `DmtItem`, `DmtPowderItem` and the smoking-device items connect acquisition to [`substance/dmt/`](../src/main/java/com/trippycraft/substance/dmt/). This preparation change preserves the session's dose model, redosing and visual settings.
 
 The package includes stages, transitions, encounters, themes, signatures and a fractal scaffold, beyond a single generic effect curve. `DmtVisualRenderer`, `DmtWorldGeometryRenderer` and `DmtWorldWarpPass` compose symbols, encounters, architecture and breakthrough/world-replacement presentation. Review stage continuity, geometry lifecycle, ordinary-world visibility and stereo anchoring together.
 
@@ -163,9 +165,9 @@ Strange mushrooms connect drying, mortar powder and capsule production to `Psilo
 
 ### Salvia
 
-Jungle cultivation and seeds lead to leaves, drying and extract strengths. `SalviaDivinorumPlantBlock`, `SalviaPatchFeature`, `SalviaLeafItem` and `BongItem` connect those formats to [`substance/salvia/`](../src/main/java/com/trippycraft/substance/salvia/).
+Jungle cultivation and seeds lead to leaves, drying and extract strengths. `SalviaDivinorumPlantBlock`, `SalviaPatchFeature`, `SalviaLeafItem`, `BongItem` and `AncientPipeItem` connect those formats to [`substance/salvia/`](../src/main/java/com/trippycraft/substance/salvia/).
 
-The active route is the one-hit loaded bong. Loose leaves/extracts and legacy capsule entries do not provide a working direct salvia effect route. `SalviaVisualRenderer` and `SalviaWorldWarpPass` handle scene replacement, loop seams, observer cutouts, flattening/objecthood and re-entry. Preserve vessel returns, strength selection, route exclusions and phase transitions together.
+The active route is a one-hit loaded Bong or Ancient Pipe. Both support 1x/10x/25x/50x extracts with the existing calibrated strengths (1/5/10/15 gameplay units). Loose leaves/extracts and legacy capsule entries do not provide a working direct salvia effect route. `SalviaVisualRenderer` and `SalviaWorldWarpPass` handle scene replacement, loop seams, observer cutouts, flattening/objecthood and re-entry. Preserve vessel returns, strength selection, route exclusions and phase transitions together.
 
 ### 2C-B
 
@@ -195,7 +197,7 @@ Normal crafting/heating lives in `data/trippycraft/recipe/`, with custom seriali
 
 | Utility | Main responsibility | Contributor checks |
 |---|---|---|
-| Mortar and Pestle | Dried mushroom/koka processing and supported 4-HO-MET/2C-B/2C-E crystal-to-powder conversion | Remaining content, output counts, allowed inputs and tool/container behavior |
+| Mortar and Pestle | Dried mushroom/koka processing and supported DMT/4-HO-MET/2C-B/2C-E crystal-to-powder conversion | Remaining content, output counts, allowed inputs and tool/container behavior; DMT 1x/5x yields 1/5 powders without overflowing a blocked output |
 | Cannabis Press | Bud/extract processing and the retained MDMA tablet route | Fuel/progress, branch inputs, packaging and full output slots |
 | Brew Cauldron | Plant, lysergic, medicinal, empathogen and synthetic precursor steps | Ingredient matching, returned vessels, counts, progress and saved state |
 | Chemistry Table | Refinement, solvent/heroin/ketamine steps and selectable aromatic/phenethylamine branches | Branch selection, progress reset, server agreement and shared intermediates |
@@ -205,9 +207,13 @@ Each utility spans a block, block entity, menu and client screen. The server own
 
 `StackableDoseItemSupport`, `ContainerReturnItemSupport` and substance-specific reservoir items preserve partially used content. Stack count, available content, label and engine dose are different values. Partial-stack identities prevent incompatible reservoirs from merging. Full inventories, Creative/Survival and both hands affect return paths and need direct checks.
 
-Loading recipes accept one dried cannabis bud or a supported salvia strength. `BongItem` consumes the loaded hit and returns the reusable empty vessel. Fresh buds, extra ingredients, mixed bowls and already loaded vessels are not interchangeable inputs. Preserve the loading recipe and item-use rules together.
+The **Ancient Pipe** uses one iron ingot, two planks from `minecraft:planks` (mixed types allowed) and one Acacia Bark at a crafting table. With the top row empty, place iron at middle-left and planks/bark/planks across the bottom. Standard vanilla shaped-recipe translation and mirroring apply.
 
-`CapsuleBlendRecipe` requires one empty capsule and supported ingredient slots. `CapsuleBlend.entryFromDoseItem` is the allowed-format boundary; not every item or substance belongs in a blend. Entries preserve route/content/effect amounts. Salvia loose items and bongs are excluded, and a readable legacy salvia-kind entry does not establish a functional capsule route.
+The new pipe craft and seven new loading recipes have inventory-based recipe-book discoveries under `data/trippycraft/advancement/recipes/misc/`. Collecting their required ingredient types reveals the recipe; Minecraft still checks the full quantities and shape before crafting.
+
+Shapeless loading recipes accept one empty Bong or Ancient Pipe plus one **DMT Powder**, **dried cannabis bud**, or supported **salvia extract** in either crafting grid. `BongItem` implements the shared single-serving behavior; `AncientPipeItem` supplies the pipe's empty item and cooldown family. Smoking returns exactly the same type of empty vessel in either hand and in Survival/Creative. Loading has no vessel remainder, avoiding a duplicate empty item. Fresh buds, unground DMT crystals, extra ingredients, mixed bowls and already loaded vessels are not interchangeable inputs. Loaded pipe variants reuse the supplied empty-pipe artwork and have distinct names/tooltips. Cursed Findings exposes construction and loading in its always-open Smoking Devices chapter and substance-specific pages.
+
+`CapsuleBlendRecipe` requires one empty capsule and supported ingredient slots. `CapsuleBlend.entryFromDoseItem` is the allowed-format boundary; not every item or substance belongs in a blend. Entries preserve route/content/effect amounts. DMT powder contributes one unit; DMT crystals and all smoking devices are excluded. Previously stored DMT entries retain their amount and consumption behavior. Salvia loose items and smoking devices are excluded, and a readable legacy salvia-kind entry does not establish a functional capsule route.
 
 ## Villagers, trading and progression
 

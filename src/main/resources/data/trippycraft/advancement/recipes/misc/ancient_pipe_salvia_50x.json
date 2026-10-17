@@ -1,0 +1,20 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_device_and_serving": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "trippycraft:ancient_pipe" },
+          { "items": "trippycraft:salvia_leaf_50x" }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": { "recipe": "trippycraft:ancient_pipe_salvia_50x" }
+    }
+  },
+  "requirements": [["has_device_and_serving", "has_the_recipe"]],
+  "rewards": { "recipes": ["trippycraft:ancient_pipe_salvia_50x"] }
+}

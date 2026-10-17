@@ -91,6 +91,8 @@ public final class ClientBootstrap {
         gameEventBus.addListener(GuiSmokeCheck::onClientTick);
         gameEventBus.addListener(ConfigClientSmokeTest::onClientTick);
         gameEventBus.addListener(ConfigClientSmokeTest::onScreenRender);
+        gameEventBus.addListener(SmokingClientSmokeTest::onClientTick);
+        gameEventBus.addListener(SmokingClientSmokeTest::onScreenRender);
         gameEventBus.addListener(TwoCeClientSmokeTest::onClientTick);
         gameEventBus.addListener(AlLadClientSmokeTest::onClientTick);
         gameEventBus.addListener(SalviaClientSmokeTest::onClientTick);

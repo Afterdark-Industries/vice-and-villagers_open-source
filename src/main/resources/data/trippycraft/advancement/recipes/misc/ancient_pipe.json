@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_materials": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          { "items": "minecraft:iron_ingot" },
+          { "items": "#minecraft:planks" },
+          { "items": "trippycraft:acacia_bark" }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": { "recipe": "trippycraft:ancient_pipe" }
+    }
+  },
+  "requirements": [["has_materials", "has_the_recipe"]],
+  "rewards": { "recipes": ["trippycraft:ancient_pipe"] }
+}

@@ -67,9 +67,12 @@ A successful build proves compilation and packaging, not a running world or comp
 ```powershell
 .\scripts\build.ps1 build
 .\scripts\build.ps1 runHoMetGameTestServer
+.\scripts\build.ps1 runSmokingGameTestServer
 ```
 
 Despite its historical name, `runHoMetGameTestServer` runs the retained whole-mod GameTest suite, including substance/session, crafting/content, plants, exploration loot, commands and village/bartender contracts. Its test world and logs are under ignored `build/` directories. Check the actual failed-test summary and process exit; assembly alone does not execute GameTests.
+
+`runSmokingGameTestServer` runs the focused `trippycraft_smoking` namespace using its small empty structure fixture. It covers Ancient Pipe crafting with any planks, all twelve device loads in both crafting grids, actual ingredient/remainder handling, rejected loads, mortar yields/capacity/save/shift-click behavior, processing-only crystals, powder and capsule compatibility, correct substance amounts, cooldowns, findings, recipe-book discovery and empty-device returns in both hands and game modes. The whole-mod run includes this namespace too. Change `-PsmokingGameTestDir` and `-PsmokingGameTestWorldDir` to isolate a run's logs and test world.
 
 Coverage is uneven. There are dedicated LSD and psilocybin contracts, cannabis-bong and bartender tests, and extensive tests for several later substance systems. Cannabis, cocaine, heroin, alcohol, MDMA and ketamine lack dedicated full-session GameTest classes, and DMT's complete session/stage behavior also needs direct manual checks. Focused item/crafting tests do not replace that coverage. Passing the suite does not prove every substance, saved world or modpack.
 
@@ -122,6 +125,7 @@ Use a fresh smoke directory for each run. These harnesses protect existing world
 |---|---|
 | `runHoMetSmoke` | 4-HO-MET renderer scenes; optional AL-LAD/2C-B/2C-E crafting flags consume formats and resolve models |
 | `runSalviaSmoke` | Salvia plant-stage and item-model assets; does not consume a dose or test active effects |
+| `runSmokingSmoke` | DMT Powder and all smoking-device models/translations, first-person devices, recipe-book synchronization and native Smoking Devices/DMT Findings pages; gameplay dosing is covered by the server contracts |
 | `runMescalineSmoke` | Cactus/item-model and Findings UI assets; does not consume a dose or test active effects |
 | `runPsilocybinSmoke` | Psilocybin surface-flow, phase and camera/FOV regression scenes |
 | `runLsdSmoke` | LSD presentation, palette and camera/FOV regression scenes |
@@ -133,6 +137,7 @@ Use a fresh smoke directory for each run. These harnesses protect existing world
 ```powershell
 .\scripts\build.ps1 runHoMetSmoke -PhometSmokeDir=build/qa-homet-fresh -PalLadCraftingSmoke=true -PtwoCbCraftingSmoke=true -PtwoCeCraftingSmoke=true
 .\scripts\build.ps1 runSalviaSmoke -PsalviaSmokeDir=build/qa-salvia-fresh
+.\scripts\build.ps1 runSmokingSmoke -PsmokingSmokeDir=build/qa-smoking-fresh
 .\scripts\build.ps1 runMescalineSmoke -PmescalineSmokeDir=build/qa-mescaline-fresh
 .\scripts\build.ps1 runPsilocybinSmoke -PpsilocybinSmokeDir=build/qa-psilocybin-fresh
 .\scripts\build.ps1 runLsdSmoke -PlsdSmokeDir=build/qa-lsd-fresh

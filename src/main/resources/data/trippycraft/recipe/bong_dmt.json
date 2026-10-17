@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "trippycraft:bong" },
+    { "item": "trippycraft:dmt_powder" }
+  ],
+  "result": { "id": "trippycraft:bong_dmt", "count": 1 }
+}

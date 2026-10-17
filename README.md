@@ -8,6 +8,8 @@ All substance quantities, effects and production chains are fictional gameplay v
 
 This branch includes an optional generated 3D DMT fractal realm. The [built mod JAR](artifacts/ViceAndVillagers-2.2.0-backport-1.21.1-neoforge.jar) is in this repository's `artifacts/` folder, beside its [installation instructions, settings and checksum](artifacts/README.md). Open **Mods → Vice and Villagers → Config** to select the realm mode, intensity and quality. Existing DMT effects remain the default; the original shortcut bindings remain available.
 
+This build also adds **DMT Powder** and the reusable **Ancient Pipe**. Grind DMT crystals in the Mortar and Pestle (1x → 1 powder; 5x → 5 powders) before use. Craft either empty smoking device with one powder, dried cannabis bud or salvia extract, then right-click the loaded device to smoke and keep the empty vessel. Cursed Findings includes the new recipes and instructions.
+
 ## What the mod contains
 
 The substance systems cover **cannabis, psilocybin, LSD, 2C-B, 4-HO-MET, AL-LAD, 2C-E, mescaline, DMT, salvia, cocaine, heroin, ketamine, MDMA, alcohol and nitrous oxide**. Koka and crack are routes within the cocaine system; different drinks share the alcohol system. Sessions can stack and interact, with tolerance, dependence, recovery, visual, audio and movement effects.

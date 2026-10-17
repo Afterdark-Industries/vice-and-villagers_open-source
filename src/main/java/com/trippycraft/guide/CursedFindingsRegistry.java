@@ -60,10 +60,10 @@ public final class CursedFindingsRegistry {
                 List.of(
                         "The green finding begins low to the ground, hiding in wet shade and old forest light. It does not announce itself. It waits until your hand knows the leaf.",
                         "Cannabis is a warm and body-heavy discovery. It does not split the sky like LSD or tear open a tunnel like DMT. It settles over the world instead, thickening time, softening color, and making each step arrive a little after you asked for it.",
-                        "The first path is simple: find or grow the plant, dry the bud, then roll a joint or load a Bong. One dried bud holds 200mg THC: the Joint divides it into four pulls, while the Bong gives it as one hit. The deeper path needs the Cannabis Press, where fresh flowers give up THC Extract, and extract becomes packed green concentrate for pens and edibles."
+                        "The first path is simple: find or grow the plant, dry the bud, then roll a joint or load a Bong or Ancient Pipe. One dried bud holds 200mg THC: the Joint divides it into four pulls, while either smoking device gives it as one hit. The deeper path needs the Cannabis Press, where fresh flowers give up THC Extract, and extract becomes packed green concentrate for pens and edibles."
                 ),
                 List.of(
-                        "The first taste opens this page. After that, every joint, Bong hit, pen, gummy, or chocolate bar adds its own weight to the same green weather until it fades.",
+                        "The first taste opens this page. After that, every joint, Bong or Ancient Pipe hit, pen, gummy, or chocolate bar adds its own weight to the same green weather until it fades.",
                         "A small pull comes on gently. The edges warm, the air breathes, and colors lean toward gold and leaf-green. The trip bar marks the rise as Onset, Lift, Cruise, Sink, and Afterglow.",
                         "Taking more before the feeling passes does not start a second story. It deepens the one already being written, raising the THC mark and stretching the remaining glow.",
                         "At cruising strength, time begins to drag. The body feels heavier, movement gets soft at the edges, and the camera may lag behind your intention like your eyes are remembering the previous second.",
@@ -77,13 +77,16 @@ public final class CursedFindingsRegistry {
                         step(() -> Items.GRASS_BLOCK, "Farmland or living soil", ModItems.CANNABIS_SEEDS, "Cannabis Seeds", ModItems.CANNABIS_BUD, "4x Cannabis Bud + 2x Seeds",
                                 "Give the seed light and patient soil. A mature plant gives 4 Cannabis Buds and 2 Cannabis Seeds. If cut too early, it gives only seed and regret."),
                         step(ModItems.CANNABIS_BUD, "Fresh Cannabis Bud", () -> Items.FURNACE, "Furnace, Blast Furnace, Smoker, or Campfire", ModItems.DRIED_CANNABIS_BUD, "Dried Cannabis Bud",
-                                "Fresh bud must be dried before it can be rolled or loaded in a Bong. One dried bud contains 200mg THC. A smoker works fastest, a furnace works steadily, and a campfire takes its slow little ritual."),
+                                "Fresh bud must be dried before it can be rolled or loaded in a Bong or Ancient Pipe. One dried bud contains 200mg THC. A smoker works fastest, a furnace works steadily, and a campfire takes its slow little ritual."),
                         step(ModItems.DRIED_CANNABIS_BUD, "Dried Bud + 2 Paper", () -> Items.CRAFTING_TABLE, "Crafting", ModItems.CANNABIS_JOINT, "Joint",
                                 "The quick field method. One dried bud and two papers become a Joint: four small pulls from one rolled finding."),
                         step(() -> Items.GLASS, "4x Glass + Water Bucket", () -> Items.CRAFTING_TABLE, "Shaped crafting", ModItems.BONG, "Bong",
                                 "Build the reusable glass vessel in this shape: _ G _ / _ G _ / G W G. G is a Glass block, W is a Water Bucket, and _ is empty. The Water Bucket leaves an empty Bucket behind."),
                         step(ModItems.DRIED_CANNABIS_BUD, "One Dried Bud + Empty Bong", () -> Items.CRAFTING_TABLE, "Crafting table or inventory", ModItems.BONG_CANNABIS, "Loaded Bong: One 200mg Hit",
-                                "Craft one dried bud with one empty Bong in either crafting grid. Right-click the loaded Bong to take its whole 200mg THC hit. The same vessel returns with an empty bowl, ready for another dried bud or salvia extract."),
+                                "Craft one dried bud with one empty Bong in either crafting grid. Right-click the loaded Bong to take its whole 200mg THC hit. The same vessel returns empty, ready for another dried bud, DMT Powder, or salvia extract."),
+                        ancientPipeProductionStep(),
+                        step(ModItems.DRIED_CANNABIS_BUD, "One Dried Bud + Empty Ancient Pipe", () -> Items.CRAFTING_TABLE, "Crafting table or inventory", ModItems.ANCIENT_PIPE_CANNABIS, "Loaded Ancient Pipe: One 200mg Hit",
+                                "Load one dried bud beside one empty Ancient Pipe in either crafting grid. Its one 200mg THC hit uses the same cannabis session as a Bong and returns the empty Ancient Pipe."),
                         step(ModItems.CANNABIS_BUD, "2x Fresh Bud + Fuel", ModItems.CANNABIS_PRESS, "Cannabis Press", ModItems.THC_EXTRACT, "THC Extract",
                                 "The press squeezes fresh flowers under heat. Two buds become one THC Extract. Coal or charcoal keeps the jaw hot enough for several pressings."),
                         step(ModItems.THC_EXTRACT, "10x THC Extract", ModItems.CANNABIS_PRESS, "Cannabis Press", ModItems.PACKED_THC_EXTRACT, "Packed THC Extract",
@@ -118,6 +121,8 @@ public final class CursedFindingsRegistry {
                                 List.of(ref(ModItems.BONG, "1x Empty Bong"), ref(ModItems.DRIED_CANNABIS_BUD, "1x Dried Cannabis Bud")),
                                 ref(ModItems.BONG_CANNABIS, "1x Loaded Bong (200mg THC)"),
                                 List.of("Shapeless recipe in the crafting table or 2x2 inventory grid. One dried bud supplies one 200mg THC hit. Right-click to smoke it and recover the same empty Bong.")),
+                        ancientPipeRecipe(),
+                        loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.DRIED_CANNABIS_BUD, "Dried Cannabis Bud", ModItems.ANCIENT_PIPE_CANNABIS, "Cannabis", "200mg THC"),
                         recipe("THC Extract", CursedFindingRecipeType.CANNABIS_PRESS,
                                 List.of(ref(ModItems.CANNABIS_BUD, "2x Cannabis Bud"), ref(Items.COAL, "Coal or Charcoal fuel")),
                                 ref(ModItems.THC_EXTRACT, "1x THC Extract"),
@@ -145,8 +150,8 @@ public final class CursedFindingsRegistry {
                         "Farmland pleases it most. Bonemeal can hurry the growth, but the journal has a bias toward patience.",
                         "The Cannabis Press has three mouths: input, fuel, and output. Buds and extract go in; coal or charcoal heats fresh buds; finished resin waits on the far side.",
                         "Pens, gummies, bars, and joints remember how many uses remain. If you use one from a stack, one serving-piece separates from the pile and the rest tries to return to your inventory.",
-                        "A Bong has one bowl and one hit. Load exactly one Dried Cannabis Bud beside the empty Bong in a crafting table or the inventory grid; fresh buds cannot be smoked this way. A loaded bowl cannot be topped up or mixed with salvia. Smoking adds 200mg THC to the active session and returns the same empty vessel, including in Creative mode.",
-                        "The empty Bong is shared with Salvia. Once its hit is taken, it can be loaded again with either one dried cannabis bud or one salvia extract serving.",
+                        "A Bong or Ancient Pipe has one bowl and one hit. Load exactly one Dried Cannabis Bud beside the empty device in a crafting table or the inventory grid; fresh buds cannot be smoked this way. A loaded bowl cannot be topped up or mixed with another substance. Smoking adds 200mg THC to the active session and returns the same empty device, including in Creative mode.",
+                        "Both devices are shared with DMT and Salvia. Once empty, either can hold one dried cannabis bud, one DMT Powder, or one of the four salvia extract strengths. The Utilities / Smoking Devices page lists their crafting and loading recipes.",
                         "Gummies and Chocolate Bars are not ordinary food in this build. They are measured THC items, and their remaining portions show like durability.",
                         "The journal's THC marks are fictional gameplay measures. They are for the world of Vice and Villagers, not the world outside it."
                 )
@@ -784,11 +789,11 @@ public final class CursedFindingsRegistry {
                 ModItems.DMT,
                 List.of(
                         "DMT is the short bright door. It does not ask for a long walk; it throws the room open and counts quickly.",
-                        "Its trail begins in acacia: bark shaved from the log, leaves broken loose, both boiled into Plant Extract, then dried down into crystals. The stronger crystal is not a different story, only five stories arriving at once.",
+                        "Its trail begins in acacia: bark shaved from the log, leaves broken loose, both boiled into Plant Extract, then dried down into crystals. Crystals must be ground in the Mortar and Pestle before use: a 1x crystal yields one DMT Powder, and a 5x crystal yields five. Use a powder directly or load it into a Bong or Ancient Pipe for one fictional dose unit.",
                         "Where LSD bends the world and psilocybin grows through it, DMT replaces the frame. At enough strength, ordinary space can fold into tunnels, impossible rooms, symbol chambers, and the feeling that something is studying the player back."
                 ),
                 List.of(
-                        "The first crystal opens this page. Additional crystals join the same launch if the trip is still alive, pushing the target higher and stretching the return.",
+                        "The first DMT Powder serving, DMT-containing Blend Capsule, or DMT-loaded Bong or Ancient Pipe hit opens this page. Additional servings or hits join the same launch if the trip is still alive, pushing the target higher and stretching the return.",
                         "Low threshold DMT is pressure behind the eyes, bright edges, sudden geometry, and a sense that the room has gained depth in directions it should not have.",
                         "The Tunnel arrives quickly. Color becomes a corridor, sound narrows, and motion feels pulled toward a center you did not choose.",
                         "At pre-breakthrough strength, the chrysanthemum opens: patterned shutters, kaleidoscopic gates, rotating forms, and a sense of machinery made from light.",
@@ -806,10 +811,17 @@ public final class CursedFindingsRegistry {
                                 "Bark, leaf, water, and fuel become Plant Extract in the Brew Cauldron."),
                         step(ModItems.PLANT_EXTRACT, "5x Plant Extract", () -> Items.CRAFTING_TABLE, "Bundling", ModItems.BUNDLED_PLANT_EXTRACT, "Bundled Plant Extract",
                                 "Five extracts can be bundled before drying, a compact promise of a stronger crystal."),
-                        step(ModItems.PLANT_EXTRACT, "Plant Extract", () -> Items.FURNACE, "Furnace, Blast Furnace, Smoker, or Campfire", ModItems.DMT, "DMT Crystal 1x",
+                        step(ModItems.PLANT_EXTRACT, "Plant Extract", () -> Items.FURNACE, "Furnace, Smoker, or Campfire", ModItems.DMT, "DMT Crystal 1x",
                                 "Heat dries a single extract into a 1x crystal. Smoker is quickest, furnace is steady, campfire is slow."),
-                        step(ModItems.BUNDLED_PLANT_EXTRACT, "Bundled Plant Extract", () -> Items.FURNACE, "Furnace, Blast Furnace, Smoker, or Campfire", ModItems.DMT_5X, "DMT Crystal 5x",
-                                "A bundled extract dries into the 5x crystal: one object, fivefold launch.")
+                        step(ModItems.BUNDLED_PLANT_EXTRACT, "Bundled Plant Extract", () -> Items.FURNACE, "Furnace, Smoker, or Campfire", ModItems.DMT_5X, "DMT Crystal 5x",
+                                "A bundled extract dries into the 5x crystal. It holds five units for grinding; the crystal itself cannot be consumed."),
+                        step(ModItems.DMT, "1x DMT Crystal 1x", ModItems.MORTAR_AND_PESTLE, "Mortar and Pestle", ModItems.DMT_POWDER, "1x DMT Powder",
+                                "Grind one 1x crystal for one powder. The mortar takes 40 ticks and needs room for its complete output."),
+                        step(ModItems.DMT_5X, "1x DMT Crystal 5x", ModItems.MORTAR_AND_PESTLE, "Mortar and Pestle", ModItems.DMT_POWDER, "5x DMT Powder",
+                                "Grind one 5x crystal for five separate powders. Every powder carries one fictional DMT dose unit; the original five-unit yield is preserved."),
+                        ancientPipeProductionStep(),
+                        step(ModItems.DMT_POWDER, "One Powder + Empty Ancient Pipe", () -> Items.CRAFTING_TABLE, "Crafting table or inventory", ModItems.ANCIENT_PIPE_DMT, "Loaded Ancient Pipe: One DMT Unit",
+                                "Use one powder directly, or craft it beside one empty Ancient Pipe or Bong. Either loaded device gives one DMT hit and returns its own empty vessel; crystals cannot be loaded.")
                 ),
                 List.of(
                         recipe("Brew Cauldron", CursedFindingRecipeType.CRAFTING_TABLE,
@@ -827,17 +839,37 @@ public final class CursedFindingsRegistry {
                         recipe("DMT Crystal 1x", CursedFindingRecipeType.HEATING,
                                 List.of(ref(ModItems.PLANT_EXTRACT, "1x Plant Extract")),
                                 ref(ModItems.DMT, "1x DMT Crystal 1x"),
-                                List.of("Smoker dries fastest, furnace follows, campfire takes longer. One plant extract becomes one 1x crystal.")),
+                                List.of("Smoker dries fastest, furnace follows, campfire takes longer. One plant extract becomes one 1x crystal. This crystal is a processing ingredient: grind it before use.")),
                         recipe("DMT Crystal 5x", CursedFindingRecipeType.HEATING,
                                 List.of(ref(ModItems.BUNDLED_PLANT_EXTRACT, "1x Bundled Plant Extract")),
                                 ref(ModItems.DMT_5X, "1x DMT Crystal 5x"),
-                                List.of("The bundled extract dries the same way, but the resulting crystal carries a 5x fictional launch."))
+                                List.of("The bundled extract dries the same way. The resulting crystal is processing-only and preserves five fictional dose units as five powders after grinding.")),
+                        recipe("Mortar and Pestle", CursedFindingRecipeType.CRAFTING_TABLE,
+                                List.of(ref(Items.COBBLESTONE, "2x Cobblestone"), ref(Items.STICK, "1x Stick"), ref(Items.BOWL, "1x Bowl")),
+                                ref(ModItems.MORTAR_AND_PESTLE, "Mortar and Pestle"),
+                                List.of("Build it in this shape: C _ C / _ S _ / _ B _. C=Cobblestone, S=Stick, B=Bowl, _=Empty.")),
+                        recipe("DMT Powder: 1x Crystal", CursedFindingRecipeType.MORTAR_AND_PESTLE,
+                                List.of(ref(ModItems.DMT, "1x DMT Crystal 1x")), ref(ModItems.DMT_POWDER, "1x DMT Powder"),
+                                List.of("One 1x crystal becomes one powder after 40 ticks. Each powder can be used directly for one fictional dose unit or loaded into either smoking device.")),
+                        recipe("DMT Powder: 5x Crystal", CursedFindingRecipeType.MORTAR_AND_PESTLE,
+                                List.of(ref(ModItems.DMT_5X, "1x DMT Crystal 5x")), ref(ModItems.DMT_POWDER, "5x DMT Powder"),
+                                List.of("One 5x crystal becomes five powders after 40 ticks. The entire five-powder output must fit before the mortar consumes the crystal.")),
+                        bongRecipe(),
+                        loadDeviceRecipe("Bong", ModItems.BONG, ModItems.DMT_POWDER, "DMT Powder", ModItems.BONG_DMT, "DMT", "1 DMT unit"),
+                        ancientPipeRecipe(),
+                        loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.DMT_POWDER, "DMT Powder", ModItems.ANCIENT_PIPE_DMT, "DMT", "1 DMT unit"),
+                        recipe("DMT Blend Capsule", CursedFindingRecipeType.CRAFTING_TABLE,
+                                List.of(ref(ModItems.EMPTY_CAPSULE, "1x Empty Capsule"), ref(ModItems.DMT_POWDER, "1x DMT Powder")),
+                                ref(ModItems.BLEND_CAPSULE, "1x Blend Capsule (1 DMT unit)"),
+                                List.of("Shapeless capsule blending. Each occupied DMT Powder slot contributes one fictional unit; supported prepared substances may share the capsule. Unprocessed DMT crystals are not accepted."))
                 ),
                 List.of(
                         "Acacia Bark drops when a non-creative player strips an Acacia Log with an axe. Acacia Leaf drops when a non-creative player breaks Acacia Leaves.",
                         "The Brew Cauldron consumes bark, leaf, water, and fuel for each Plant Extract. Water buckets leave their bucket behind when the ritual is done.",
                         "Plant Extract and Bundled Plant Extract both dry through furnace, smoker, or campfire. The smoker is quickest, the furnace is steady, and the campfire is the slow road.",
-                        "DMT dose labels are fictional gameplay units. A 1x crystal is the standard launch; a 5x crystal is a much harder opening.",
+                        "Crystals cannot be consumed as-is or loaded into a smoking device. Grind them first: 1x crystal to one powder, 5x crystal to five powders. Use one powder directly for one fictional unit, or craft one powder with one empty Bong or Ancient Pipe for an equivalent one-hit serving.",
+                        "Either loaded device returns the same empty vessel after use, including in Creative mode. A loaded bowl cannot be topped up or mixed. The Utilities / Smoking Devices page lists both devices and their other supported loads.",
+                        "New Blend Capsules accept DMT Powder, not crystals. Each occupied powder slot contributes one unit. Existing already-filled capsules keep their saved contents.",
                         "DMT also appears rarely in old chests and strange bundles, but the acacia chain is the craftable path the journal can retrace.",
                         "If several psychedelics are active, watch the Trip Status bar. DMT's yellow mark can briefly outrank the others when the breakthrough gate opens."
                 )
@@ -850,11 +882,11 @@ public final class CursedFindingsRegistry {
                 List.of(
                         "The purple finding grows where the jungle keeps its shade. Look for small, uncommon patches beneath Jungle and Sparse Jungle canopy, close to water and away from open sunlight.",
                         "Salvia does not read like the other psychedelic findings. It does not simply brighten the room. It convinces the room that it was staged wrong, as if the world is still made of the same blocks but no longer agrees on what those blocks were for.",
-                        "Harvest the mature plant for seeds and fresh leaves, replant the seeds, then dry the leaves over heat. One, two, three, or four dried leaves become the 1x, 10x, 25x, or 50x extract. The finished extract needs a Bong: load one serving through crafting, then take its single hit.",
-                        "Every bong hit joins one escalating session instead of starting over from the beginning. The Trip Status bar writes the road as Load-in, Pull, Dislocation, Recursion, and Shakeout, while stronger extracts push the same chapter harder and keep it alive longer."
+                        "Harvest the mature plant for seeds and fresh leaves, replant the seeds, then dry the leaves over heat. One, two, three, or four dried leaves become the 1x, 10x, 25x, or 50x extract. The finished extract needs a Bong or Ancient Pipe: load one serving through crafting, then take its single hit.",
+                        "Every Bong or Ancient Pipe hit joins one escalating session instead of starting over from the beginning. The Trip Status bar writes the road as Load-in, Pull, Dislocation, Recursion, and Shakeout, while stronger extracts push the same chapter harder and keep it alive longer."
                 ),
                 List.of(
-                        "The first bong hit opens this page. Later hits do not begin a second separate trip. They stack into the active salvia state, raise the target potency, and stretch the duration of the same unfolding scene.",
+                        "The first Salvia hit from either device opens this page. Later hits do not begin a second separate trip. They stack into the active salvia state, raise the target potency, and stretch the duration of the same unfolding scene.",
                         "At the low end, the room starts to feel staged. The world is still recognizably Minecraft, but it stops feeling innocent. Surfaces feel placed, corners feel intentional, and the tier messages climb from unease toward outright timeline slippage.",
                         "Pull is where the body starts losing its clean agreement with space. Camera roll, yaw drift, and pitch drag build from body pull, anchor slip, and scene replacement rather than from ordinary vanilla potion effects.",
                         "Dislocation is the real center of the finding. Scene replacement and anchor slip become strong enough that space stops feeling trustworthy, especially in still rooms, artificial spaces, villages, caves, and other places the system remembers as arranged.",
@@ -876,7 +908,10 @@ public final class CursedFindingsRegistry {
                         step(() -> Items.GLASS, "4x Glass + Water Bucket", () -> Items.CRAFTING_TABLE, "Shaped crafting", ModItems.BONG, "Bong",
                                 "Build the glass vessel in this shape: _ G _ / _ G _ / G W G. G is a Glass block, W is a Water Bucket, and _ is empty. The water leaves an empty bucket behind."),
                         step(ModItems.SALVIA_1X, "One Extract + Empty Bong", () -> Items.CRAFTING_TABLE, "Crafting table or inventory", ModItems.BONG_SALVIA_1X, "Loaded Bong: One Hit",
-                                "Craft an empty Bong with one extract of any strength. Right-click the loaded Bong to take that one hit; the vessel returns with an empty bowl, ready to load again.")
+                                "Craft an empty Bong with one extract of any strength. Right-click the loaded Bong to take that one hit; the vessel returns with an empty bowl, ready to load again."),
+                        ancientPipeProductionStep(),
+                        step(ModItems.SALVIA_1X, "One Extract + Empty Ancient Pipe", () -> Items.CRAFTING_TABLE, "Crafting table or inventory", ModItems.ANCIENT_PIPE_SALVIA_1X, "Loaded Ancient Pipe: One Hit",
+                                "The Ancient Pipe accepts the same four extract strengths as the Bong. Craft one serving beside the empty pipe, take its one hit, and recover the same empty Ancient Pipe.")
                 ),
                 List.of(
                         recipe("Dried Salvia Leaf", CursedFindingRecipeType.HEATING,
@@ -918,15 +953,20 @@ public final class CursedFindingsRegistry {
                         recipe("Load Bong: Salvia 50x", CursedFindingRecipeType.CRAFTING_TABLE,
                                 List.of(ref(ModItems.BONG, "1x Empty Bong"), ref(ModItems.SALVIA_50X, "1x Salvia Extract 50x")),
                                 ref(ModItems.BONG_SALVIA_50X, "1x Loaded Bong (50x)"),
-                                List.of("Shapeless recipe in the crafting table or 2x2 inventory grid. Carries one 50x hit; right-click to consume it and recover the empty Bong."))
+                                List.of("Shapeless recipe in the crafting table or 2x2 inventory grid. Carries one 50x hit; right-click to consume it and recover the empty Bong.")),
+                        ancientPipeRecipe(),
+                        loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_1X, "Salvia Extract 1x", ModItems.ANCIENT_PIPE_SALVIA_1X, "Salvia 1x", "Salvia 1x"),
+                        loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_10X, "Salvia Extract 10x", ModItems.ANCIENT_PIPE_SALVIA_10X, "Salvia 10x", "Salvia 10x"),
+                        loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_25X, "Salvia Extract 25x", ModItems.ANCIENT_PIPE_SALVIA_25X, "Salvia 25x", "Salvia 25x"),
+                        loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_50X, "Salvia Extract 50x", ModItems.ANCIENT_PIPE_SALVIA_50X, "Salvia 50x", "Salvia 50x")
                 ),
                 List.of(
                         "Only Jungle and Sparse Jungle grow wild Salvia. Search the shaded ground near water beneath leaves; open sunlit clearings are the wrong place. A few plants together are a finding worth carrying home.",
                         "A mature harvest gives exactly two Salvia Seeds and four fresh Salvia Leaves. Cutting an immature plant returns one seed and no leaves. Seeds can be replanted on farmland; cultivation follows the same four stages and growth pace as Cannabis.",
                         "Fresh leaves must be dried before extract crafting. Each heat recipe keeps the count simple: one fresh leaf becomes one dried leaf.",
-                        "Extract is a Bong ingredient. Right-clicking loose extract cannot consume it, and it cannot be tucked into a blended capsule. Loading uses exactly one empty Bong and one extract serving; a loaded bowl cannot be filled again until its hit is taken.",
-                        "Every loaded Bong holds one hit and returns the empty vessel after use. The strength belongs to the loaded extract, so the reusable glass does not dilute a 10x, 25x, or 50x serving.",
-                        "The same empty Bong can also hold one Dried Cannabis Bud for a single 200mg THC hit. A loaded bowl takes only its existing serving; smoke it empty before switching between cannabis and salvia.",
+                        "Extract is a Bong or Ancient Pipe ingredient. Right-clicking loose extract cannot consume it, and it cannot be tucked into a blended capsule. Loading uses exactly one empty device and one extract serving; a loaded bowl cannot be filled again until its hit is taken.",
+                        "Every loaded Bong or Ancient Pipe holds one hit and returns the same empty device after use, including in Creative mode. The strength belongs to the loaded extract: either device preserves the 1x, 10x, 25x, or 50x serving.",
+                        "Both empty devices also accept one Dried Cannabis Bud for 200mg THC or one DMT Powder for one DMT unit. Smoke the existing bowl empty before switching substances. See Utilities / Smoking Devices for all crafting and loading recipes.",
                         "The item labels are abstract gameplay intensity marks. The extracts are presented as 1x, 10x, 25x, and 50x style salvia labels, but the journal treats them as Vice and Villagers shorthand rather than outside-world guidance.",
                         "Each run receives its own trip signature. That signature nudges body torque, recursion bias, observer bias, scene bias, cutout bias, and aftershock, so two equal hits can feel related without feeling identical.",
                         "Environment matters more here than in most chapters. Artificial blocks, villages, caves, stillness, movement, nearby entities, threat, night, and low health all feed the final read.",
@@ -1438,6 +1478,35 @@ public final class CursedFindingsRegistry {
                         "This economy chapter describes fictional gameplay systems inside Vice and Villagers, not outside-world advice."
                 )
         ));
+        entries.add(entry(
+                CursedFindingIds.SMOKING_DEVICES,
+                "Smoking Devices",
+                CursedFindingCategory.UTILITIES,
+                ModItems.ANCIENT_PIPE,
+                List.of(
+                        "The Ancient Pipe and Bong are reusable vessels for the same prepared findings. Each holds one serving: a Dried Cannabis Bud, one DMT Powder, or one Salvia Extract of any of the four strengths.",
+                        "The Ancient Pipe uses iron, any wooden planks, and Acacia Bark. The Bong keeps its glass-and-water recipe. This utility page is open from the start so their construction does not depend on trying a substance first."
+                ),
+                List.of(
+                        "Craft exactly one empty device beside exactly one supported ingredient in a crafting table or the 2x2 inventory grid. The result holds one hit. A loaded bowl cannot be topped up or mixed with another substance.",
+                        "Right-click the loaded item to take its single serving. It returns the same type of empty device, including in Creative mode. An empty device gives no dose.",
+                        "One dried bud supplies 200mg THC, one DMT Powder supplies one DMT unit, and Salvia keeps its selected 1x, 10x, 25x, or 50x extract strength. Switching vessels does not multiply the serving."
+                ),
+                List.of(
+                        ancientPipeProductionStep(),
+                        step(() -> Items.GLASS, "4x Glass + Water Bucket", () -> Items.CRAFTING_TABLE, "Shaped crafting", ModItems.BONG, "Empty Bong",
+                                "Build the Bong in this shape: _ G _ / _ G _ / G W G. G=Glass block, W=Water Bucket, _=Empty. The bucket returns empty."),
+                        step(ModItems.DMT_POWDER, "One Prepared Serving + Empty Device", () -> Items.CRAFTING_TABLE, "Shapeless crafting", ModItems.ANCIENT_PIPE_DMT, "Loaded Device: One Hit",
+                                "Use DMT Powder, a Dried Cannabis Bud, or Salvia Extract. DMT crystals, fresh buds, and fresh or merely dried Salvia leaves are not device loads.")
+                ),
+                smokingDeviceRecipes(),
+                List.of(
+                        "See the DMT finding for the acacia chain and mortar yields: a 1x crystal makes one powder, a 5x crystal makes five powders. Crystals cannot be consumed or loaded as-is; one powder can also be consumed directly for one fictional unit.",
+                        "See Cannabis / THC for drying buds and Salvia for the four extract recipes. The same ingredients work in either device.",
+                        "Only an empty vessel can be loaded. Use one ingredient item, not two servings or a mixed bowl. A full inventory does not turn a loaded item into an extra serving or destroy the returning vessel.",
+                        "Taking a prepared hit unlocks its existing substance finding. This utility page does not change any substance dose, trip progression, or chapter history."
+                )
+        ));
         entries.sort(Comparator.comparing(entry -> entry.displayName().toLowerCase(java.util.Locale.ROOT)));
         return List.copyOf(entries);
     }
@@ -1464,6 +1533,54 @@ public final class CursedFindingsRegistry {
                 recipes,
                 notes,
                 "Ink refuses the shape. Try the thing, and the finding may let itself be named."
+        );
+    }
+
+    private static CursedFindingProductionStep ancientPipeProductionStep() {
+        return step(() -> Items.IRON_INGOT, "Iron Ingot + 2 Any Planks + Acacia Bark", () -> Items.CRAFTING_TABLE,
+                "Shaped crafting", ModItems.ANCIENT_PIPE, "Empty Ancient Pipe",
+                "Build it in this shape: _ _ _ / I _ _ / W A W. I=Iron Ingot, W=any plank from minecraft:planks, A=Acacia Bark, _=Empty. The three-column recipe needs a crafting table.");
+    }
+
+    private static CursedFindingRecipe ancientPipeRecipe() {
+        return recipe("Ancient Pipe", CursedFindingRecipeType.CRAFTING_TABLE,
+                List.of(ref(Items.IRON_INGOT, "1x Iron Ingot"), ref(Items.OAK_PLANKS, "2x Any Planks (minecraft:planks)"), ref(ModItems.ACACIA_BARK, "1x Acacia Bark")),
+                ref(ModItems.ANCIENT_PIPE, "1x Empty Ancient Pipe"),
+                List.of("Build it in this shape: _ _ _ / I _ _ / W A W. I=Iron Ingot, W=any wooden plank, A=Acacia Bark, _=Empty. Requires a crafting table; the plank ingredient accepts the minecraft:planks tag."));
+    }
+
+    private static CursedFindingRecipe bongRecipe() {
+        return recipe("Bong", CursedFindingRecipeType.CRAFTING_TABLE,
+                List.of(ref(Items.GLASS, "4x Glass Blocks"), ref(Items.WATER_BUCKET, "1x Water Bucket")),
+                ref(ModItems.BONG, "1x Empty Bong"),
+                List.of("Build it in this shape: _ G _ / _ G _ / G W G. G=Glass block, W=Water Bucket, _=Empty. The Water Bucket leaves an empty Bucket behind."));
+    }
+
+    private static CursedFindingRecipe loadDeviceRecipe(String device,
+            Supplier<? extends ItemLike> empty, Supplier<? extends ItemLike> ingredient, String ingredientLabel,
+            Supplier<? extends ItemLike> loaded, String substanceLabel, String servingLabel) {
+        return recipe("Load " + device + ": " + substanceLabel, CursedFindingRecipeType.CRAFTING_TABLE,
+                List.of(ref(empty, "1x Empty " + device), ref(ingredient, "1x " + ingredientLabel)),
+                ref(loaded, "1x Loaded " + device + " (" + servingLabel + ")"),
+                List.of("Shapeless recipe in the crafting table or 2x2 inventory grid. Each loaded item carries " + servingLabel
+                        + " as one hit. Right-click to take it and recover the same empty " + device + ", including in Creative mode. A loaded bowl cannot be topped up or mixed."));
+    }
+
+    private static List<CursedFindingRecipe> smokingDeviceRecipes() {
+        return List.of(
+                ancientPipeRecipe(), bongRecipe(),
+                loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.DMT_POWDER, "DMT Powder", ModItems.ANCIENT_PIPE_DMT, "DMT", "1 DMT unit"),
+                loadDeviceRecipe("Bong", ModItems.BONG, ModItems.DMT_POWDER, "DMT Powder", ModItems.BONG_DMT, "DMT", "1 DMT unit"),
+                loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.DRIED_CANNABIS_BUD, "Dried Cannabis Bud", ModItems.ANCIENT_PIPE_CANNABIS, "Cannabis", "200mg THC"),
+                loadDeviceRecipe("Bong", ModItems.BONG, ModItems.DRIED_CANNABIS_BUD, "Dried Cannabis Bud", ModItems.BONG_CANNABIS, "Cannabis", "200mg THC"),
+                loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_1X, "Salvia Extract 1x", ModItems.ANCIENT_PIPE_SALVIA_1X, "Salvia 1x", "Salvia 1x"),
+                loadDeviceRecipe("Bong", ModItems.BONG, ModItems.SALVIA_1X, "Salvia Extract 1x", ModItems.BONG_SALVIA_1X, "Salvia 1x", "Salvia 1x"),
+                loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_10X, "Salvia Extract 10x", ModItems.ANCIENT_PIPE_SALVIA_10X, "Salvia 10x", "Salvia 10x"),
+                loadDeviceRecipe("Bong", ModItems.BONG, ModItems.SALVIA_10X, "Salvia Extract 10x", ModItems.BONG_SALVIA_10X, "Salvia 10x", "Salvia 10x"),
+                loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_25X, "Salvia Extract 25x", ModItems.ANCIENT_PIPE_SALVIA_25X, "Salvia 25x", "Salvia 25x"),
+                loadDeviceRecipe("Bong", ModItems.BONG, ModItems.SALVIA_25X, "Salvia Extract 25x", ModItems.BONG_SALVIA_25X, "Salvia 25x", "Salvia 25x"),
+                loadDeviceRecipe("Ancient Pipe", ModItems.ANCIENT_PIPE, ModItems.SALVIA_50X, "Salvia Extract 50x", ModItems.ANCIENT_PIPE_SALVIA_50X, "Salvia 50x", "Salvia 50x"),
+                loadDeviceRecipe("Bong", ModItems.BONG, ModItems.SALVIA_50X, "Salvia Extract 50x", ModItems.BONG_SALVIA_50X, "Salvia 50x", "Salvia 50x")
         );
     }
 
