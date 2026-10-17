@@ -62,7 +62,8 @@ public final class ClientKeyBindings {
         while (TOGGLE_DMT_FRACTAL_WORLD.consumeClick()) {
             boolean enabled = !TrippyClientConfig.dmtFractalWorld;
             TrippyClientConfig.setDmtFractalWorld(enabled);
-            mc.player.displayClientMessage(Component.translatable("message.trippycraft.dmt_fractal_world",
+            mc.player.displayClientMessage(Component.translatable(enabled
+                            ? "message.trippycraft.dmt_fractal_world_experimental" : "message.trippycraft.dmt_fractal_world",
                     Component.translatable(enabled ? "options.on" : "options.off")), true);
         }
         while (CYCLE_DMT_FRACTAL_INTENSITY.consumeClick()) {

@@ -2,6 +2,7 @@ package com.trippycraft.client;
 
 import com.mojang.serialization.Codec;
 import com.trippycraft.config.TrippyClientConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.Button;
@@ -29,6 +30,7 @@ public final class ModSettingsScreen extends OptionsSubScreen {
         // Add future settings in sections here. Each option owns its caption,
         // tooltip and persisted setter; no custom positioning/input is needed.
         addSection("trippycraft.settings.section.dmt",
+                "trippycraft.settings.dmt_experimental",
                 OptionInstance.createBoolean("trippycraft.configuration.dmtFractalWorld",
                         OptionInstance.cachedConstantTooltip(Component.translatable("trippycraft.settings.dmt_world.tooltip")),
                         TrippyClientConfig.dmtFractalWorld, TrippyClientConfig::setDmtFractalWorld),
@@ -43,7 +45,11 @@ public final class ModSettingsScreen extends OptionsSubScreen {
                         new OptionInstance.Enum<>(List.of(0, 1, 2), Codec.INT),
                         TrippyClientConfig.dmtFractalQuality, TrippyClientConfig::setDmtFractalQuality));
 
-        addSection("trippycraft.settings.section.controls");
+        addNotice(Component.translatable("trippycraft.settings.dmt_recommended"));
+        addNotice(Component.translatable("trippycraft.settings.dmt_mid_range"));
+        addNotice(Component.translatable("trippycraft.settings.dmt_low_end"));
+
+        addSection("trippycraft.settings.section.controls", null);
         list.addSmall(Button.builder(Component.translatable("trippycraft.settings.key_binds"),
                         button -> minecraft.setScreen(new KeyBindsScreen(this, options)))
                 .width(310).tooltip(Tooltip.create(Component.translatable("trippycraft.settings.key_binds.tooltip"))).build(), null);
@@ -70,13 +76,23 @@ public final class ModSettingsScreen extends OptionsSubScreen {
         }
         return new OptionInstance<>("trippycraft.configuration.dmtFractalIntensity",
                 OptionInstance.cachedConstantTooltip(Component.translatable("trippycraft.settings.dmt_intensity.tooltip")),
-                (caption, value) -> Component.literal(Math.round(value * 100.0) + "%"),
+                (caption, value) -> {
+                    if (value == 0.75D) return Component.translatable("options.trippycraft.dmt_fractal_intensity.recommended");
+                    if (value == 0.50D) return Component.translatable("options.trippycraft.dmt_fractal_intensity.mid_range");
+                    if (value == 0.25D) return Component.translatable("options.trippycraft.dmt_fractal_intensity.low_end");
+                    return Component.literal(Math.round(value * 100.0) + "%");
+                },
                 new OptionInstance.Enum<>(List.copyOf(values), Codec.DOUBLE), current,
                 TrippyClientConfig::setDmtFractalIntensity);
     }
 
-    private void addSection(String titleKey, OptionInstance<?>... settings) {
+    private void addSection(String titleKey, String noticeKey, OptionInstance<?>... settings) {
         list.addSmall(new StringWidget(0, 0, 310, 20, Component.translatable(titleKey), font), null);
+        if (noticeKey != null) addNotice(Component.translatable(noticeKey).withStyle(ChatFormatting.GOLD));
         for (OptionInstance<?> setting : settings) list.addBig(setting);
+    }
+
+    private void addNotice(Component message) {
+        list.addSmall(new StringWidget(0, 0, 310, 20, message, font), null);
     }
 }

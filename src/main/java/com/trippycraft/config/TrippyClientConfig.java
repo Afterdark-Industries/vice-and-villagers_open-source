@@ -11,7 +11,7 @@ public final class TrippyClientConfig {
             .define("rendererEnabled", true);
 
     private static final ModConfigSpec.BooleanValue DMT_FRACTAL_WORLD = BUILDER
-            .comment("Enables the optional 3D DMT fractal realm. Existing DMT visuals remain the default.")
+            .comment("Experimental 3D DMT fractal realm. Off by default; enabling may affect performance. Off uses the original DMT visuals.")
             .translation("trippycraft.configuration.dmtFractalWorld")
             .define("dmtFractalWorld", false);
 
@@ -21,9 +21,9 @@ public final class TrippyClientConfig {
             .defineInRange("dmtFractalQuality", 1, 0, 2);
 
     private static final ModConfigSpec.DoubleValue DMT_FRACTAL_INTENSITY = BUILDER
-            .comment("Player multiplier for the optional DMT realm: visibility and dose-driven geometric/material detail. 0.0 = hidden, 1.0 = full dose response. Actual dose complexity has no visual dose ceiling. Use quality to control rendering cost.")
+            .comment("Player multiplier for the optional DMT realm. Default 0.75 (75%): recommended for best experience. Try 0.50 (50%) for mid-range PCs, or 0.25 (25%) for low-end PCs. 0.0 = hidden, 1.0 = full dose response. Dose complexity has no visual dose ceiling. Use quality to control rendering cost.")
             .translation("trippycraft.configuration.dmtFractalIntensity")
-            .defineInRange("dmtFractalIntensity", 1.0D, 0.0D, 1.0D);
+            .defineInRange("dmtFractalIntensity", 0.75D, 0.0D, 1.0D);
 
     private static final ModConfigSpec.DoubleValue VISUAL_INTENSITY = BUILDER
             .comment("Global multiplier for screen-space and color visuals.")
@@ -58,7 +58,7 @@ public final class TrippyClientConfig {
     public static boolean rendererEnabled = true;
     public static boolean dmtFractalWorld = false;
     public static int dmtFractalQuality = 1;
-    public static double dmtFractalIntensity = 1.0D;
+    public static double dmtFractalIntensity = 0.75D;
     public static double visualIntensity = 1.0D;
     public static double motionIntensity = 1.0D;
     public static boolean audioEnabled = true;
@@ -104,7 +104,7 @@ public final class TrippyClientConfig {
     }
 
     private static double normalizedFractalIntensity(double intensity) {
-        return Double.isFinite(intensity) ? Math.max(0.0D, Math.min(1.0D, intensity)) : 1.0D;
+        return Double.isFinite(intensity) ? Math.max(0.0D, Math.min(1.0D, intensity)) : 0.75D;
     }
 
     public static void onLoad(ModConfigEvent event) {

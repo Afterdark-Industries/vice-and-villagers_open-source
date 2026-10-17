@@ -22,13 +22,15 @@ Open **Mods → Vice and Villagers → Config** from Minecraft's title screen or
 
 The config-menu build passed native Minecraft tests for Mods entry navigation, saved values, custom/zero intensity, a 320×240 GUI, parent-screen return and synchronization with the original key bindings. The JAR and checksum below include this menu.
 
-The original DMT effects remain the default. You can also enable the optional 3D fractal realm through your instance's `config/trippycraft-client.toml`:
+The original DMT effects remain the default. **DMT Fractal World is experimental and off by default**; enabling it may affect performance. A fresh instance's `config/trippycraft-client.toml` uses these defaults:
 
 ```toml
-dmtFractalWorld = true
-dmtFractalIntensity = 1.0
+dmtFractalWorld = false
+dmtFractalIntensity = 0.75
 dmtFractalQuality = 1
 ```
+
+To try the realm, enable it in the Config menu or set `dmtFractalWorld = true`. **75% intensity** is the default and recommended for the best experience; try **50%** on mid-range PCs or **25%** on low-end PCs. Existing saved mode, intensity and quality settings are preserved.
 
 Quality `0` is low, `1` is balanced, and `2` is high. Assign **Toggle DMT Fractal World** under **Options → Controls → Key Binds → Vice and Villagers** to switch modes in game; the binding starts unassigned and saves your preference. The generated realm is visual only, with Minecraft's existing blocks and collisions.
 
