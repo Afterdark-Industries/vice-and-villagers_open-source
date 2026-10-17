@@ -45,10 +45,6 @@ public final class ModSettingsScreen extends OptionsSubScreen {
                         new OptionInstance.Enum<>(List.of(0, 1, 2), Codec.INT),
                         TrippyClientConfig.dmtFractalQuality, TrippyClientConfig::setDmtFractalQuality));
 
-        addNotice(Component.translatable("trippycraft.settings.dmt_recommended"));
-        addNotice(Component.translatable("trippycraft.settings.dmt_mid_range"));
-        addNotice(Component.translatable("trippycraft.settings.dmt_low_end"));
-
         addSection("trippycraft.settings.section.controls", null);
         list.addSmall(Button.builder(Component.translatable("trippycraft.settings.key_binds"),
                         button -> minecraft.setScreen(new KeyBindsScreen(this, options)))

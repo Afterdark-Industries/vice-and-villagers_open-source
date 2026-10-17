@@ -97,19 +97,17 @@ public final class ConfigClientSmokeTest {
                                     && widget(mc.screen, QUALITY).getMessage().getString().contains(
                                             Component.translatable("options.trippycraft.dmt_fractal_quality.balanced").getString()),
                             "Fresh menu does not show the disabled realm and recommended 75% intensity");
-                    for (String key : new String[]{"dmt_experimental", "dmt_recommended", "dmt_mid_range", "dmt_low_end"}) {
-                        AbstractWidget notice = widget(mc.screen, "trippycraft.settings." + key);
-                        require(notice.visible && notice.getY() >= 0 && notice.getBottom() <= mc.screen.height
-                                        && mc.font.width(notice.getMessage()) <= notice.getWidth(),
-                                "Performance guidance is hidden or overflows its native row: " + key);
-                    }
+                    AbstractWidget notice = widget(mc.screen, "trippycraft.settings.dmt_experimental");
+                    require(notice.visible && notice.getY() >= 0 && notice.getBottom() <= mc.screen.height
+                                    && mc.font.width(notice.getMessage()) <= notice.getWidth(),
+                            "Experimental warning is hidden or overflows its native row");
                     String modeHelp = tooltip(mc, widget(mc.screen, MODE)).toLowerCase(java.util.Locale.ROOT);
                     String intensityHelp = tooltip(mc, widget(mc.screen, INTENSITY));
                     require(modeHelp.contains("experimental") && modeHelp.contains("performance")
                                     && intensityHelp.contains("75%") && intensityHelp.contains("50%") && intensityHelp.contains("25%"),
                             "Native setting tooltips omit experimental/performance guidance or player recommendations");
                     log("PASS: fresh client defaults are realm Off, intensity 75%, quality Balanced in live values, saved TOML and native widgets");
-                    log("PASS: visible experimental/performance warning and 75%/50%/25% guidance fit native rows and are available in setting tooltips");
+                    log("PASS: experimental warning fits its native row; 75%/50%/25% recommendations remain in setting tooltips");
                     capture(mc, "config-title.png");
                     TrippyClientConfig.setDmtFractalIntensity(Double.NaN);
                     persisted(mc, false, .75, 1);
