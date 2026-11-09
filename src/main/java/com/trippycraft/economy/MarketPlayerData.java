@@ -18,6 +18,9 @@ public final class MarketPlayerData {
     private long lastDemandRefreshGameTime;
     // Retained for old save compatibility only; contracts no longer expire or refresh on a timer.
     private long lastContractRefreshGameTime;
+    // Sale and order payouts wait here until the market or customer screen closes. Saving them with the
+    // player keeps them in step with the inventory the sold items were removed from.
+    private int pendingPayoutEmeralds;
     private final Map<String, Integer> demandMultipliers = new LinkedHashMap<>();
     private final List<MarketContract> activeContracts = new ArrayList<>();
 
@@ -81,6 +84,26 @@ public final class MarketPlayerData {
         completedContracts = Math.max(0, completedContracts + 1);
     }
 
+    public int pendingPayoutEmeralds() {
+        return pendingPayoutEmeralds;
+    }
+
+    public void addPendingPayout(int emeralds) {
+        if (emeralds <= 0) {
+            return;
+        }
+        pendingPayoutEmeralds = pendingPayoutEmeralds >= Integer.MAX_VALUE - emeralds
+                ? Integer.MAX_VALUE
+                : pendingPayoutEmeralds + emeralds;
+    }
+
+    /** Returns the queued payout and clears it, so a payout can only be delivered once. */
+    public int takePendingPayout() {
+        int payout = pendingPayoutEmeralds;
+        pendingPayoutEmeralds = 0;
+        return payout;
+    }
+
     public String nextContractId() {
         nextContractSerial++;
         return "contract_" + nextContractSerial;
@@ -94,6 +117,7 @@ public final class MarketPlayerData {
         tag.putInt("nextContractSerial", nextContractSerial);
         tag.putLong("lastDemandRefreshGameTime", lastDemandRefreshGameTime);
         tag.putLong("lastContractRefreshGameTime", lastContractRefreshGameTime);
+        tag.putInt("pendingPayoutEmeralds", pendingPayoutEmeralds);
 
         ListTag demandList = new ListTag();
         demandMultipliers.forEach((productId, multiplier) -> {
@@ -120,6 +144,7 @@ public final class MarketPlayerData {
         data.nextContractSerial = Math.max(0, NbtCompat.getIntOr(tag, "nextContractSerial", 0));
         data.lastDemandRefreshGameTime = Math.max(0L, NbtCompat.getLongOr(tag, "lastDemandRefreshGameTime", 0L));
         data.lastContractRefreshGameTime = Math.max(0L, NbtCompat.getLongOr(tag, "lastContractRefreshGameTime", 0L));
+        data.pendingPayoutEmeralds = Math.max(0, NbtCompat.getIntOr(tag, "pendingPayoutEmeralds", 0));
 
         NbtCompat.compoundStream(NbtCompat.getListOrEmpty(tag, "demand")).forEach(demandTag -> {
             String productId = NbtCompat.getStringOr(demandTag, "productId", "");
@@ -143,6 +168,7 @@ public final class MarketPlayerData {
         copy.nextContractSerial = nextContractSerial;
         copy.lastDemandRefreshGameTime = lastDemandRefreshGameTime;
         copy.lastContractRefreshGameTime = lastContractRefreshGameTime;
+        copy.pendingPayoutEmeralds = pendingPayoutEmeralds;
         copy.demandMultipliers.putAll(demandMultipliers);
         copy.activeContracts.addAll(activeContracts);
         return copy;

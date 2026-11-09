@@ -27,7 +27,6 @@ public final class MarketEvents {
     }
 
     public static void onServerStopped(ServerStoppedEvent event) {
-        EmeraldPayoutLedger.clearAll();
         MarketDataStore.clearAll();
     }
 }

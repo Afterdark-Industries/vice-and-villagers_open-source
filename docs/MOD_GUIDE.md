@@ -302,14 +302,14 @@ Authored track lengths, world-time playlist position, saved offsets, distance fa
 | Saved state | Source owners | Compatibility concerns |
 |---|---|---|
 | Player experience | `SubstanceEvents`, `SubstancePersistence`, `PsychoactiveExperience` | Dedicated sessions, physical/effect amounts, signatures, clocks, tolerance and recovery |
-| Player economy | `MarketEvents`, `MarketDataStore`, `MarketPersistence` | Reputation and trade/contract counters, demand refresh time and persistent personal contracts; level is derived |
+| Player economy | `MarketEvents`, `MarketDataStore`, `MarketPersistence` | Reputation and trade/contract counters, demand refresh time, persistent personal contracts and queued payouts; level is derived |
 | Book discovery | `CursedRecipeCodex` | Chapter IDs, legacy keys and synchronization |
 | World systems | `VillageBarData`, `ErgotInfectionData`, `TavernPlaybackData` | Placement/revisions, infection timers and playlist offsets |
 | Blocks/items/villagers | Their NBT/data-component and block-entity paths | Reservoir content, selection/progress, tapped crops, role/station links and customer habits/daily offers |
 
 Player sidecars retain the `trippycraft` and `trippycraft_market` names alongside vanilla player data. `NbtCompat` and saved aliases support existing worlds. For example, old koka/cocaine identifiers, the legacy MDMA tablet, dealer products and book chapter keys cannot be removed just because they are hidden from current menus.
 
-Pending payouts in `EmeraldPayoutLedger` are transient server state, rather than persisted market data. Review their open/close/logout flushing and server-stop cleanup separately from a sidecar save. Customer state belongs to villager persistent NBT, not the player's market sidecar.
+Pending payouts queued through `EmeraldPayoutLedger` are stored in the player's market data, so they are saved with the inventory the sold items left and survive a crash. They are delivered once when the market or customer screen closes, the market reopens or the player logs out. A market file that cannot be read, or that uses a newer schema, is moved aside with an `.unreadable-<time>` suffix instead of being overwritten by a fresh profile, and saves are written through a temporary file. Customer state belongs to villager persistent NBT, not the player's market sidecar.
 
 The saved `lastContractRefreshGameTime` field remains for compatibility, but no longer schedules contract expiry or replacement. Preserve posted order IDs and terms across migrations; only demand uses its daily refresh clock.
 

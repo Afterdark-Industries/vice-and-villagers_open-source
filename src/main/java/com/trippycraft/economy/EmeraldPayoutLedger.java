@@ -3,13 +3,12 @@ package com.trippycraft.economy;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+/**
+ * Defers broker and customer payouts until the trading screen closes, the market reopens or the player
+ * logs out. The queued amount lives in the player's {@link MarketPlayerData}, so it is saved alongside the
+ * inventory the sold items left and survives a crash or forced stop.
+ */
 public final class EmeraldPayoutLedger {
-    private static final Map<UUID, Integer> PENDING_PAYOUTS = new HashMap<>();
-
     private EmeraldPayoutLedger() {
     }
 
@@ -17,27 +16,18 @@ public final class EmeraldPayoutLedger {
         if (player == null || emeralds <= 0) {
             return;
         }
-        UUID playerId = player.getUUID();
-        PENDING_PAYOUTS.put(playerId, safeAdd(PENDING_PAYOUTS.getOrDefault(playerId, 0), emeralds));
+        MarketDataStore.getOrCreate(player).addPendingPayout(emeralds);
     }
 
     public static void flush(ServerPlayer player) {
         if (player == null) {
             return;
         }
-        Integer payout = PENDING_PAYOUTS.remove(player.getUUID());
-        if (payout == null || payout <= 0) {
+        int payout = MarketDataStore.get(player.getUUID()).map(MarketPlayerData::takePendingPayout).orElse(0);
+        if (payout <= 0) {
             return;
         }
         EmeraldWallet.pay(player, payout);
         player.displayClientMessage(Component.translatable("message.trippycraft.sales.payout", payout), true);
-    }
-
-    public static void clearAll() {
-        PENDING_PAYOUTS.clear();
-    }
-
-    private static int safeAdd(int left, int right) {
-        return left >= Integer.MAX_VALUE - right ? Integer.MAX_VALUE : left + right;
     }
 }

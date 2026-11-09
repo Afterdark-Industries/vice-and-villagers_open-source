@@ -3,6 +3,7 @@ package com.trippycraft.network;
 import com.trippycraft.TrippyCraft;
 
 import com.trippycraft.economy.MarketService;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -37,7 +38,11 @@ public final class MarketActionPacket implements CustomPacketPayload {
     public static MarketActionPacket decode(FriendlyByteBuf buffer) {
         int actionIndex = buffer.readVarInt();
         Action[] actions = Action.values();
-        Action action = actionIndex >= 0 && actionIndex < actions.length ? actions[actionIndex] : Action.SELL_PRODUCT;
+        if (actionIndex < 0 || actionIndex >= actions.length) {
+            // Reject rather than guess: an unknown action must never be treated as a sale.
+            throw new DecoderException("Unknown market action " + actionIndex);
+        }
+        Action action = actions[actionIndex];
         return new MarketActionPacket(action, buffer.readUtf(), buffer.readVarInt());
     }
 
