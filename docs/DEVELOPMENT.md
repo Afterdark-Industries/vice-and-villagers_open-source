@@ -69,6 +69,7 @@ A successful build proves compilation and packaging, not a running world or comp
 .\scripts\build.ps1 runHoMetGameTestServer
 .\scripts\build.ps1 runSmokingGameTestServer
 .\scripts\build.ps1 runMarketGameTestServer
+.\scriptsuild.ps1 runSessionGameTestServer
 ```
 
 Despite its historical name, `runHoMetGameTestServer` runs the retained whole-mod GameTest suite, including substance/session, crafting/content, plants, exploration loot, commands and village/bartender contracts. Its test world and logs are under ignored `build/` directories. Check the actual failed-test summary and process exit; assembly alone does not execute GameTests.
@@ -77,7 +78,9 @@ Despite its historical name, `runHoMetGameTestServer` runs the retained whole-mo
 
 `runMarketGameTestServer` runs the focused `trippycraft_market` namespace and is also included in the whole-mod suite. Its contracts exercise every broker catalog entry, all sixteen families and Dealer products, fourteen saved item aliases, full/partial stock, exact inventory removal and deferred emerald settlement, reputation/demand, contract replay, unavailable/distant requests and saved market data. `MarketStock.matches` is shared by the client counts and server transactions. Use `-PmarketGameTestDir` and `-PmarketGameTestWorldDir` to isolate logs and the disposable test world.
 
-Coverage is uneven. There are dedicated LSD and psilocybin contracts, cannabis-bong and bartender tests, and extensive tests for several later substance systems. Cannabis, cocaine, heroin, alcohol, MDMA and ketamine lack dedicated full-session GameTest classes, and DMT's complete session/stage behavior also needs direct manual checks. Focused item/crafting tests do not replace that coverage. Passing the suite does not prove every substance, saved world or modpack.
+`runSessionGameTestServer` runs the focused `trippycraft_sessions` namespace and is also included in the whole-mod suite. Its contracts cover alcohol and cannabis sessions from consumption to expiry: phase order, dose duration and intensity, stacking, save/reload and repair of out-of-range saves, item servings and container returns, vanilla status effects, cannabis potentiation, sleep and death. Alcohol's recovery tracker is checked for hangover and dependence by session peak, blackout thresholds, withdrawal damage and lethality by dependence phase, suppression by drinking and DMT-only therapy. Sessions are advanced by rewriting their saved age, so a whole trip runs in milliseconds; `SessionTestSupport` provides a damageable test player for withdrawal, hangover and blackout checks. A known defect is kept as an optional test that reports without failing the run. Use `-PsessionGameTestDir` and `-PsessionGameTestWorldDir` to isolate logs and the disposable test world.
+
+Coverage is uneven. There are dedicated LSD and psilocybin contracts, cannabis-bong and bartender tests, full-session alcohol and cannabis contracts, and extensive tests for several later substance systems. Cocaine, heroin, MDMA and ketamine lack dedicated full-session GameTest classes, and DMT's complete session/stage behavior also needs direct manual checks. Focused item/crafting tests do not replace that coverage. Passing the suite does not prove every substance, saved world or modpack.
 
 New tests should exercise meaningful behavior or compatibility, rather than mirror a helper's implementation. Use the existing GameTests near the affected system as examples. A documentation-only change needs link and scope review, rather than a new runtime test.
 
